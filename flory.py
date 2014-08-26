@@ -23,7 +23,7 @@ def index():
 @app.route('/Flory.html')
 def flory():
 	return render_template("Flory.html")
-"""
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     error = None
@@ -37,7 +37,7 @@ def login():
     # was GET or the credentials were invalid
     return render_template('login.html', error=error)
 
-"""
+
 def plot():
 	fig = Figure()
 	axis = fig.add_subplot(1, 1, 1)
