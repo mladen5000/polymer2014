@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<!-- Things I know I will need --!>
    	 <script src = "static/jquery-1.11.1.min.js"> </script>
    	 <link rel="stylesheet" href="static/foundation/css/foundation.css">
    	 <link rel="stylesheet" href="static/Flory.css">
          <script src="static/foundation/js/foundation.min.js"></script>
-    	 <script src="static/script.js"></script>
 <!--Things I might need --!>
     	<script src="static/foundation/js/foundation/foundation.js"></script>
     	<script src="static/foundation/js/foundation/foundation.dropdown.js"></script>
@@ -31,11 +30,11 @@
 				<li class="has-dropdown"> 
 					<a href="#">Popular Apps</a> 
 						<ul class="dropdown"> 
-							<li><a href="Flory.html">Flory-Higgins</a>
+							<li><a href="Flory.html">Flory-Huggins</a>
 							</li> 
 							<li><a href="#">Large Cardinal Generator</a>
 							</li>
-							<li><a href="#">Vorn-Overbeek</a>
+							<li><a href="#">Voorn-Overbeek</a>
 							</li>
 						</ul> 
 				</li> 
@@ -47,9 +46,37 @@
 			</ul> 
 		</section> 
 	</nav>
-	<div id = "Header">
-		<h1> Flory-Higgins Graph Generator <h1>
+	<div id = "Header" style="text-align: center;">
+		<h1> Flory-Huggins Graph Generator </h1>
 	</div>
+	<div class = "introduction">
+		<div class="row">
+		<h2> About </h2>
+		</div>
+		<div class = "row">
+		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum </p>
+		</div>
+	</div>
+		<div class = "row">
+			<div class = "large-4 columns">
+				<p> </p>
+			</div>
+			<div class = "large-4 columns" id = "fbox">
+				<form action="/login" method=post>
+    				<dl>
+      				<dt> Number of Polymer (NA)
+      				<dd><input type=text name=NFA>
+   					<dt> Number of Polymer (NB)
+    				<dd><input type=text name=NFB>
+     				<dd><input type=submit value=Generate!>
+    				</dl>
+  				</form>
+			</div>
+			<div class = "large-4 columns">		
+				<p> </p>
+			</div>
+	</div>
+	
 <!-- Added jQuery at the End --!>
 <script> $(document).ready(function(){ $(document).foundation();}); </script>
 

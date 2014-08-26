@@ -6,7 +6,7 @@ from numpy.linalg import inv
 import matplotlib.pyplot as plt
 import StringIO
 
-from flask import Flask, make_response, render_template
+from flask import Flask, request, make_response, render_template
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 
@@ -24,19 +24,21 @@ def index():
 def flory():
 	return render_template("Flory.html")
 
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    error = None
-    if request.method == 'POST':
-        if valid_login(request.form['username'],
-                       request.form['password']):
-            return log_the_user_in(request.form['username'])
-        else:
-            error = 'Invalid username/password'
-    # the code below is executed if the request method
-    # was GET or the credentials were invalid
-    return render_template('index.html', error=error)
-
+"""
+@app.route('/login', methods=['GET', 'POST'])
+ 51 def login():
+ 52     error = None
+ 53     if request.method == 'POST':
+ 54         if request.form['username'] != app.config['USERNAME']:
+ 55             error = 'Invalid username'
+ 56         elif request.form['password'] != app.config['PASSWORD']:
+ 57             error = 'Invalid password'
+ 58         else:
+ 59             session['logged_in'] = True
+ 60             flash('You were logged in')
+ 61             return redirect(url_for('show_entries'))
+ 62     return render_template('login.html', error=error)
+"""
 
 def plot():
 	fig = Figure()
