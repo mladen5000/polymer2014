@@ -1,0 +1,13 @@
+Flask==0.10.1
+Jinja2==2.7.3
+MarkupSafe==0.18
+PasteDeploy==1.5.2
+Werkzeug==0.9.6
+gunicorn==19.1.0
+itsdangerous==0.24
+numpy==1.7.0
+pyparsing==2.0.1
+python-dateutil==1.5
+pytz==2014.4
+six==1.7.3
+wsgiref==0.1.2

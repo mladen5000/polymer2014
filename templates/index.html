@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+   <head>
+
+<!-- Things I know I will need --!>
+   	 <script src = "static/jquery-1.11.1.min.js"> </script>
+   	 <link rel="stylesheet" href="static/foundation/css/foundation.css">
+   	 <link rel="stylesheet" href="static/stylef.css">
+         <script src="static/foundation/js/foundation.min.js"></script>
+    	 <script src="static/script.js"></script>
+<!--Things I might need --!>
+    	<script src="static/foundation/js/foundation/foundation.js"></script>
+    	<script src="static/foundation/js/foundation/foundation.dropdown.js"></script>
+    	<script src="static/foundation/js/foundation/foundation.topbar.js"></script>
+    	<script src="static/foundation/js/vendor/custom.modernizer.js"></script>
+   </head>
+   <body>
+	<nav class="top-bar" data-topbar data-options="is_hover:true"> 
+		<ul class="title-area"> 
+			<li class="name"> 
+				<h1> <a href="index.html"> Materials Genome Project </a> </h1> 
+			</li> <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone --> 
+			<li class="toggle-topbar menu-icon"> 
+				<a href="#"> <span>Polymers</span></a>
+			</li> 
+		</ul> 
+		<section class="top-bar-section"> <!-- Right Nav Section --> 
+			<ul class="right"> 
+				<li class="active">
+					<a href="#">Applications</a>
+				</li> 
+				<li class="has-dropdown"> 
+					<a href="#">Popular Apps</a> 
+						<ul class="dropdown"> 
+							<li><a href="Flory.html">Flory-Huggins</a>
+							</li> 
+							<li><a href="#">Large Cardinal Generator</a>
+							</li>
+							<li><a href="#">Voorn-Overbeek</a>
+							</li>
+						</ul> 
+				</li> 
+			</ul> <!-- Left Nav Section --> 
+			<ul class="left"> 
+				<li>
+					<a href="#">About</a>
+				</li> 
+			</ul> 
+		</section> 
+	</nav>
+	<div id="Header">
+		<div id= "Heading">
+			<div class="row">
+				<div class="large-4 columns">
+					<h1 id="Mat"> Materials </h1>
+				</div>
+				<div class="large-4 columns">
+					<h1 id="Gen"> Genome </h1>
+				</div>
+				<div class="large-4 columns">
+					<h1 id="Pro"> Project </h1>
+				</div>
+			</div>
+		</div>	
+		<div id = "tagline">
+                        <div class = "row">
+                                <p> Presented by the Institute of Molecular Engineering At the University of Chicago </p>
+                        </div>
+                </div>
+
+		<div class = "image">
+			<div class = "row">
+			<img src="static/drawing.png"/>
+			</div>
+		</div>
+
+	</div>
+	<div class="layer">
+	<p> </p>
+	</div>
+        <div class="introduction">
+		<div class = "row">
+			<div class = "about">
+				<h2> The Project </h2>
+			<p> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p> 
+			<h2 style="text-align:left; padding-bottom: 0px; padding-top: 25px;"> Polymer Applications </h2>
+			<p> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum </p>
+			</div>
+				<!--Our programs! --!>
+
+			<div id="first" class="large-5 columns">
+				<h2> <a href="Flory.html"> Flory-Huggins Generator</a> </h2>
+				<p> Text here about the app </p>
+				<ol>
+					<li> First point </li>
+					<li> Second point </li>
+					<li> Third point </li>
+				</ol>
+			</div>
+			<div id="third" class= "large-5 columns">
+			 <h2> <a href="#">Voorn-Overbeek Generator</a> </h2>
+                                <p> Text here about the app </p>
+                                <ol>
+                                        <li> First point </li>
+                                        <li> Second point </li>
+                                        <li> Third point </li>
+                                </ol>
+			</div>
+		</div>
+    </div>
+
+
+<!-- Ending Javascript !-->
+<script> $(document).ready(function(){ $(document).foundation();}); </script>
+
+  </body>
+</html>
