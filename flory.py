@@ -32,33 +32,31 @@ def login():
 	if request.method == 'POST':
 		na = float(request.form['NFA'])
 		nb = float(request.form['NFB'])
+#		flash('kyle sucks')
 
 		crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
 		nav = 2./crit_chi
  
-	
+		plt.xkcd()	
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		x = arange(0.01,0.99,0.01)
+		x = arange(0.1,0.90,0.001)
 		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
 		phi,y2 =  NR(na,nb,nav)
-		xmin = 0
-		xmax = 1
-		ymin = 0
-		ymax = crit_chi + 10
-		axis.plot(x,spinodal,'r',lw=2) 
-		#axis.fill(x, spinodal, 'b', phi, y2, 'r', alpha=0.3)
-		axis.plot(phi,y2,'b',lw=2)
-		axis.set_xlim([xmin,xmax])
-		axis.set_ylim([ymin,ymax])
+		spinline = axis.plot(x,spinodal,'r',lw=2) 
+		binline = axis.plot(phi,y2,'b',lw=2)
+#		axis.xlabel('Volume Fraction')
+#		axis.ylabel('Chi')
+		fig.suptitle('Phase Diagram')
 		canvas = FigureCanvas(fig)
 		output = StringIO.StringIO()
 		canvas.print_png(output, bbox_inches='tight')
-	#	response = make_response(output.getvalue())
-	#	response.mimetype = 'image/png'
-		return mpld3.fig_to_html(fig)
-		#return response
+		response = make_response(output.getvalue())
+		response.mimetype = 'image/png'
+#		plugins.connect(fig, plugins.MousePosition())
+#		return mpld3.fig_to_html(fig)
+		return response
 
 
 """
