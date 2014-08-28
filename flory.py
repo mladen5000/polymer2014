@@ -5,6 +5,8 @@ from numpy import *
 from numpy.linalg import inv
 import matplotlib.pyplot as plt
 import StringIO
+import mpld3
+from mpld3 import plugins
 
 from flask import Flask, request, make_response, render_template
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -20,9 +22,44 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route('/Flory.html')
+@app.route('/Flory.html',methods=['POST','GET'])
 def flory():
 	return render_template("Flory.html")
+
+	
+@app.route('/login', methods=['GET','POST'])	
+def login():
+	if request.method == 'POST':
+		na = float(request.form['NFA'])
+		nb = float(request.form['NFB'])
+
+		crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
+		nav = 2./crit_chi
+ 
+	
+		fig = Figure()
+		fig.set_facecolor('white')
+		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+		x = arange(0.01,0.99,0.01)
+		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
+		phi,y2 =  NR(na,nb,nav)
+		xmin = 0
+		xmax = 1
+		ymin = 0
+		ymax = crit_chi + 10
+		axis.plot(x,spinodal,'r',lw=2) 
+		#axis.fill(x, spinodal, 'b', phi, y2, 'r', alpha=0.3)
+		axis.plot(phi,y2,'b',lw=2)
+		axis.set_xlim([xmin,xmax])
+		axis.set_ylim([ymin,ymax])
+		canvas = FigureCanvas(fig)
+		output = StringIO.StringIO()
+		canvas.print_png(output, bbox_inches='tight')
+	#	response = make_response(output.getvalue())
+	#	response.mimetype = 'image/png'
+		return mpld3.fig_to_html(fig)
+		#return response
+
 
 """
 @app.route('/login', methods=['GET', 'POST'])
@@ -39,7 +76,7 @@ def flory():
  61             return redirect(url_for('show_entries'))
  62     return render_template('login.html', error=error)
 """
-
+"""
 def plot():
 	fig = Figure()
 	axis = fig.add_subplot(1, 1, 1)
@@ -48,7 +85,7 @@ def plot():
 	phi,y2 =  NR(na,nb,nav)
 
 
-	axis.plot(x,spinodal) 
+	axis.plot(x,spinodal,'r--') 
 	axis.plot(phi,y2)
 	canvas = FigureCanvas(fig)
 	output = StringIO.StringIO()
@@ -56,7 +93,7 @@ def plot():
 	response = make_response(output.getvalue())
 	response.mimetype = 'image/png'
 	return response
-
+"""
 
 def fun(x,na,nb,phi1):
 	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
@@ -88,6 +125,12 @@ def plot(phi,y2):
 def NR(na,nb,nav):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
+
+		if na != nb:
+			crit_phi = (-nb + sqrt(na*nb))/(na-nb)
+		else:
+			crit_phi = .5  	
+
 		phi1vals = arange(.001,crit_phi,.01)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
@@ -130,10 +173,15 @@ def NR(na,nb,nav):
 		y2 = y2 + y2i
 		return (phi,y2)
 		#####################PLOT#######################
+	
 
-"Initialize"
-na = 100
+na = 1
 nb = 1
+crit_chi = .5 
+crit_phi = 1
+"""
+na = 100
+nb = 100
 
 #Calculate crit_phiical value of Chi
 crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
@@ -144,13 +192,13 @@ if na != nb:
 else:
 		crit_phi = .5		
 
-"Run"
 #phi,y2 =  NR(na,nb,nav)
-#plot(phi,y2)
+#plot()
+"""
 
 if __name__ == '__main__':
-  #  app.run(debug=True)
-	app.run(host='0.0.0.0')
+    app.run(debug=True)
+#	app.run(host='0.0.0.0')
 
 
 
