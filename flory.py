@@ -52,8 +52,7 @@ def login():
 		response = make_response(output.getvalue())
 		response.mimetype = 'image/png'
 		plugins.connect(fig, plugins.MousePosition())
-#		return mpld3.fig_to_html(fig)
-		return response
+		return mpld3.fig_to_html(fig)
 
 
 
