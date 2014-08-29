@@ -37,7 +37,7 @@ def login():
 		crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
 		nav = 2./crit_chi
  
-		plt.xkcd()	
+#		plt.xkcd()	
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
@@ -54,9 +54,9 @@ def login():
 		canvas.print_png(output, bbox_inches='tight')
 		response = make_response(output.getvalue())
 		response.mimetype = 'image/png'
-#		plugins.connect(fig, plugins.MousePosition())
-#		return mpld3.fig_to_html(fig)
-		return response
+		plugins.connect(fig, plugins.MousePosition())
+		return mpld3.fig_to_html(fig)
+#		return response
 
 
 """
