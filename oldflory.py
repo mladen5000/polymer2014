@@ -32,11 +32,12 @@ def login():
 	if request.method == 'POST':
 		na = float(request.form['NFA'])
 		nb = float(request.form['NFB'])
+#		flash('kyle sucks')
 
 		crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
 		nav = 2./crit_chi
  
-		plt.xkcd()	
+#		plt.xkcd()	
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
@@ -45,6 +46,8 @@ def login():
 		phi,y2 =  NR(na,nb,nav)
 		spinline = axis.plot(x,spinodal,'r',lw=2) 
 		binline = axis.plot(phi,y2,'b',lw=2)
+#		axis.xlabel('Volume Fraction')
+#		axis.ylabel('Chi')
 		fig.suptitle('Phase Diagram')
 		canvas = FigureCanvas(fig)
 		output = StringIO.StringIO()
@@ -52,10 +55,43 @@ def login():
 		response = make_response(output.getvalue())
 		response.mimetype = 'image/png'
 		plugins.connect(fig, plugins.MousePosition())
-#		return mpld3.fig_to_html(fig)
-		return response
+		return mpld3.fig_to_html(fig)
+#		return response
 
 
+"""
+@app.route('/login', methods=['GET', 'POST'])
+ 51 def login():
+ 52     error = None
+ 53     if request.method == 'POST':
+ 54         if request.form['username'] != app.config['USERNAME']:
+ 55             error = 'Invalid username'
+ 56         elif request.form['password'] != app.config['PASSWORD']:
+ 57             error = 'Invalid password'
+ 58         else:
+ 59             session['logged_in'] = True
+ 60             flash('You were logged in')
+ 61             return redirect(url_for('show_entries'))
+ 62     return render_template('login.html', error=error)
+"""
+"""
+def plot():
+	fig = Figure()
+	axis = fig.add_subplot(1, 1, 1)
+	x = arange(0.01,0.39,0.01)
+	spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
+	phi,y2 =  NR(na,nb,nav)
+
+
+	axis.plot(x,spinodal,'r--') 
+	axis.plot(phi,y2)
+	canvas = FigureCanvas(fig)
+	output = StringIO.StringIO()
+	canvas.print_png(output)
+	response = make_response(output.getvalue())
+	response.mimetype = 'image/png'
+	return response
+"""
 
 def fun(x,na,nb,phi1):
 	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
@@ -72,6 +108,16 @@ def jac(x,na,nb,phi1):
 				[log(phi1)/na -log(x[0])/na - log(1-phi1)/nb + log(1-x[0])/nb
 				-2*x[1]*phi1 + 2*x[1]*x[0],
 				(x[0] - phi1)**2]])
+
+"""
+def plot(phi,y2):
+	"Plot binodal and spinodal"
+	x = arange(0.01,0.39,0.01)
+	spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
+	plt.plot(x,spinodal,'r--')
+	plt.plot(phi,y2)
+	plt.show()
+"""
 
 
 def NR(na,nb,nav):
@@ -131,6 +177,22 @@ na = 1
 nb = 1
 crit_chi = .5 
 crit_phi = 1
+"""
+na = 100
+nb = 100
+
+#Calculate crit_phiical value of Chi
+crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
+nav = 2./crit_chi
+
+if na != nb:
+		crit_phi = (-nb + sqrt(na*nb))/(na-nb)
+else:
+		crit_phi = .5		
+
+#phi,y2 =  NR(na,nb,nav)
+#plot()
+"""
 
 if __name__ == '__main__':
     app.run(debug=True)
