@@ -27,7 +27,7 @@ def flory():
 	return render_template("Flory.html")
 
 	
-@app.route('/login', methods=['GET','POST'])	
+@app.route('/plot', methods=['GET','POST'])	
 def login():
 	if request.method == 'POST':
 		na = float(request.form['NFA'])
@@ -36,11 +36,10 @@ def login():
 		crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
 		nav = 2./crit_chi
  
-		plt.xkcd()	
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		x = arange(0.1,0.90,0.001)
+		x = arange(0.05,0.95,0.001)
 		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
 		phi,y2 =  NR(na,nb,nav)
 		spinline = axis.plot(x,spinodal,'r',lw=2) 
@@ -49,10 +48,8 @@ def login():
 		canvas = FigureCanvas(fig)
 		output = StringIO.StringIO()
 		canvas.print_png(output, bbox_inches='tight')
-		response = make_response(output.getvalue())
-		response.mimetype = 'image/png'
 		plugins.connect(fig, plugins.MousePosition())
-		return mpld3.fig_to_html(fig)
+		return mpld3.fig_to_html(fig,template_type='simple')
 
 
 
