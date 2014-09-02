@@ -11,6 +11,7 @@ from mpld3 import plugins
 from flask import Flask, request, make_response, render_template
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
+import json
 
 
 app = Flask(__name__)
@@ -52,7 +53,6 @@ def login():
 		plugins.connect(fig, plugins.MousePosition())
 
 		return mpld3.fig_to_html(fig,template_type='simple')
-		#return 	mpld3.save_html(fig,login.html)
 		
 
 
@@ -134,7 +134,6 @@ crit_phi = 1
 
 if __name__ == '__main__':
     app.run(debug=True)
-#	app.run(host='0.0.0.0')
 
 
 
