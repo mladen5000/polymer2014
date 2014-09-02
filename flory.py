@@ -40,7 +40,8 @@ def login():
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
 		x = arange(0.05,0.95,0.001)
-		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
+		spinodal = (.5*(1./(na*x) + 1./(nb-nb*x)))
+
 		phi,y2 =  NR(na,nb,nav)
 		spinline = axis.plot(x,spinodal,'r',lw=2) 
 		binline = axis.plot(phi,y2,'b',lw=2)
@@ -49,7 +50,10 @@ def login():
 		output = StringIO.StringIO()
 		canvas.print_png(output, bbox_inches='tight')
 		plugins.connect(fig, plugins.MousePosition())
+
 		return mpld3.fig_to_html(fig,template_type='simple')
+		#return 	mpld3.save_html(fig,login.html)
+		
 
 
 
@@ -112,7 +116,7 @@ def NR(na,nb,nav):
 
 		x2=x2.tolist()
 		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
-		y2 = nav*y2
+#		y2 = nav*y2
 		y2=y2.tolist()
 		y2i = y2[::-1]
 
