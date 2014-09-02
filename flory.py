@@ -52,7 +52,9 @@ def login():
 		canvas.print_png(output, bbox_inches='tight')
 		plugins.connect(fig, plugins.MousePosition())
 
-		return mpld3.fig_to_html(fig,template_type='simple')
+		json01 = json.dumps(mpld3.fig_to_dict(fig))
+		#return mpld3.fig_to_html(fig,template_type='simple')
+		return render_template("plot.html")
 		
 
 
