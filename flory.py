@@ -105,7 +105,7 @@ def vjac(x,alpha,N,phi1):
 def vNR(alpha,N):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
-		phi1vals = arange(1e-4,.1,.005)
+		phi1vals = arange(1e-4,.1,.001)
 		print phi1vals
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
