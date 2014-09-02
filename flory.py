@@ -27,6 +27,10 @@ def index():
 def flory():
 	return render_template("Flory.html")
 
+@app.route('/vorn.html',methods=['POST','GET'])
+def vorn():
+	return render_template("vorn.html")
+
 	
 @app.route('/plot', methods=['GET','POST'])	
 def login():
@@ -52,12 +56,96 @@ def login():
 		canvas.print_png(output, bbox_inches='tight')
 		plugins.connect(fig, plugins.MousePosition())
 
-		#json01 = json.dumps(mpld3.fig_to_dict(fig,template_type='simple'))
+#		json01 = json.dumps(mpld3.fig_to_dict(fig,template_type='simple'))
 		return mpld3.fig_to_html(fig,template_type='simple')
-#		return render_template("plot.html")
-		
+#		return render_template("plot.html",json01=json01)
+
+@app.route('/vornplot', methods=['GET','POST'])	
+def vornplot():
+	if request.method == 'POST':
+		N = float(request.form['N'])
+
+ 
+		fig = Figure()
+		fig.set_facecolor('white')
+		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+		x = arange(0.0001,0.1,0.0001)
+ 		spinodal = (2 * (2**.333) * ((N*x -x +1)**.666))/((3**.666)*(alpha**.666)*(N**.666)*(((x-1)**2)**(1./3.))*(x**.333))
+	
+		x1,x2,y2 =  vNR(alpha,N)
+		line1 = axis.plot(x,spinodal,'y',lw=2)
+		spinline = axis.plot(x1,y2,'r',lw=2) 
+		binline = axis.plot(x2,y2,'b',lw=2)
+		fig.suptitle('Phase Diagram')
+		canvas = FigureCanvas(fig)
+		output = StringIO.StringIO()
+		canvas.print_png(output, bbox_inches='tight')
+		plugins.connect(fig, plugins.MousePosition())
+
+#		json01 = json.dumps(mpld3.fig_to_dict(fig,template_type='simple'))
+		return mpld3.fig_to_html(fig,template_type='simple')
+#		return render_template("plot.html",json01=json01)
 
 
+
+
+
+
+""" Voorn-Overbeek """
+
+def vfun(x,alpha,N,phi1):
+	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
+	return array([1.5*alpha*x[1]*(x[1]*phi1)**0.5 - 1.5*alpha*x[1]*(x[1]*x[0])**0.5
+			- log(phi1/2.)/N + log(x[0]/2.)/N + log(1-phi1) - log(1-x[0]),
+			-1.5*alpha*x[1]*x[0]*(x[1]*phi1)**.5 + .5*alpha*x[1]*phi1*(x[1]*phi1)**.5 + alpha*x[1]*x[0]*(x[1]*x[0])**.5 + x[0]*log(phi1/2)/N - phi1/N + x[0]/N - x[0]*log(x[0]/2)/N - x[0]*log(1-phi1) + phi1 + log(1-phi1) - x[0] + x[0]*log(1-x[0]) - log(1-x[0])])
+
+def vjac(x,alpha,N,phi1):
+	"df1/dphi2, df1/dchi; df2/dphi2, df2/dchi"
+	return array([[((-3.*alpha*x[1]**2.)/(4.*(x[1]*x[0])**0.5)) + 1./(N*x[0]) + 1./(1.-x[0]), # dF1/dphi2
+		 2.25*alpha*((x[1]*phi1)**0.5 - (x[1]*x[0])**0.5)], #dF1/dsigma
+		 [-1.5*alpha*x[1]*(x[1]*phi1)**0.5 + 1.5*alpha*x[1]*(x[1]*x[0])**0.5 + log(phi1)/N - log(x[0])/N - log(1.-phi1) + log(1.-x[0]), #dF2/dphi2
+			0.75*alpha*(-3.*x[0]*(x[1]*phi1)**.5 + phi1*(x[1]*phi1)**.5 + 2.*x[0]*(x[1]*x[0])**.5)]]) #dF2/dsigma
+
+def vNR(alpha,N):
+		" Newton Raphson solver for the binary mixture"
+		# Set up parameters, initial guesses, formatting, initializing etc.
+		phi1vals = arange(1e-4,.1,.001)
+		print phi1vals
+		phi1vals = phi1vals.tolist()
+		guess = [0,0]
+		new_guess = [0.9,.9] #phi2, sigma
+		iter = 0
+		length = len(phi1vals)
+		y2 = zeros((length,1))
+		x2 = zeros((length,1))
+		x1 = zeros((length,1))
+		max_iter = 2000
+
+		#Loop to find the roots using Multivariate Newton-Rhapson
+		for phi in phi1vals:
+			iter = 0
+			while iter < max_iter :
+				iter += 1
+				index = phi1vals.index(phi)
+				guess = new_guess
+				jacobian = vjac(guess,alpha,N,phi)
+				invjac = inv(jacobian)
+				f1 = vfun(guess,alpha,N,phi)
+				new_guess = guess - .1*dot(invjac,f1)
+				if abs(new_guess[0] - guess[0]) < 1e-10 and abs(new_guess[1]-guess[1]) < 1e-10: 
+					x1[index] = phi
+					x2[index] = new_guess[0]
+					y2[index] = new_guess[1]
+					break
+		#Convert Numpy arrays (x1,x2,y2) to a list
+		x1=x1.tolist()
+		x2=x2.tolist()
+		y2=y2.tolist()
+		#Concatenate the lists together
+		return (x1,x2,y2)
+
+
+""" Flory Huggins"""
 
 def fun(x,na,nb,phi1):
 	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
@@ -133,6 +221,12 @@ na = 1
 nb = 1
 crit_chi = .5 
 crit_phi = 1
+alpha = 3.655
+N = 1
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

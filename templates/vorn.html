@@ -32,7 +32,7 @@
 						<ul class="dropdown"> 
 							<li><a href="Flory.html">Flory-Huggins</a>
 							</li> 
-							<li><a href="vorn.html">Voorn-Overbeek</a>
+							<li><a href="#">Voorn-Overbeek</a>
 							</li> 
 						</ul> 
 				</li> 
@@ -45,7 +45,7 @@
 		</section> 
 	</nav>
 	<div id = "Header" style="text-align: left;">
-		<h1> Flory-Huggins Graph Generator </h1>
+		<h1> Voorn-Overbeek Graph Generator </h1>
 	</div>
 	<div class = "introduction">
 		<div class="row">
@@ -60,12 +60,10 @@
 				<p> </p>
 			</div>
 			<div class = "large-4 columns" id = "fbox">
-				<form action="/plot" method=post>
+				<form action="/vornplot" method=post>
     				<dl>
-      				<dt> Number of Polymer (NA)
-      				<dd><input type=text name=NFA>
-   					<dt> Number of Polymer (NB)
-    				<dd><input type=text name=NFB>
+   					<dt> Number of Polymers (N)
+    				<dd><input type=text name=N>
      				<dd><input type=submit value=Generate!>
     				</dl>
   				</form>
