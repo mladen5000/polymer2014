@@ -64,14 +64,11 @@ def login():
 def vornplot():
 	if request.method == 'POST':
 		N = float(request.form['N'])
-
- 
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
 		x = arange(0.0001,0.1,0.0001)
  		spinodal = (2 * (2**.333) * ((N*x -x +1)**.666))/((3**.666)*(alpha**.666)*(N**.666)*(((x-1)**2)**(1./3.))*(x**.333))
-	
 		x1,x2,y2 =  vNR(alpha,N)
 		line1 = axis.plot(x,spinodal,'y',lw=2)
 		spinline = axis.plot(x1,y2,'r',lw=2) 
@@ -81,7 +78,6 @@ def vornplot():
 		output = StringIO.StringIO()
 		canvas.print_png(output, bbox_inches='tight')
 		plugins.connect(fig, plugins.MousePosition())
-
 #		json01 = json.dumps(mpld3.fig_to_dict(fig,template_type='simple'))
 		return mpld3.fig_to_html(fig,template_type='simple')
 #		return render_template("plot.html",json01=json01)
@@ -109,7 +105,7 @@ def vjac(x,alpha,N,phi1):
 def vNR(alpha,N):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
-		phi1vals = arange(1e-4,.1,.001)
+		phi1vals = arange(1e-4,.1,.005)
 		print phi1vals
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
