@@ -75,7 +75,6 @@ def vornplot():
 		axis.set_xlabel('Volume Fraction')
 		axis.set_ylabel('Charge Density')
 		axis.set_title('Voorn-Overbeek Phase Diagram')
-		plt.ylabel(r'$\alpha$')
 		canvas = FigureCanvas(fig)
 #		output = StringIO.StringIO()
 #		canvas.print_png(output, bbox_inches='tight')
