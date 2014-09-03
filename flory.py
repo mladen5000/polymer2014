@@ -67,7 +67,7 @@ def vornplot():
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		x = arange(1e-7,0.1,0.00001)
+		x = arange(1e-5,0.1,0.0001)
  		spinodal = ((2 * (2**.333) * ((N*x -x +1)**.666))/((3**.666)*(alpha**.666)*(N**.666)*(((x-1)**2)**(1./3.))*(x**.333)))
 		phi,y2 =  vNR(alpha,N)
 		line1 = axis.plot(x,spinodal,'r',lw=2)
@@ -103,7 +103,7 @@ def vNR(alpha,N):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
 		crit_phi = (-(N+2) + sqrt((N+2)**2 + 4*(N-1)))/(2*(N-1))
-		phi1vals = arange(1e-7,crit_phi,.00001)
+		phi1vals = arange(1e-6,crit_phi,.0001)
 		phi1vals = phi1vals.tolist()
 		print phi1vals
 		guess = [0,0]
