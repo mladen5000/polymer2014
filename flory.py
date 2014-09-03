@@ -43,7 +43,7 @@ def login():
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
 		axis.set_xlabel('Volume Fraction')
-		axis.set_ylabel("Chi")
+		axis.set_ylabel('Chi')
 		axis.set_title('Flory-Huggins Phase Diagram')
 		x = arange(0.05,0.95,0.001)
 		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
