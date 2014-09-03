@@ -13,7 +13,6 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import json
 
-
 app = Flask(__name__)
 
 
@@ -72,10 +71,12 @@ def vornplot():
 		phi,y2 =  vNR(alpha,N)
 		line1 = axis.plot(x,spinodal,'r',lw=2)
 		spinline = axis.plot(phi,y2,'b',lw=2) 
-		fig.suptitle('Phase Diagram')
+		axis.set_xlabel(r'$\alpha$')
+		axis.set_ylabel('Charge Density, /sigma')
+		plt.ylabel(r'$\alpha$')
 		canvas = FigureCanvas(fig)
-		output = StringIO.StringIO()
-		canvas.print_png(output, bbox_inches='tight')
+#		output = StringIO.StringIO()
+#		canvas.print_png(output, bbox_inches='tight')
 		plugins.connect(fig, plugins.MousePosition())
 		return mpld3.fig_to_html(fig,template_type='simple')
 
@@ -103,9 +104,8 @@ def vNR(alpha,N):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
 		crit_phi = (-(N+2) + sqrt((N+2)**2 + 4*(N-1)))/(2*(N-1))
-		phi1vals = arange(1e-4,crit_phi,.0001)
+		phi1vals = arange(2e-4,crit_phi,.0001)
 		phi1vals = phi1vals.tolist()
-		print phi1vals
 		guess = [0,0]
 		new_guess = [0.9,.9] #phi2, sigma
 		iter = 0
