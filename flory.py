@@ -105,6 +105,7 @@ def vNR(alpha,N):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
 		crit_phi = (-(N+2) + sqrt((N+2)**2 + 4*(N-1)))/(2*(N-1))
+		crit_phi = crit_phi - .001
 		phi1vals = arange(2e-4,crit_phi,.0001)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
