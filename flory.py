@@ -45,7 +45,7 @@ def login():
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
 		x = arange(0.05,0.95,0.001)
-		spinodal = (.5*(1./(na*x) + 1./(nb-nb*x)))
+		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
 
 		phi,y2 =  NR(na,nb,nav)
 		spinline = axis.plot(x,spinodal,'r',lw=2) 
@@ -67,20 +67,17 @@ def vornplot():
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		x = arange(0.0001,0.1,0.0001)
- 		spinodal = (2 * (2**.333) * ((N*x -x +1)**.666))/((3**.666)*(alpha**.666)*(N**.666)*(((x-1)**2)**(1./3.))*(x**.333))
-		x1,x2,y2 =  vNR(alpha,N)
-		line1 = axis.plot(x,spinodal,'y',lw=2)
-		spinline = axis.plot(x1,y2,'r',lw=2) 
-		binline = axis.plot(x2,y2,'b',lw=2)
+		x = arange(1e-7,0.1,0.00001)
+ 		spinodal = ((2 * (2**.333) * ((N*x -x +1)**.666))/((3**.666)*(alpha**.666)*(N**.666)*(((x-1)**2)**(1./3.))*(x**.333)))
+		phi,y2 =  vNR(alpha,N)
+		line1 = axis.plot(x,spinodal,'r',lw=2)
+		spinline = axis.plot(phi,y2,'b',lw=2) 
 		fig.suptitle('Phase Diagram')
 		canvas = FigureCanvas(fig)
 		output = StringIO.StringIO()
 		canvas.print_png(output, bbox_inches='tight')
 		plugins.connect(fig, plugins.MousePosition())
-#		json01 = json.dumps(mpld3.fig_to_dict(fig,template_type='simple'))
 		return mpld3.fig_to_html(fig,template_type='simple')
-#		return render_template("plot.html",json01=json01)
 
 
 
@@ -105,9 +102,10 @@ def vjac(x,alpha,N,phi1):
 def vNR(alpha,N):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
-		phi1vals = arange(1e-4,.1,.001)
-		print phi1vals
+		crit_phi = (-(N+2) + sqrt((N+2)**2 + 4*(N-1)))/(2*(N-1))
+		phi1vals = arange(1e-7,crit_phi,.00001)
 		phi1vals = phi1vals.tolist()
+		print phi1vals
 		guess = [0,0]
 		new_guess = [0.9,.9] #phi2, sigma
 		iter = 0
@@ -133,12 +131,20 @@ def vNR(alpha,N):
 					x2[index] = new_guess[0]
 					y2[index] = new_guess[1]
 					break
-		#Convert Numpy arrays (x1,x2,y2) to a list
+
+	#Convert Numpy arrays (x1,x2,y2) to a list
 		x1=x1.tolist()
 		x2=x2.tolist()
+		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
+		#y2 = nav*y2
 		y2=y2.tolist()
+		y2i = y2[::-1]
+
 		#Concatenate the lists together
-		return (x1,x2,y2)
+		phi = x1 + x2
+		y2 = y2 + y2i
+		return (phi,y2)
+		
 
 
 """ Flory Huggins"""
@@ -202,7 +208,7 @@ def NR(na,nb,nav):
 
 		x2=x2.tolist()
 		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
-#		y2 = nav*y2
+		y2 = nav*y2
 		y2=y2.tolist()
 		y2i = y2[::-1]
 
