@@ -15,7 +15,6 @@ import json
 
 app = Flask(__name__)
 
-#l
 @app.route('/')
 
 @app.route('/index')
@@ -43,13 +42,15 @@ def login():
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+		axis.set_xlabel('Volume Fraction')
+		axis.set_ylabel("Chi")
+		axis.set_title('Flory-Huggins Phase Diagram')
 		x = arange(0.05,0.95,0.001)
 		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
 
 		phi,y2 =  NR(na,nb,nav)
 		spinline = axis.plot(x,spinodal,'r',lw=2) 
 		binline = axis.plot(phi,y2,'b',lw=2)
-		fig.suptitle('Phase Diagram')
 		canvas = FigureCanvas(fig)
 		output = StringIO.StringIO()
 		canvas.print_png(output, bbox_inches='tight')
@@ -71,14 +72,15 @@ def vornplot():
 		phi,y2 =  vNR(alpha,N)
 		line1 = axis.plot(x,spinodal,'r',lw=2)
 		spinline = axis.plot(phi,y2,'b',lw=2) 
-		axis.set_xlabel(r'$\alpha$')
-		axis.set_ylabel('Charge Density, /sigma')
+		axis.set_xlabel('Volume Fraction')
+		axis.set_ylabel('Charge Density')
+		axis.set_title('Voorn-Overbeek Phase Diagram')
 		plt.ylabel(r'$\alpha$')
 		canvas = FigureCanvas(fig)
 #		output = StringIO.StringIO()
 #		canvas.print_png(output, bbox_inches='tight')
 		plugins.connect(fig, plugins.MousePosition())
-		return mpld3.fig_to_html(fig,template_type='simple')
+		return mpld3.fig_to_html(fig)
 
 
 
