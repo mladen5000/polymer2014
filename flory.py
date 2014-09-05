@@ -48,7 +48,7 @@ def login():
 		x = arange(0.05,0.95,0.001)
 		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
 
-		phi,y2 =  NR(na,nb,nav)
+		phi,y2 =  NR(na,nb,nav,crit_chi)
 		spinline = axis.plot(x,spinodal,'r',lw=2) 
 		binline = axis.plot(phi,y2,'b',lw=2)
 		canvas = FigureCanvas(fig)
@@ -138,7 +138,6 @@ def vNR(alpha,N):
 		x1=x1.tolist()
 		x2=x2.tolist()
 		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
-		#y2 = nav*y2
 		y2=y2.tolist()
 		y2i = y2[::-1]
 
@@ -168,7 +167,7 @@ def jac(x,na,nb,phi1):
 				(x[0] - phi1)**2]])
 
 
-def NR(na,nb,nav):
+def NR(na,nb,nav,crit_chi):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
 
@@ -204,16 +203,17 @@ def NR(na,nb,nav):
 					x2[index] = new_guess[0]
 					y2[index] = new_guess[1]
 					break
-
 		#Convert Numpy arrays (x1,x2,y2) to a list
+		x1 = reshape(append(x1,crit_phi),(51,1))
 		x1=x1.tolist()
-
 		x2=x2.tolist()
+
 		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
+		y2 = reshape(append(y2,crit_chi),(51,1))
 		y2 = nav*y2
 		y2=y2.tolist()
 		y2i = y2[::-1]
-
+		y2i.pop(0)
 		#Concatenate the lists together
 		phi = x1 + x2
 		y2 = y2 + y2i
