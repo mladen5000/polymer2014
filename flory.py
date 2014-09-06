@@ -106,7 +106,7 @@ def vNR(alpha,N):
 		# Set up parameters, initial guesses, formatting, initializing etc.
 		crit_phi = (-(N+2) + sqrt((N+2)**2 + 4*(N-1)))/(2*(N-1))
 		crit_phi = crit_phi - .0001
-		phi1vals = arange(2e-4,crit_phi,.0001)
+		phi1vals = arange(2e-7,crit_phi,.0001)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
 		new_guess = [0.9,.9] #phi2, sigma
@@ -128,7 +128,7 @@ def vNR(alpha,N):
 				invjac = inv(jacobian)
 				f1 = vfun(guess,alpha,N,phi)
 				new_guess = guess - .1*dot(invjac,f1)
-				if abs(new_guess[0] - guess[0]) < 1e-10 and abs(new_guess[1]-guess[1]) < 1e-10: 
+				if abs(new_guess[0] - guess[0]) < 1e-8 and abs(new_guess[1]-guess[1]) < 1e-8: 
 					x1[index] = phi
 					x2[index] = new_guess[0]
 					y2[index] = new_guess[1]
@@ -176,7 +176,7 @@ def NR(na,nb,nav,crit_chi):
 		else:
 			crit_phi = .5  	
 
-		phi1vals = arange(.001,crit_phi,.01)
+		phi1vals = arange(.001,crit_phi-.001,.01)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
 		new_guess = [0.3,3]
