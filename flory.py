@@ -137,6 +137,9 @@ def vNR(alpha,N):
 	#Convert Numpy arrays (x1,x2,y2) to a list
 		x1=x1.tolist()
 		x2=x2.tolist()
+		print x1
+		print x2
+		print y2
 		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
 		y2=y2.tolist()
 		y2i = y2[::-1]
@@ -219,7 +222,126 @@ def NR(na,nb,nav,crit_chi):
 		y2 = y2 + y2i
 		return (phi,y2)
 		#####################PLOT#######################
+
+
+""" Simple Lattice Cluster """
+
+
+def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb):
+		#put all these values into a list
+		phi = arange(0.01,.99,0.001)
+		a = (r1 - r2)**2 / z**2
+		b =((z-2)/2 + (1/z)*(-2*p1 + p2)) #Technically this is b/(eps/kt) which is factored out
+		c = (3/z)*(p1 - p2) #Technically c / (eps/kt) 
+		f = (.5*(1./(na*phi) + 1./(nb-nb*phi)))
+		#spin1 = (f - a) / (b + c*phi)
+		btmspin = (z - 2 + (2./z)*(p1*(1 - 3*(1-phi)) + p2*(1-3*phi)))
+		topspin = (1./(na*phi) + 1./(nb*(1-phi)) - 2*a)
+		spin2 = topspin/btmspin
+		return phi,spin2
+
+def SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb):
+		a = (r1 - r2)**2 / z**2
+		c = (z-2)/2 
+		d = 1.0/z
+		m1 = na 
+		m2 = nb
+		
+		k = nb*1.0/na
+		
+		return array([
+		1.0/m1 - 1.0/(k*m1) - 1.0/m2 + 1.0/(k*m2) - 2*a*phi1 - 2*x[1]*c*phi1
+		+ 4*x[1]*d*p1*phi1 - 2*x[1]*d*p2*phi1 
+		- 3*x[1]*d*p1*phi1**2 + 3*x[1]*d*p2*phi1**2 + 2*a*x[0] + 2*x[1]*c*x[0]
+		- 4*x[1]*d*p1*x[0] + 2*x[1]*d*p2*x[0] + 3*x[1]*d*p1*x[0]**2 - 3*x[1]*d*p2*x[0]**2
+		- log(1-phi1)/(k*m1) + log(phi1)/m1 + log(1-x[0])/(k*m2) - log(x[0])/m2,
+
+		phi1/m1 - phi1/(k*m1) -a*phi1**2 - x[1]*c*phi1**2 + 2*x[1]*d*p1*phi1**2
+		- x[1]*d*p2*phi1**2 - 2*x[1]*d*p1*phi1**3 +2*x[1]*d*p2*phi1**3 - x[0]/m1
+		+ x[0]/(k*m1)  + 2*a*phi1*x[0] + 2*x[1]*c*phi1*x[0] - 4*x[1]*d*p1*phi1*x[0]
+		+ 2*x[1]*d*p2*phi1*x[0] + 3*x[1]*d*p1*x[0]*phi1**2 - 3*x[1]*d*p2*x[0]*phi1**2
+		- a*x[0]**2 - x[1]*c*x[0]**2 + 2*x[1]*d*p1*x[0]**2 - x[1]*d*p2*x[0]**2
+		- x[1]*d*p1*x[0]**3 + x[1]*d*p2*x[0]**3 - log(1-phi1)/(k*m1)
+		+ x[0]*log(1-phi1)/(k*m1) - x[0]*log(phi1)/m1 + log(1-x[0])/(k*m2)
+		- x[0]*log(1-x[0])/(k*m2) + x[0]*log(x[0])/m2
+		]) 
+
 	
+def SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb):
+	a = (r1 - r2)**2 / z**2
+	c = (z-2.0)/2
+	d = 1.0/z
+	m1 = na 
+	m2 = nb
+	k = nb*1.0/na
+	
+	return array([[
+			2*a + 2*x[1]*c - 4*x[1]*d*p1 + 2*x[1]*d*p2
+			- 1.0/(k*m2*(1-x[0])) - 1.0/(m2*x[0]) + 6*x[1]*d*p1*x[0]
+			- 6*x[1]*d*p2*x[0],
+
+			-2*c*phi1 + 4*d*p1*phi1 - 2*d*p2*phi1 - 3*d*p1*phi1**2
+			+ 3*d*p2*phi1**2 + 2*c*x[0] - 4*d*p1*x[0] + 2*d*p2*x[0] 
+			+ 3*d*p1*x[0]**2 - 3*d*p2*x[0]**2],
+
+			[-1.0/m1 + 1.0/(k*m1) + 1.0/m2 - 1.0/(k*m2) + 2*a*phi1
+		    + 2*x[1]*c*phi1 - 4*x[1]*d*p1*phi1
+			+ 2*x[1]*d*p2*phi1 + 3*x[1]*d*p1*phi1**2 - 3*x[1]*d*p2*phi1**2
+			- 2*a*x[0] - 2*x[1]*c*x[0] + 4*x[1]*d*p1*x[0]
+			- 2*x[1]*d*p2*x[0]  - 3*x[1]*d*p1*x[0]**2
+			+ 3*x[1]*d*p2*x[0]**2 + log(1-phi1)/(k*m1) - log(phi1)/m1 
+			- log(1-x[0])/(k*m2) + log(x[0])/m2,
+
+			-c*phi1**2 + 2*d*p1*phi1**2 - d*p2*phi1**2 - 2*d*p1*phi1**3
+			+ 2*d*p2*phi1**3 + 2*c*phi1*x[0] - 4*d*p1*phi1*x[0] + 2*d*p2*phi1*x[0]
+			+ 3*d*p1*x[0]*phi1**2 - 3*d*p2*x[0]*phi1**2 - c*x[0]**2
+			+ 2*d*p1*x[0]**2 - d*p2*x[0]**2 - d*p1*x[0]**3 + d*p2*x[0]**3
+			]])
+
+
+def SLCT_NR(r1,r2,z,p1,p2,na,nb):
+		" Newton Raphson solver for the binary mixture"
+		# Set up parameters, initial guesses, formatting, initializing etc.
+
+		phi1vals = arange(.01,.599,.01)
+		phi1vals = phi1vals.tolist()
+		guess = [0,0]
+		new_guess = [0.99,.01]
+		iter = 0
+		length = len(phi1vals)
+		y2 = zeros((length,1))
+		x2 = zeros((length,1))
+		x1 = zeros((length,1))
+		max_iter = 20000
+		#Loop to find the roots using Multivariate Newton-Rhapson
+		for phi in phi1vals:
+			iter = 0
+			while iter < max_iter :
+				iter += 1
+				print guess
+				index = phi1vals.index(phi)
+				guess = new_guess
+				jacobian = SLCT_jac(guess,phi,r1,r2,z,p1,p2,na,nb)
+				invjac = inv(jacobian)
+				invjac = inv(jacobian)
+				f1 = SLCT_fun(guess,phi,r1,r2,z,p1,p2,na,nb)
+				new_guess = guess - .1*dot(invjac,f1)
+				if abs(new_guess[0] - guess[0]) < 1e-14 and abs(new_guess[1]-guess[1]) < 1e-14: 
+					x1[index] = phi
+					x2[index] = new_guess[0]
+					y2[index] = new_guess[1]
+					break
+		print x1, x2, y2
+		x1=x1.tolist()
+		x2=x2.tolist()
+		y2=y2.tolist()
+		x2=x2[::-1] 	
+		y2i=y2[::-1]
+		return (x1,x2,y2,y2i)
+
+
+
+
 
 na = 1
 nb = 1
@@ -227,11 +349,15 @@ crit_chi = .5
 crit_phi = 1
 alpha = 3.655
 N = 1
+"""
+phi,x2, y2, y2i = SLCT_NR(  1.75,1.2,4,1.5,1.2,100,300)
+phix,spinx2 = SLCT_Spinodal(1.75,1.2,4,1.5,1.2,100,300)
+plt.plot(phi,y2)
+plt.plot(x2,y2i)
+plt.plot(phix,spinx2)
 
-
-
-
-
+plt.show()
+"""
 if __name__ == '__main__':
     app.run(debug=True)
 
