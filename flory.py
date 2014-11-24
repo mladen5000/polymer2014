@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import random
 from math import *
 from numpy import *
 from numpy.linalg import inv
@@ -225,6 +226,22 @@ def NR(na,nb,nav,crit_chi):
 
 
 """ Simple Lattice Cluster """
+def SLCT_crit(r1,r2,z,p1,p2,na,nb):
+		#Use numpy root to calculate phi_c
+		a = (r1 - r2)**2 / z**2
+		b =((z-2)/2 + (1/z)*(-2*p1 + p2)) #Technically this is b/(eps/kt) which is factored out
+		c = (3/z)*(p1 - p2) #Technically c/(eps/kt) 
+		m = na
+		k = nb*1.0/na
+		coeff = [2*a*c, 2*c*(k-1)/(m*k), (b*(k-1) - c*(4*k - 1))/(m*k) - 2*a*c , 2*(c - b)/m , b/m]
+
+		phi_c_temp =  roots(coeff)
+
+		for critval in phi_c_temp:
+			if critval > 0 and critval < 1:
+				phi_c = critval
+				return phi_c
+
 
 
 def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb):
@@ -254,7 +271,7 @@ def SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb):
 		+ 4*x[1]*d*p1*phi1 - 2*x[1]*d*p2*phi1 
 		- 3*x[1]*d*p1*phi1**2 + 3*x[1]*d*p2*phi1**2 + 2*a*x[0] + 2*x[1]*c*x[0]
 		- 4*x[1]*d*p1*x[0] + 2*x[1]*d*p2*x[0] + 3*x[1]*d*p1*x[0]**2 - 3*x[1]*d*p2*x[0]**2
-		- log(1-phi1)/(k*m1) + log(phi1)/m1 + log(1-x[0])/(k*m2) - log(x[0])/m2,
+		- log(1-phi1)*(1.0/(k*m1)) + log(phi1)*(1.0/m1) + log(1-x[0])*(1.0/(k*m2)) - log(x[0])*(1.0/m2),
 
 		phi1/m1 - phi1/(k*m1) -a*phi1**2 - x[1]*c*phi1**2 + 2*x[1]*d*p1*phi1**2
 		- x[1]*d*p2*phi1**2 - 2*x[1]*d*p1*phi1**3 +2*x[1]*d*p2*phi1**3 - x[0]/m1
@@ -262,8 +279,8 @@ def SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb):
 		+ 2*x[1]*d*p2*phi1*x[0] + 3*x[1]*d*p1*x[0]*phi1**2 - 3*x[1]*d*p2*x[0]*phi1**2
 		- a*x[0]**2 - x[1]*c*x[0]**2 + 2*x[1]*d*p1*x[0]**2 - x[1]*d*p2*x[0]**2
 		- x[1]*d*p1*x[0]**3 + x[1]*d*p2*x[0]**3 - log(1-phi1)/(k*m1)
-		+ x[0]*log(1-phi1)/(k*m1) - x[0]*log(phi1)/m1 + log(1-x[0])/(k*m2)
-		- x[0]*log(1-x[0])/(k*m2) + x[0]*log(x[0])/m2
+		+ x[0]*log(1-phi1)*(1.0/(k*m1)) - x[0]*log(phi1)*(1.0/m1) + log(1-x[0])*(1.0/(k*m2))
+		- x[0]*log(1-x[0])*(1.0/(k*m2)) + x[0]*log(x[0])*(1.0/m2)
 		]) 
 
 	
@@ -290,7 +307,7 @@ def SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb):
 			- 2*a*x[0] - 2*x[1]*c*x[0] + 4*x[1]*d*p1*x[0]
 			- 2*x[1]*d*p2*x[0]  - 3*x[1]*d*p1*x[0]**2
 			+ 3*x[1]*d*p2*x[0]**2 + log(1-phi1)/(k*m1) - log(phi1)/m1 
-			- log(1-x[0])/(k*m2) + log(x[0])/m2,
+			- log(1-x[0])*(1.0/(k*m2)) + log(x[0])*(1.0/m2),
 
 			-c*phi1**2 + 2*d*p1*phi1**2 - d*p2*phi1**2 - 2*d*p1*phi1**3
 			+ 2*d*p2*phi1**3 + 2*c*phi1*x[0] - 4*d*p1*phi1*x[0] + 2*d*p2*phi1*x[0]
@@ -302,8 +319,11 @@ def SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb):
 def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
-
-		phi1vals = arange(.01,.599,.01)
+		phi_c = SLCT_crit(r1,r2,z,p1,p2,na,nb)
+		print phi_c
+		fil1=open('./blah.txt', 'w+')
+	
+		phi1vals = arange(.01,phi_c,.01)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
 		new_guess = [0.99,.01]
@@ -312,32 +332,44 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 		y2 = zeros((length,1))
 		x2 = zeros((length,1))
 		x1 = zeros((length,1))
-		max_iter = 20000
+		max_iter = 2000
 		#Loop to find the roots using Multivariate Newton-Rhapson
 		for phi in phi1vals:
 			iter = 0
+			damp = 0.1
 			while iter < max_iter :
+
+				print >> fil1, guess[0], guess[1] 
 				iter += 1
-				print guess
 				index = phi1vals.index(phi)
 				guess = new_guess
+				if guess[0] < 0 or guess[0] > 1:
+						guess[0] = random.random()
+						guess[1] = 0
+						damp = 0.01
+						#print phi, iter, damp, guess[0]
 				jacobian = SLCT_jac(guess,phi,r1,r2,z,p1,p2,na,nb)
 				invjac = inv(jacobian)
 				invjac = inv(jacobian)
 				f1 = SLCT_fun(guess,phi,r1,r2,z,p1,p2,na,nb)
-				new_guess = guess - .1*dot(invjac,f1)
+				new_guess = guess - damp*dot(invjac,f1)
 				if abs(new_guess[0] - guess[0]) < 1e-14 and abs(new_guess[1]-guess[1]) < 1e-14: 
 					x1[index] = phi
 					x2[index] = new_guess[0]
 					y2[index] = new_guess[1]
 					break
-		print x1, x2, y2
+		#Convert Numpy arrays (x1,x2,y2) to a list
+		print x1
+		print x2
+		print y2
 		x1=x1.tolist()
 		x2=x2.tolist()
 		y2=y2.tolist()
-		x2=x2[::-1] 	
-		y2i=y2[::-1]
-		return (x1,x2,y2,y2i)
+		x2 = x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
+		y2i = y2[::-1]
+		phi = x1 + x2
+		y2 = y2 + y2i
+		return (phi,y2)
 
 
 
@@ -349,15 +381,17 @@ crit_chi = .5
 crit_phi = 1
 alpha = 3.655
 N = 1
-"""
-phi,x2, y2, y2i = SLCT_NR(  1.75,1.2,4,1.5,1.2,100,300)
-phix,spinx2 = SLCT_Spinodal(1.75,1.2,4,1.5,1.2,100,300)
+phi, y2 = SLCT_NR(  1.75,1.2,4,1.5,1.2,100,100)
+phix,spinx2 = SLCT_Spinodal(1.75,1.2,4,1.5,1.2,100,100)
 plt.plot(phi,y2)
-plt.plot(x2,y2i)
 plt.plot(phix,spinx2)
+"""
+x = [0.5,0.1]
+phi1 = 0.1
+print SLCT_jac(x,phi1,1.75,1.2,4,1.5,1.2,100,100)
+"""
 
 plt.show()
-"""
 if __name__ == '__main__':
     app.run(debug=True)
 
