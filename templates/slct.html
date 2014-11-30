@@ -33,9 +33,10 @@
 							<li><a href="Flory.html">Flory-Huggins</a>
 							</li> 
 							<li><a href="vorn.html">Voorn-Overbeek</a>
-							</li>  
+							</li> 
 							<li><a href="slct.html">SLCT</a>
-							</li> 	
+							</li> 
+							
 						</ul> 
 				</li> 
 			</ul> <!-- Left Nav Section --> 
@@ -47,7 +48,7 @@
 		</section> 
 	</nav>
 	<div id = "Header" style="text-align: left;">
-		<h1> Flory-Huggins Graph Generator </h1>
+		<h1>Generalized-Flory Lattice Cluster Graph Generator </h1>
 	</div>
 	<div class = "introduction">
 		<div class="row">
@@ -67,24 +68,47 @@ The tools included here, in order of increasing complexity and sophistication, a
 </p>
 		</div>
 	</div>
-		<div class = "row">
-			<div class = "large-4 columns">
-				<p> </p>
+	<br>
+	<br>
+	<form>
+		<div class="row">
+			<div class="large-4 columns">
+				<label>Species A
+					<select>
+						<option value="poly1">poly(hexene-1)</option>
+						<option value="poly2">poly(ethylene propylene)</option>
+						<option value="poly3">poly(isobutylene)</option>
+					</select>
+				</label>
 			</div>
-			<div class = "large-4 columns" id = "fbox">
-				<form action="/plot" method=post>
-    				<dl>
-      				<dt> Number of Monomer A (NA)
-      				<dd><input type=text name=NFA>
-   					<dt> Number of Monomer B (NB)
-    				<dd><input type=text name=NFB>
-     				<dd><input type=submit value=Generate!>
-    				</dl>
-  				</form>
+			<div class="large-4 columns">
+				<label>Species B
+					<select>
+						<option value="poly1">poly(hexene-1)</option>
+						<option value="poly2">poly(ethylene propylene)</option>
+						<option value="poly3">poly(isobutylene)</option>
+					</select>
+				</label>
 			</div>
-			<div class = "large-4 columns">		
-				<p> </p>
+		</div>
+		<div class="row">
+			<div class="large-4 columns">
+				<label>Monomers of Species A
+						<input type="text" placeholder="100" />
+				</label>
 			</div>
+			<div class="large-4 columns">
+				<label>Monomers of Species B
+						<input type="text" placeholder="100" />
+				</label>
+			</div>
+		</div>
+	</form>
+	<div class="row">
+	<br>
+	<br>
+	<br>
+	<br>
 	</div>
 	
 <!-- Added jQuery at the End --!>

@@ -30,6 +30,10 @@ def flory():
 def vorn():
 	return render_template("vorn.html")
 
+@app.route('/slct.html',methods=['POST','GET'])
+def slct():
+	return render_template("slct.html")
+
 	
 @app.route('/plot', methods=['GET','POST'])	
 def login():
@@ -448,12 +452,14 @@ crit_chi = .5
 crit_phi = 1
 alpha = 3.655
 N = 1
+"""
 phi, y2 = SLCT_NR(  1.2,1.2,6,1.2,1.2,100,200)
 phix,spinx2 = SLCT_Spinodal(1.2,1.2,6,1.2,1.2,100,200)
 plt.plot(phi,y2)
 plt.plot(phix,spinx2)
 
 plt.show()
+"""
 if __name__ == '__main__':
     app.run(debug=True)
 
