@@ -67,25 +67,32 @@ The tools included here, in order of increasing complexity and sophistication, a
 </p>
 		</div>
 	</div>
-	<form>
+	<form action="/plot" method="post">
 		<div class="row">
 			<div class="large-4 columns">
 				<label>Monomers of Species A
-						<input type="text" placeholder="100" />
+						<input type="text" name="NFA" placeholder="100" />
 				</label>
 			</div>
 			<div class="large-4 columns">
 				<label>Monomers of Species B
-						<input type="text" placeholder="100" />
+						<input type="text" name="NFB" placeholder="100" />
 				</label>
 			</div>
 		</div>
+		<div class="row">
+				<div align="center">
+					<input class="button" type="submit" value="Generate!" />
+				</div>
+		</div>
 	</form>
+	<!--
 	<div class="row">
 			<div align="center">
 				<a href="#" class="button">Generate!</a>
 			</div>
 	</div>
+	--!>
 	
 <!-- Added jQuery at the End --!>
 <script> $(document).ready(function(){ $(document).foundation();}); </script>
