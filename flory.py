@@ -50,7 +50,7 @@ def login():
 		axis.set_xlabel('Volume Fraction')
 		axis.set_ylabel('Chi')
 		axis.set_title('Flory-Huggins Phase Diagram')
-		x = arange(0.05,0.95,0.001)
+		x = arange(0.01,0.97,0.001)
 		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
 
 		phi,y2 =  NR(na,nb,nav,crit_chi)
@@ -160,19 +160,39 @@ def vNR(alpha,N):
 
 def fun(x,na,nb,phi1):
 	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
-	return array([log(x[0])/na - log(phi1)/na + log(1.-phi1)/nb -
-			log(1.-x[0])/nb + 2.*x[1]*phi1 - 2.*x[1]*x[0],
+	"""na and nb are equivalent to m1, m2"""
+
+	na = 1.0*na
+	nb = 1.0*nb
+	return array([ 
+
+			log(phi1) - log(x[0]) + x[1]*x[0]*(1-x[0])*na
+			- x[1]*phi1*(1-phi1)*na + x[0] - phi1 - x[1]*na*(1-x[0]) + x[1]*na*(1-phi1)
+			+ (na/nb)*(1-x[0]) - (na/nb)*(1-phi1),
+
 			(x[0] - phi1)*(1./na - 1./nb + x[1] - 2*x[1]*phi1
 			- log(1-phi1)/nb + log(phi1)/na) - ((x[0]/na)*log(x[0])
 			+ ((1-x[0])/nb)*log(1-x[0]) + x[1]*x[0]*(1-x[0]))
-			 + ((phi1/na)*log(phi1) + ((1-phi1)/nb)*log(1-phi1) + x[1]*(phi1)*(1-phi1))])	
+			+ ((phi1/na)*log(phi1) + ((1-phi1)/nb)*log(1-phi1) + x[1]*(phi1)*(1-phi1))
+			])	
 
 def jac(x,na,nb,phi1):
 	"df1/dphi2, df1/dchi; df2/dphi2, df2/dchi"
-	return array([[1./(na*x[0]) + 1./(nb*(1.-x[0])) - 2.*x[1],  2.*(phi1 - x[0])],
-				[log(phi1)/na -log(x[0])/na - log(1-phi1)/nb + log(1-x[0])/nb
-				-2*x[1]*phi1 + 2*x[1]*x[0],
-				(x[0] - phi1)**2]])
+	na = 1.0*na
+	nb = 1.0*nb
+	return array([[
+			1 + x[1]*na - na/nb + x[1]*na*(1-x[0]) - 1.0/x[0] - x[1]*na*x[0],
+
+			na*(1-phi1) - na*(1-phi1)*phi1 - na*(1-x[0]) + na*(1-x[0])*(x[0])],
+
+			[
+			log(phi1)/na -log(x[0])/na - log(1-phi1)/nb + log(1-x[0])/nb
+			-2*x[1]*phi1 + 2*x[1]*x[0],
+
+			(x[0] - phi1)**2
+			]])
+
+
 
 
 def NR(na,nb,nav,crit_chi):
@@ -184,7 +204,7 @@ def NR(na,nb,nav,crit_chi):
 		else:
 			crit_phi = .5  	
 
-		phi1vals = arange(.001,crit_phi-.001,.01)
+		phi1vals = arange(.0001,crit_phi-.001,.01)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
 		new_guess = [0.3,3]
@@ -212,12 +232,17 @@ def NR(na,nb,nav,crit_chi):
 					y2[index] = new_guess[1]
 					break
 		#Convert Numpy arrays (x1,x2,y2) to a list
-		x1 = reshape(append(x1,crit_phi),(51,1))
+		print x1
+		print x2
+		print size(x1)
+		print size(x2)
+		n = size(x1) + 1
+		x1 = reshape(append(x1,crit_phi),(n,1))
 		x1=x1.tolist()
 		x2=x2.tolist()
 
 		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
-		y2 = reshape(append(y2,crit_chi),(51,1))
+		y2 = reshape(append(y2,crit_chi),(n,1))
 		y2 = nav*y2
 		y2=y2.tolist()
 		y2i = y2[::-1]
@@ -460,9 +485,19 @@ plt.plot(phix,spinx2)
 
 plt.show()
 """
+"""
+na = 300
+nb = 100
+crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
+nav = 2./crit_chi
+
+phi,y2 =  NR(na,nb,nav,crit_chi)
+binline = plt.plot(phi,y2,'b',lw=2)
+plt.show()
+"""
+
 if __name__ == '__main__':
     app.run(debug=True)
-
 
 
 
