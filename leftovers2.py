@@ -308,7 +308,7 @@ def SLCT_crit(r1,r2,z,p1,p2,na,nb):
 
 def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb):
 		#put all these values into a list
-		phi = arange(0.01,.99,0.001)
+		phi = arange(0.01,.95,0.001)
 		a = (r1 - r2)**2 / z**2
 		b =((z-2)/2 + (1/z)*(-2*p1 + p2)) #Technically this is b/(eps/kt) which is factored out
 		c = (3/z)*(p1 - p2) #Technically c / (eps/kt) 
@@ -329,71 +329,48 @@ def SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb):
 		k = nb*1.0/na
 		
 		return array([
-				a*m1*(1-phi1) - m1*(1-phi1)/m2 - phi1 - a*m1*(1-phi1)*phi1 - a*m1*(1-x[0]) 
-				+ m1*(1-x[0])/m2 + x[0] + a*m1*(1-x[0])*x[0] - m1*(1-phi1)*x[1]
-				+ m1*(1-phi1)*phi1*x[1] + m1*(1-x[0])*x[1] - m1*(1-x[0])*x[0]*x[1]
-				+ phi1*(1-phi1)*(1-phi1)*m1*p1*x[1]/z - x[0]*(1-x[0])*(1-x[0])*m1*p1*x[1]/z
-				- m1*(1-phi1)*(1-phi1)*p1*x[1]/z + m1*(1-phi1)*(1-phi1)*phi1*p1*x[1]/z 
-				+ phi1*phi1*(1-phi1)*m1*p2*x[1]/z - x[0]*x[0]*(1-x[0])*m1*p2*x[1]/z
-				- 2*m1*(1-phi1)*phi1*p2*x[1]/z + m1*(1-phi1)*phi1*phi1*p2*x[1]/z + m1*p1*(1-x[0])*(1-x[0])*x[1]/z  
-				+ 2*m1*p2*(1-x[0])*x[0]*x[1]/z - m1*p1*(1-x[0])*(1-x[0])*x[0]*x[1]/z 
-				- m1*p2*(1-x[0])*x[0]*x[0]*x[1]/z + 0.5*m1*(1-phi1)*x[1]*z - 0.5*m1*(1-phi1)*phi1*x[1]*z
-				- 0.5*m1*(1-x[0])*x[1]*z + 0.5*m1*(1-x[0])*x[0]*x[1]*z + log(phi1) - log(x[0]),
+				-a*phi1*(1-phi1)*m1 + a*x[0]*(1-x[0])*m2 + x[0] 
+				- a*m1*(1-x[0]) + (m1/m2)*(1-x[0]) - phi1 + a*m1*(1-phi1) 
+				- (m1/m2)*(1-phi1) - log(x[0]) + log(phi1),
 
-				- phi1/m1 + phi1/m2 + a*phi1*phi1 + x[0]/m1 - x[0]/m2 - 2*a*phi1*x[0] + a*x[0]*x[0] 
-				- phi1*phi1*x[1] + 2*phi1*x[0]*x[1] - x[0]*x[0]*x[1] - 2*phi1*phi1*p1*x[1]/z
-				+ 2*phi1*phi1*phi1*p1*x[1]/z + phi1*phi1*p2*x[1]/z - 2*phi1*phi1*phi1*p2*x[1]/z 
-				+ 4*phi1*p1*x[0]*x[1]/z - 3*phi1*phi1*p1*x[0]*x[1]/z - 2*phi1*p2*x[0]*x[1]/z
-				+ 3*phi1*phi1*p2*x[0]*x[1]/z -2*p1*x[0]*x[0]*x[1]/z + p2*x[0]*x[0]*x[1]/z 
-				+ p1*x[0]*x[0]*x[0]*x[1]/z - p2*x[0]*x[0]*x[0]*x[1]/z 
-				+ 0.5*phi1*phi1*x[1]*z - phi1*x[0]*x[1]*z + 0.5*x[0]*x[0]*x[1]*z 
-				+ log(1-phi1)/m2 - x[0]*log(1-phi1)/m2 + x[0]*log(phi1)/m1 
-				- log(1-x[0])/m2 + x[0]*log(1-x[0])/m2 -x[0]*log(x[0])/m1
-				]) 
+		(1 - phi1)*phi1*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - phi1) + p2*phi1)/z) 
+		+ (r1 - r2)**2/z**2) - (1 - x[0])*x[0]*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - x[0]) 
+		+ p2*x[0])/z) + (r1 - r2)**2/z**2) + ((1 - phi1)*log(1 - phi1))/m2 + (phi1*log(phi1))/m1 
+		+ (-phi1 + x[0])*(1/m1 - 1/m2 + (1 - phi1)*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - phi1) 
+		+ p2*phi1)/z) + (r1 - r2)**2/z**2) - phi1*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - phi1) 
+		+ p2*phi1)/z) + (r1 - r2)**2/z**2) - ((-p1 + p2)*(1 - phi1)*phi1*x[1])/z
+		- log(1 - phi1)/m2 + log(phi1)/m1) - ((1 - x[0])*log(1 - x[0]))/m1 - (x[0]*log(x[0]))/m2
+		])
 """insert f2 here"""
 """consult leftovers.py for old shitty code"""
-"""
-+ phi1*(1-phi1)*(1-phi1)*m1*p1*x[1]/z - x[0]*(1-x[0])*(1-x[0])*m1*p1*x[1]/z
-- m1*(1-phi1)*(1-phi1)*p1*x[1]/z + m1*(1-phi1)*(1-phi1)*phi1*p1*x[1]/z + phi1*phi1*(1-phi1)*m1*p2*x[1]/z - x[0]*x[0]*(1-x[0])*m1*p2*x[1]/z 
-- 2*m1*(1-phi1)*phi1*p2*x[1]/z + m1*(1-phi1)*phi1*phi1*p2*x[1]/z + m1*p1*(1-x[0])*(1-x[0])*p2*x[1]/z + m1*p1*(1-x[0])*(1-x[0])*x[1]/z 
-+ 2*m1*p2*(1-x[0])*x[0]*x[1]/z - m1*p1*(1-x[0])*(1-x[0])*x[0]*x[1]/z - m1*p2*(1-x[0])*x[0]*x[0]*x[1]/z + 0.5*m1*(1-phi1)*x[1]*z - 0.5*m1*(1-phi1)*phi1*x[1]*z
-- 0.5*m1*(1-x[0])*x[1]*z + 0.5*m1*(1-x[0])*x[0]*x[1]*z + log(phi1) + log(x[0]),
-"""
 
 
 def SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb):
 	a = (r1 - r2)**2 / z**2
+	c = (z-2.0)/2
+	d = 1.0/z
 	m1 = na*1.0
 	m2 = nb*1.0
+	k = nb*1.0/na
 	
 	return array([[
-			1 + a*m1 - m1/m2 + a*m1*(1-x[0]) - 1.0/x[0] - a*m1*x[0] - m1*x[1] - m1*(1-x[0])*x[1] + m1*x[0]*x[1] 
-			- 2*m1*p1*(1-x[0])*x[1]/z + 2*m1*p2*(1-x[0])*x[1]/z - 2*m1*p1*(1-x[0])*(1-x[0])*x[1]/z 
-			- 2*m1*p2*x[0]*x[1]/z + 4*m1*p1*(1-x[0])*x[0]*x[1]/z - 4*m1*p2*(1-x[0])*x[0]*x[1]/z 
-			+ 2*m1*p2*x[0]*x[0]*x[1]/z + m1*x[1]*z/2 + 0.5*m1*(1-x[0])*x[1]*z - 0.5*m1*x[0]*x[1]*z,
+			1 + a*m1 - m1/m2 + a*m1*(1-x[0]) - 1.0/x[0] - a*m1*x[0],
 
-			2*m1*phi1 - m1*phi1*phi1 - 2*m1*x[0] + m1*x[0]*x[0] + 4*m1*phi1*p1/z - 5*m1*phi1*phi1*p1/z 
-			+ 2*m1*phi1*phi1*phi1*p1/z - 2*m1*phi1*p2/z + 4*m1*phi1*phi1*p2/z - 2*m1*phi1*phi1*phi1*p2/z
-			- 4*m1*p1*x[0]/z + 2*m1*p2*x[0]/z + 5*m1*p1*x[0]*x[0]/z - 4*m1*p2*x[0]*x[0]/z - 2*m1*p1*x[0]*x[0]*x[0]/z 
-			+ 2*m1*p2*x[0]*x[0]*x[0]/z - m1*phi1*z + 0.5*m1*phi1*phi1*z + m1*x[0]*z - 0.5*m1*x[0]*x[0]*z],
-			[ 
+			x[1] - x[1] + x[0] - x[0]],
 
-			- 1.0/m2 - 2*a*phi1 + 1.0/(m2*(1-x[0])) + 2*a*x[0] - x[0]/(m2*(1-x[0])) 
-			+ 2*phi1*x[1] - 2*x[0]*x[1] + 4*phi1*p1*x[1]/z
-			- 3*phi1*phi1*p1*x[1]/z - 2*phi1*p2*x[1]/z + 3*phi1*phi1*p2*x[1]/z 
-			- 4*p1*x[0]*x[1]/z + 2*p2*x[0]*x[1]/z + 3*p1*x[0]*x[0]*x[1]/z
-			- 3*p2*x[0]*x[0]*x[1]/z - phi1*x[1]*z + x[0]*x[1]*z - log(1-phi1)/m2 
-			+ log(phi1)/m2 + log(1-x[0])/m2 - log(x[0])/m1,
+		  [2.0/m1 - 2.0/m2 + (1 - phi1)*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - phi1) 
+		+ p2*phi1)/z) + (r1 - r2)**2/z**2) - phi1*(x[1]*((1.0/2)*(-2 + z) 
+		- (p1*(1 - phi1) + p2*phi1)/z) + (r1 - r2)**2/z**2) - (1 - x[0])*(x[1]*((1.0/2)*(-2 + z) 
+		- (p1*(1 - x[0]) + p2*x[0])/z) + (r1 - r2)**2/z**2) + x[0]*(x[1]*((1.0/2)*(-2 + z) 
+		- (p1*(1 - x[0]) + p2*x[0])/z) + (r1 - r2)**2/z**2) - ((-p1 + p2)*(1 - phi1)*phi1*x[1])/z 
+		+ ((-p1 + p2)*(1 - x[0])*x[0]*x[1])/z - log(1 - phi1)/m2 + log(phi1)/m1 
+		+ log(1 - x[0])/m1 - log(x[0])/m2,
 
-			-phi1*phi1 + 2*phi1*x[0] - x[0]*x[0] - 2*phi1*phi1*p1/z 
-			+ 2*phi1*phi1*phi1*p1/z + phi1*phi1*p2/z - 2*phi1*phi1*phi1*p2/z
-			+ 4*phi1*p1*x[0]/z - 3*phi1*phi1*p1*x[0]/z - 2*phi1*p2*x[0]/z 
-			+ 3*phi1*phi1*p2*x[0]/z - 2*p1*x[0]*x[0]/z + p2*x[0]*x[0]/z
-			+ p1*x[0]*x[0]*x[0]/z - p2*x[0]*x[0]*x[0]/z + phi1*phi1*z/2 
-			- phi1*x[0]*z + x[0]*x[0]*z/2
-
-
-			]])
+		  (-phi1 + x[0])*((1 - phi1)*((1.0/2)*(-2 + z) - (p1*(1 - phi1) + p2*phi1)/z) 
+		- phi1*((1.0/2)*(-2 + z) - (p1*(1 - phi1) + p2*phi1)/z) - ((-p1 + p2)*(1 - phi1)*phi1)/z) 
+		+ (1 - phi1)*phi1*((1.0/2)*(-2 + z) - (p1*(1 - phi1) + p2*phi1)/z) 
+		- (1 - x[0])*x[0]*((1.0/2)*(-2 + z) - (p1*(1 - x[0]) + p2*x[0])/z)
+		]])
 
 
 """insert df2/dphi'' and df2/db here """
@@ -408,13 +385,13 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 		phi1vals = arange(.01,phi_c,.01)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
-		new_guess = [0.88,2]
+		new_guess = [0.98,.01]
 		iter = 0
 		length = len(phi1vals)
 		y2 = zeros((length,1))
 		x2 = zeros((length,1))
 		x1 = zeros((length,1))
-		max_iter = 5000
+		max_iter = 2000
 		#Loop to find the roots using Multivariate Newton-Rhapson
 		for phi in phi1vals:
 			iter = 0
@@ -424,8 +401,6 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 				iter += 1
 				index = phi1vals.index(phi)
 				guess = new_guess
-				if iter%1000 ==0:
-						print guess
 				"""				if guess[0] < 0 or guess[0] > 1:
 						guess[0] = random.random()
 						guess[1] = 0
@@ -433,15 +408,17 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 						print phi, iter, damp, guess[0]
 						"""
 				jacobian = SLCT_jac(guess,phi,r1,r2,z,p1,p2,na,nb)
+				print jacobian
 				invjac = inv(jacobian)
 				invjac = inv(jacobian)
 				f1 = SLCT_fun(guess,phi,r1,r2,z,p1,p2,na,nb)
 				new_guess = guess - damp*dot(invjac,f1)
-				if abs(new_guess[0] - guess[0]) < 1e-6 and abs(new_guess[1]-guess[1]) < 1e-6: 
+				if abs(new_guess[0] - guess[0]) < 1e-10 and abs(new_guess[1]-guess[1]) < 1e-10: 
 					x1[index] = phi
 					x2[index] = new_guess[0]
 					y2[index] = new_guess[1]
 					break
+		"""
 		#Convert Numpy arrays (x1,x2,y2) to a list
 		print x1
 		print x2
@@ -462,7 +439,7 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 		x2=x2.tolist()
 
 		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
-		eps_c = 0.1/Tc
+		eps_c = 0.01/Tc
 		y2 = reshape(append(y2,eps_c),(n,1))
 
 		#y2 = nav*y2
@@ -474,7 +451,8 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 		y2 = y2 + y2i
 		return (phi,y2)
 
-		"""
+
+
 
 na = 1
 nb = 1
@@ -482,12 +460,26 @@ crit_chi = .5
 crit_phi = 1
 alpha = 3.655
 N = 1
-phi, y2 = SLCT_NR(  1.2,1.2,6,1.2,1.2,300,2000)
-phix,spinx2 = SLCT_Spinodal(1.2,1.2,6,1.2,1.2,300,2000)
+phi, y2 = SLCT_NR(  1.2,1.2,6,1.2,1.2,100,100)
+phix,spinx2 = SLCT_Spinodal(1.2,1.2,6,1.2,1.2,100,100)
 plt.plot(phi,y2)
 plt.plot(phix,spinx2)
 
 plt.show()
+ 
+x = [.1,.2]
+phi1 = 0.3
+r1 = 1.2
+r2 = 1.2
+z = 6
+p1 = 1.2
+p2 = 1.2
+na = 100
+nb = 100
+
+print SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb)
+print SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb)
+
 
 
 
