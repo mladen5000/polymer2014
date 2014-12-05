@@ -160,19 +160,49 @@ def vNR(alpha,N):
 
 def fun(x,na,nb,phi1):
 	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
-	return array([log(x[0])/na - log(phi1)/na + log(1.-phi1)/nb -
-			log(1.-x[0])/nb + 2.*x[1]*phi1 - 2.*x[1]*x[0],
+	"""na and nb are equivalent to m1, m2"""
+	"""- x[1]*na*(1-x[0]) 
+	+ x[1]*na*(1-phi1) + (na/nb)*(1-x[0]) - (na/nb)*(1-x[0]),
+	"""
+
+	na = 1.0*na
+	nb = 1.0*nb
+	return array([ 
+
+			log(phi1) - log(x[0]) + x[1]*x[0]*(1-x[0])*na
+			- x[1]*phi1*(1-phi1)*na + x[0] - phi1 - x[1]*na*(1-x[0]) + x[1]*na*(1-phi1)
+			+ (na/nb)*(1-x[0]) - (na/nb)*(1-phi1),
+
 			(x[0] - phi1)*(1./na - 1./nb + x[1] - 2*x[1]*phi1
 			- log(1-phi1)/nb + log(phi1)/na) - ((x[0]/na)*log(x[0])
 			+ ((1-x[0])/nb)*log(1-x[0]) + x[1]*x[0]*(1-x[0]))
-			 + ((phi1/na)*log(phi1) + ((1-phi1)/nb)*log(1-phi1) + x[1]*(phi1)*(1-phi1))])	
+			+ ((phi1/na)*log(phi1) + ((1-phi1)/nb)*log(1-phi1) + x[1]*(phi1)*(1-phi1))
+			])	
 
 def jac(x,na,nb,phi1):
 	"df1/dphi2, df1/dchi; df2/dphi2, df2/dchi"
-	return array([[1./(na*x[0]) + 1./(nb*(1.-x[0])) - 2.*x[1],  2.*(phi1 - x[0])],
-				[log(phi1)/na -log(x[0])/na - log(1-phi1)/nb + log(1-x[0])/nb
-				-2*x[1]*phi1 + 2*x[1]*x[0],
-				(x[0] - phi1)**2]])
+	na = 1.0*na
+	nb = 1.0*nb
+	return array([[
+			1 + x[1]*na - na/nb + x[1]*na*(1-x[0]) - 1.0/x[0] - x[1]*na*x[0],
+
+			na*(1-phi1) - na*(1-phi1)*phi1 - na*(1-x[0]) + na*(1-x[0])*(x[0])],
+
+			[
+			log(phi1)/na -log(x[0])/na - log(1-phi1)/nb + log(1-x[0])/nb
+			-2*x[1]*phi1 + 2*x[1]*x[0],
+
+			(x[0] - phi1)**2
+			]])
+
+
+	
+"""
+return array([[1./(na*x[0]) + 1./(nb*(1.-x[0])) - 2.*x[1],  2.*(phi1 - x[0])],
+[log(phi1)/na -log(x[0])/na - log(1-phi1)/nb + log(1-x[0])/nb
+-2*x[1]*phi1 + 2*x[1]*x[0],
+(x[0] - phi1)**2]])
+"""
 
 
 def NR(na,nb,nav,crit_chi):
@@ -462,7 +492,6 @@ plt.show()
 """
 if __name__ == '__main__':
     app.run(debug=True)
-
 
 
 
