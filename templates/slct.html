@@ -70,11 +70,11 @@ The tools included here, in order of increasing complexity and sophistication, a
 	</div>
 	<br>
 	<br>
-	<form>
+	<form action="/slctplot" method="post">
 		<div class="row">
 			<div class="large-4 columns">
 				<label>Species A
-					<select>
+					<select name="polya">
 						<option value="poly1">poly(hexene-1)</option>
 						<option value="poly2">poly(ethylene propylene)</option>
 						<option value="poly3">poly(isobutylene)</option>
@@ -83,7 +83,7 @@ The tools included here, in order of increasing complexity and sophistication, a
 			</div>
 			<div class="large-4 columns">
 				<label>Species B
-					<select>
+					<select name="polyb">
 						<option value="poly1">poly(hexene-1)</option>
 						<option value="poly2">poly(ethylene propylene)</option>
 						<option value="poly3">poly(isobutylene)</option>
@@ -94,21 +94,21 @@ The tools included here, in order of increasing complexity and sophistication, a
 		<div class="row">
 			<div class="large-4 columns">
 				<label>Monomers of Species A
-						<input type="text" placeholder="100" />
+						<input type="text" name="NFA" placeholder="100" />
 				</label>
 			</div>
 			<div class="large-4 columns">
 				<label>Monomers of Species B
-						<input type="text" placeholder="100" />
+						<input type="text" name="NFB" placeholder="100" />
 				</label>
 			</div>
 		</div>
-	</form>
-	<div class="row">
+		<div class="row">
 			<div align="center">
-				<a href="#" class="button">Generate!</a>
+				<input class="button" type="submit" value="Generate!" />
 			</div>
-	</div>
+		</div>
+	</form>
 	
 <!-- Added jQuery at the End --!>
 <script> $(document).ready(function(){ $(document).foundation();}); </script>

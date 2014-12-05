@@ -34,6 +34,64 @@ def vorn():
 def slct():
 	return render_template("slct.html")
 
+@app.route('/slctplot', methods=['GET','POST'])	
+def slctplot():
+	if request.method == 'POST':
+		na = float(request.form['NFA'])
+		nb = float(request.form['NFB'])
+		polya = request.form['polya']
+		polyb = request.form['polyb']
+		z = 6.0
+
+		if polya == "poly1":
+				r1 = 1.150
+				p1 = 1.333
+		if polya == "poly2":
+				r1 = 1.200
+				p1 = 1.200
+		if polya == "poly3":
+				r1 = 1.750
+				p1 = 1.500
+
+		if polyb == "poly1":
+				r2 = 1.150
+				p2 = 1.333
+		if polyb == "poly2":
+				r2 = 1.200
+				p2 = 1.200
+		if polyb == "poly3":
+				r2 = 1.750
+				p2 = 1.500
+
+		print r1, r2, z, p1, p2, na, nb
+
+		if na > nb:
+				print "we gotta flip!"
+				flipper = 1
+				na, nb, r1, r2, p1, p2 =  flip(na,nb,r1,r2,p1,p2)
+				print r1, r2, z, p1, p2, na, nb 
+		else:
+				flipper = 0
+
+		fig = Figure()
+		fig.set_facecolor('white')
+		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+		axis.set_xlabel('Volume Fraction')
+		axis.set_ylabel('eps/kbT')
+		axis.set_title('SLCT Phase Diagram')
+
+		phi, y2 = SLCT_NR(flipper,r1,r2,z,p1,p2,na,nb)
+		spinx,spiny = SLCT_Spinodal(flipper,r1,r2,z,p1,p2,na,nb)
+		spinline = axis.plot(spinx,spiny,'r',lw=2) 
+		binline = axis.plot(phi,y2,'b',lw=2)
+
+		canvas = FigureCanvas(fig)
+		output = StringIO.StringIO()
+		canvas.print_png(output, bbox_inches='tight')
+		plugins.connect(fig, plugins.MousePosition())
+
+		return mpld3.fig_to_html(fig,template_type='simple')
+
 	
 @app.route('/plot', methods=['GET','POST'])	
 def login():
@@ -43,6 +101,15 @@ def login():
 
 		crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
 		nav = 2./crit_chi
+
+		if na > nb:
+				print "we gotta flip!"
+				flipper = 1
+				na, nb, w,x,y,z=  flip(na,nb,1,1,1,1)
+				print na, nb 
+		else:
+				flipper = 0
+
  
 		fig = Figure()
 		fig.set_facecolor('white')
@@ -50,10 +117,12 @@ def login():
 		axis.set_xlabel('Volume Fraction')
 		axis.set_ylabel('Chi')
 		axis.set_title('Flory-Huggins Phase Diagram')
-		x = arange(0.01,0.97,0.001)
+		x = arange(0.05,0.95,0.001)
 		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
+		if flipper == 1:
+			x = 1 - x
 
-		phi,y2 =  NR(na,nb,nav,crit_chi)
+		phi,y2 =  NR(flipper,na,nb,nav,crit_chi)
 		spinline = axis.plot(x,spinodal,'r',lw=2) 
 		binline = axis.plot(phi,y2,'b',lw=2)
 		canvas = FigureCanvas(fig)
@@ -89,6 +158,8 @@ def vornplot():
 
 
 
+def flip(a1,a2,b1,b2,c1,c2):
+		return a2,a1,b2,b1,c2,c1
 
 
 """ Voorn-Overbeek """
@@ -225,7 +296,7 @@ def jac(x,na,nb,phi1):
 
 
 
-def NR(na,nb,nav,crit_chi):
+def NR(flipper,na,nb,nav,crit_chi):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
 
@@ -253,7 +324,6 @@ def NR(na,nb,nav,crit_chi):
 				index = phi1vals.index(phi)
 				guess = new_guess
 				jacobian = jac(guess,na,nb,phi)
-				print jacobian
 				invjac = inv(jacobian)
 				f1 = fun(guess,na,nb,phi)
 				new_guess = guess - .1*dot(invjac,f1)
@@ -263,12 +333,11 @@ def NR(na,nb,nav,crit_chi):
 					y2[index] = new_guess[1]
 					break
 		#Convert Numpy arrays (x1,x2,y2) to a list
-		print x1
-		print x2
-		print size(x1)
-		print size(x2)
 		n = size(x1) + 1
 		x1 = reshape(append(x1,crit_phi),(n,1))
+		if flipper ==1:
+			x1 = 1 - x1
+			x2 = 1 - x2
 		x1=x1.tolist()
 		x2=x2.tolist()
 
@@ -281,6 +350,8 @@ def NR(na,nb,nav,crit_chi):
 		#Concatenate the lists together
 		phi = x1 + x2
 		y2 = y2 + y2i
+
+
 		return (phi,y2)
 		#####################PLOT#######################
 
@@ -297,16 +368,16 @@ def SLCT_crit(r1,r2,z,p1,p2,na,nb):
 
 		phi_c_temp =  roots(coeff)
 
+
 		for critval in phi_c_temp:
-			if critval > 0 and critval < 1:
-				print critval
-				phi_c = critval
+			if critval > 0 and critval < 1 and critval.imag == 0:
+				phi_c = critval.real
 		Tc = 2*(b + c*phi_c)/(1.0/(m*phi_c) + 1.0/(m*k*(1-phi_c)) - 2*a)
 		return phi_c, Tc
 
 
 
-def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb):
+def SLCT_Spinodal(flipper,r1,r2,z,p1,p2,na,nb):
 		#put all these values into a list
 		phi = arange(0.01,.99,0.001)
 		a = (r1 - r2)**2 / z**2
@@ -317,6 +388,8 @@ def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb):
 		btmspin = (z - 2 + (2./z)*(p1*(1 - 3*(1-phi)) + p2*(1-3*phi)))
 		topspin = (1./(na*phi) + 1./(nb*(1-phi)) - 2*a)
 		spin2 = topspin/btmspin
+		if flipper == 1:
+				phi = 1 - phi
 		return phi,spin1
 
 def SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb):
@@ -399,13 +472,12 @@ def SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb):
 """insert df2/dphi'' and df2/db here """
 
 
-def SLCT_NR(r1,r2,z,p1,p2,na,nb):
+def SLCT_NR(flipper,r1,r2,z,p1,p2,na,nb):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
 		phi_c, Tc = SLCT_crit(r1,r2,z,p1,p2,na,nb)
-		print phi_c, Tc
 	
-		phi1vals = arange(.01,phi_c,.01)
+		phi1vals = arange(.01,phi_c,.009)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
 		new_guess = [0.88,2]
@@ -424,8 +496,6 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 				iter += 1
 				index = phi1vals.index(phi)
 				guess = new_guess
-				if iter%1000 ==0:
-						print guess
 				"""				if guess[0] < 0 or guess[0] > 1:
 						guess[0] = random.random()
 						guess[1] = 0
@@ -443,9 +513,10 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 					y2[index] = new_guess[1]
 					break
 		#Convert Numpy arrays (x1,x2,y2) to a list
-		print x1
-		print x2
-		print y2
+		if flipper ==1:
+			x1 = 1 - x1
+			x2 = 1 - x2
+
 		x1=x1.tolist()
 		x2=x2.tolist()
 		y2=y2.tolist()
@@ -453,6 +524,7 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 		y2i = y2[::-1]
 		phi = x1 + x2
 		y2 = y2 + y2i
+
 		return (phi,y2)
 		"""
 		n =  size(x1) + 1
@@ -482,12 +554,14 @@ crit_chi = .5
 crit_phi = 1
 alpha = 3.655
 N = 1
+"""
 phi, y2 = SLCT_NR(  1.2,1.2,6,1.2,1.2,300,2000)
 phix,spinx2 = SLCT_Spinodal(1.2,1.2,6,1.2,1.2,300,2000)
 plt.plot(phi,y2)
 plt.plot(phix,spinx2)
 
 plt.show()
+"""
 
 
 
