@@ -394,12 +394,8 @@ def SLCT_Spinodal(flipper,r1,r2,z,p1,p2,na,nb):
 
 def SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb):
 		a = (r1 - r2)**2 / z**2
-		c = (z-2)/2 
-		d = 1.0/z
 		m1 = na*1.0
 		m2 = nb*1.0
-		
-		k = nb*1.0/na
 		
 		return array([
 				a*m1*(1-phi1) - m1*(1-phi1)/m2 - phi1 - a*m1*(1-phi1)*phi1 - a*m1*(1-x[0]) 
@@ -423,15 +419,6 @@ def SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb):
 				+ log(1-phi1)/m2 - x[0]*log(1-phi1)/m2 + x[0]*log(phi1)/m1 
 				- log(1-x[0])/m2 + x[0]*log(1-x[0])/m2 -x[0]*log(x[0])/m1
 				]) 
-"""insert f2 here"""
-"""consult leftovers.py for old shitty code"""
-"""
-+ phi1*(1-phi1)*(1-phi1)*m1*p1*x[1]/z - x[0]*(1-x[0])*(1-x[0])*m1*p1*x[1]/z
-- m1*(1-phi1)*(1-phi1)*p1*x[1]/z + m1*(1-phi1)*(1-phi1)*phi1*p1*x[1]/z + phi1*phi1*(1-phi1)*m1*p2*x[1]/z - x[0]*x[0]*(1-x[0])*m1*p2*x[1]/z 
-- 2*m1*(1-phi1)*phi1*p2*x[1]/z + m1*(1-phi1)*phi1*phi1*p2*x[1]/z + m1*p1*(1-x[0])*(1-x[0])*p2*x[1]/z + m1*p1*(1-x[0])*(1-x[0])*x[1]/z 
-+ 2*m1*p2*(1-x[0])*x[0]*x[1]/z - m1*p1*(1-x[0])*(1-x[0])*x[0]*x[1]/z - m1*p2*(1-x[0])*x[0]*x[0]*x[1]/z + 0.5*m1*(1-phi1)*x[1]*z - 0.5*m1*(1-phi1)*phi1*x[1]*z
-- 0.5*m1*(1-x[0])*x[1]*z + 0.5*m1*(1-x[0])*x[0]*x[1]*z + log(phi1) + log(x[0]),
-"""
 
 
 def SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb):
@@ -490,18 +477,17 @@ def SLCT_NR(flipper,r1,r2,z,p1,p2,na,nb):
 		#Loop to find the roots using Multivariate Newton-Rhapson
 		for phi in phi1vals:
 			iter = 0
-			damp = 0.1
+			damp = 1.0
 			while iter < max_iter :
 
 				iter += 1
 				index = phi1vals.index(phi)
 				guess = new_guess
-				"""				if guess[0] < 0 or guess[0] > 1:
+				if guess[0] < 0 or guess[0] > 1:
 						guess[0] = random.random()
 						guess[1] = 0
-						damp = 0.01
+						damp = damp/2.0
 						print phi, iter, damp, guess[0]
-						"""
 				jacobian = SLCT_jac(guess,phi,r1,r2,z,p1,p2,na,nb)
 				invjac = inv(jacobian)
 				invjac = inv(jacobian)
