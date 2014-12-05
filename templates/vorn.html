@@ -67,21 +67,27 @@ The tools included here, in order of increasing complexity and sophistication, a
 	
 </p>
 		</div>
-	<form>
+	<form action="/vornplot" method="post">
 		<div class="row">
 			<div class="large-12 columns">
 				<label>Number of Monomers 
-						<input type="text" placeholder="100" />
+						<input type="text" placeholder="100" name = "N" />
 				</label>
 			</div>
 		</div>
+		<div align="center">
+			<input class="button" type="submit" value="Generate!" />
+		</div>
+				
 	</form>
+<!--	
 	<div class="row">
 			<div align="center">
-				<a href="#" class="button">Generate!</a>
+					<a href="/vornplot" class="button small large-12" type="submit" value="Send Message" />
 			</div>
 	</div>
-	
+	--!>
+
 <!-- Added jQuery at the End --!>
 <script> $(document).ready(function(){ $(document).foundation();}); </script>
 

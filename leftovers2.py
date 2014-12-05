@@ -50,7 +50,7 @@ def login():
 		axis.set_xlabel('Volume Fraction')
 		axis.set_ylabel('Chi')
 		axis.set_title('Flory-Huggins Phase Diagram')
-		x = arange(0.05,0.95,0.001)
+		x = arange(0.01,0.97,0.001)
 		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
 
 		phi,y2 =  NR(na,nb,nav,crit_chi)
@@ -160,18 +160,7 @@ def vNR(alpha,N):
 
 def fun(x,na,nb,phi1):
 	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
-	"""na and nb are equivalent to m1, m2"""
-	"""- x[1]*na*(1-x[0]) 
-	+ x[1]*na*(1-phi1) + (na/nb)*(1-x[0]) - (na/nb)*(1-x[0]),
-	"""
-
-	na = 1.0*na
-	nb = 1.0*nb
-	return array([ 
-
-			log(phi1) - log(x[0]) + x[1]*x[0]*(1-x[0])*na
-			- x[1]*phi1*(1-phi1)*na + x[0] - phi1 - x[1]*na*(1-x[0]) + x[1]*na*(1-phi1)
-			+ (na/nb)*(1-x[0]) - (na/nb)*(1-phi1),
+	"""na and nb are equivalent to m1, m2
 
 			(x[0] - phi1)*(1./na - 1./nb + x[1] - 2*x[1]*phi1
 			- log(1-phi1)/nb + log(phi1)/na) - ((x[0]/na)*log(x[0])
@@ -179,8 +168,44 @@ def fun(x,na,nb,phi1):
 			+ ((phi1/na)*log(phi1) + ((1-phi1)/nb)*log(1-phi1) + x[1]*(phi1)*(1-phi1))
 			])	
 
+
+			-x[0] - x[1]*nb*x[0] + (nb/na)*x[0] + x[1]*nb*(1-x[0])*x[0] 
+			+ phi1 + x[1]*nb*phi1 - (nb/na)*phi1 - x[1]*nb*(1-phi1)*phi1 
+			- log(1-x[0]) + log(1-phi1)])
+
+	"""
+	na = 1.0*na
+	nb = 1.0*nb
+	return array([ 
+
+			log(phi1) - log(x[0]) + x[1]*x[0]*(1-x[0])*na
+			- x[1]*phi1*(1-phi1)*na + x[0] - phi1 - x[1]*na*(1-x[0]) + x[1]*na*(1-phi1)
+			+ (na/nb)*(1-x[0]) - (na/nb)*(1-phi1),
+			
+			(x[0] - phi1)*(1./na - 1./nb + x[1] - 2*x[1]*phi1
+			- log(1-phi1)/nb + log(phi1)/na) - ((x[0]/na)*log(x[0])
+			+ ((1-x[0])/nb)*log(1-x[0]) + x[1]*x[0]*(1-x[0]))
+			+ ((phi1/na)*log(phi1) + ((1-phi1)/nb)*log(1-phi1) + x[1]*(phi1)*(1-phi1))
+			])	
+
+
+
+
 def jac(x,na,nb,phi1):
 	"df1/dphi2, df1/dchi; df2/dphi2, df2/dchi"
+	"""
+			[
+			log(phi1)/na -log(x[0])/na - log(1-phi1)/nb + log(1-x[0])/nb
+			-2*x[1]*phi1 + 2*x[1]*x[0],
+
+			(x[0] - phi1)**2
+			]])
+
+			[-1 - x[1]*nb + nb/na + 1.0/(1-x[0]) + x[1]*nb*(1-x[0]) - x[1]*nb*x[0],
+
+			nb*phi1 - nb*(1-phi1)*phi1 - nb*x[0] + nb*(1-x[0])*x[0]]])
+
+	"""
 	na = 1.0*na
 	nb = 1.0*nb
 	return array([[
@@ -196,13 +221,8 @@ def jac(x,na,nb,phi1):
 			]])
 
 
-	
-"""
-return array([[1./(na*x[0]) + 1./(nb*(1.-x[0])) - 2.*x[1],  2.*(phi1 - x[0])],
-[log(phi1)/na -log(x[0])/na - log(1-phi1)/nb + log(1-x[0])/nb
--2*x[1]*phi1 + 2*x[1]*x[0],
-(x[0] - phi1)**2]])
-"""
+
+
 
 
 def NR(na,nb,nav,crit_chi):
@@ -217,7 +237,7 @@ def NR(na,nb,nav,crit_chi):
 		phi1vals = arange(.001,crit_phi-.001,.01)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
-		new_guess = [0.3,3]
+		new_guess = [0.5,3]
 		iter = 0
 		length = len(phi1vals)
 		y2 = zeros((length,1))
@@ -233,6 +253,7 @@ def NR(na,nb,nav,crit_chi):
 				index = phi1vals.index(phi)
 				guess = new_guess
 				jacobian = jac(guess,na,nb,phi)
+				print jacobian
 				invjac = inv(jacobian)
 				f1 = fun(guess,na,nb,phi)
 				new_guess = guess - .1*dot(invjac,f1)
@@ -242,12 +263,17 @@ def NR(na,nb,nav,crit_chi):
 					y2[index] = new_guess[1]
 					break
 		#Convert Numpy arrays (x1,x2,y2) to a list
-		x1 = reshape(append(x1,crit_phi),(51,1))
+		print x1
+		print x2
+		print size(x1)
+		print size(x2)
+		n = size(x1) + 1
+		x1 = reshape(append(x1,crit_phi),(n,1))
 		x1=x1.tolist()
 		x2=x2.tolist()
 
 		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
-		y2 = reshape(append(y2,crit_chi),(51,1))
+		y2 = reshape(append(y2,crit_chi),(n,1))
 		y2 = nav*y2
 		y2=y2.tolist()
 		y2i = y2[::-1]
@@ -292,111 +318,62 @@ def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb):
 		topspin = (1./(na*phi) + 1./(nb*(1-phi)) - 2*a)
 		spin2 = topspin/btmspin
 		return phi,spin1
+
 def SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb):
 		a = (r1 - r2)**2 / z**2
 		c = (z-2)/2 
 		d = 1.0/z
-		m1 = na 
-		m2 = nb
+		m1 = na*1.0
+		m2 = nb*1.0
 		
 		k = nb*1.0/na
 		
 		return array([
-		1.0/m1 - 1.0/(k*m1) - 1.0/m2 + 1.0/(k*m2) - 2*a*phi1 - 2*x[1]*c*phi1
-		+ 4*x[1]*d*p1*phi1 - 2*x[1]*d*p2*phi1 
-		- 3*x[1]*d*p1*phi1**2 + 3*x[1]*d*p2*phi1**2 + 2*a*x[0] + 2*x[1]*c*x[0]
-		- 4*x[1]*d*p1*x[0] + 2*x[1]*d*p2*x[0] + 3*x[1]*d*p1*x[0]**2 - 3*x[1]*d*p2*x[0]**2
-		- log(1-phi1)*(1.0/(k*m1)) + log(phi1)*(1.0/m1) + log(1-x[0])*(1.0/(k*m2)) - log(x[0])*(1.0/m2),
+				-a*phi1*(1-phi1)*m1 + a*x[0]*(1-x[0])*m2 + x[0] 
+				- a*m1*(1-x[0]) + (m1/m2)*(1-x[0]) - phi1 + a*m1*(1-phi1) 
+				- (m1/m2)*(1-phi1) - log(x[0]) + log(phi1),
 
-		phi1/m1 - phi1/(k*m1) -a*phi1**2 - x[1]*c*phi1**2 + 2*x[1]*d*p1*phi1**2
-		- x[1]*d*p2*phi1**2 - 2*x[1]*d*p1*phi1**3 +2*x[1]*d*p2*phi1**3 - x[0]/m1
-		+ x[0]/(k*m1)  + 2*a*phi1*x[0] + 2*x[1]*c*phi1*x[0] - 4*x[1]*d*p1*phi1*x[0]
-		+ 2*x[1]*d*p2*phi1*x[0] + 3*x[1]*d*p1*x[0]*phi1**2 - 3*x[1]*d*p2*x[0]*phi1**2
-		- a*x[0]**2 - x[1]*c*x[0]**2 + 2*x[1]*d*p1*x[0]**2 - x[1]*d*p2*x[0]**2
-		- x[1]*d*p1*x[0]**3 + x[1]*d*p2*x[0]**3 - log(1-phi1)/(k*m1)
-		+ x[0]*log(1-phi1)*(1.0/(k*m1)) - x[0]*log(phi1)*(1.0/m1) + log(1-x[0])*(1.0/(k*m2))
-		- x[0]*log(1-x[0])*(1.0/(k*m2)) + x[0]*log(x[0])*(1.0/m2)
-		]) 
-		
-def SLCT_newfun(x,phi1,r1,r2,z,p1,p2,M1,M2):
-		return array([
-		2.0/M1 - 2.0/M2 + (1 - phi1)*(x[1]*((1.0/2)*(-2 + z)
-		-(p1*(1 - phi1) + p2*phi1)/z) + (r1 - r2)**2/z**2) 
-		- phi1*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - phi1) + p2*phi1)/z)
-		+ (r1 - r2)**2/z**2) - (1 - x[0])*(x[1]*((1.0/2)*(-2 + z)
-		- (p1*(1 - x[0]) + p2*x[0])/z) + (r1 - r2)**2/z**2)
-		+ x[0]*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - x[0]) + p2*x[0])/z)
-		+ (r1 - r2)**2/z**2) - ((-p1 + p2)*(1 - phi1)*phi1*x[1])/z 
-		+ ((-p1 + p2)*(1 - x[0])*x[0]*x[1])/z - log(1 - phi1)/M2 
-		+ log(phi1)/M1 + log(1 - x[0])/M1 - log(x[0])/M2,
-
-		
 		(1 - phi1)*phi1*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - phi1) + p2*phi1)/z) 
 		+ (r1 - r2)**2/z**2) - (1 - x[0])*x[0]*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - x[0]) 
-		+ p2*x[0])/z) + (r1 - r2)**2/z**2) + ((1 - phi1)*log(1 - phi1))/M2 + (phi1*log(phi1))/M1 
-		+ (-phi1 + x[0])*(1/M1 - 1/M2 + (1 - phi1)*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - phi1) 
+		+ p2*x[0])/z) + (r1 - r2)**2/z**2) + ((1 - phi1)*log(1 - phi1))/m2 + (phi1*log(phi1))/m1 
+		+ (-phi1 + x[0])*(1/m1 - 1/m2 + (1 - phi1)*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - phi1) 
 		+ p2*phi1)/z) + (r1 - r2)**2/z**2) - phi1*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - phi1) 
 		+ p2*phi1)/z) + (r1 - r2)**2/z**2) - ((-p1 + p2)*(1 - phi1)*phi1*x[1])/z
-		- log(1 - phi1)/M2 + log(phi1)/M1) - ((1 - x[0])*log(1 - x[0]))/M1 - (x[0]*log(x[0]))/M2
+		- log(1 - phi1)/m2 + log(phi1)/m1) - ((1 - x[0])*log(1 - x[0]))/m1 - (x[0]*log(x[0]))/m2
 		])
-	
+"""insert f2 here"""
+"""consult leftovers.py for old shitty code"""
+
+
 def SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb):
 	a = (r1 - r2)**2 / z**2
 	c = (z-2.0)/2
 	d = 1.0/z
-	m1 = na 
-	m2 = nb
+	m1 = na*1.0
+	m2 = nb*1.0
 	k = nb*1.0/na
 	
 	return array([[
-			2*a + 2*x[1]*c - 4*x[1]*d*p1 + 2*x[1]*d*p2
-			- 1.0/(k*m2*(1-x[0])) - 1.0/(m2*x[0]) + 6*x[1]*d*p1*x[0]
-			- 6*x[1]*d*p2*x[0],
+			1 + a*m1 - m1/m2 + a*m1*(1-x[0]) - 1.0/x[0] - a*m1*x[0],
 
-			-2*c*phi1 + 4*d*p1*phi1 - 2*d*p2*phi1 - 3*d*p1*phi1**2
-			+ 3*d*p2*phi1**2 + 2*c*x[0] - 4*d*p1*x[0] + 2*d*p2*x[0] 
-			+ 3*d*p1*x[0]**2 - 3*d*p2*x[0]**2],
+			x[1] - x[1] + x[0] - x[0]],
 
-			[-1.0/m1 + 1.0/(k*m1) + 1.0/m2 - 1.0/(k*m2) + 2*a*phi1
-		    + 2*x[1]*c*phi1 - 4*x[1]*d*p1*phi1
-			+ 2*x[1]*d*p2*phi1 + 3*x[1]*d*p1*phi1**2 - 3*x[1]*d*p2*phi1**2
-			- 2*a*x[0] - 2*x[1]*c*x[0] + 4*x[1]*d*p1*x[0]
-			- 2*x[1]*d*p2*x[0]  - 3*x[1]*d*p1*x[0]**2
-			+ 3*x[1]*d*p2*x[0]**2 + log(1-phi1)/(k*m1) - log(phi1)/m1 
-			- log(1-x[0])*(1.0/(k*m2)) + log(x[0])*(1.0/m2),
-
-			-c*phi1**2 + 2*d*p1*phi1**2 - d*p2*phi1**2 - 2*d*p1*phi1**3
-			+ 2*d*p2*phi1**3 + 2*c*phi1*x[0] - 4*d*p1*phi1*x[0] + 2*d*p2*phi1*x[0]
-			+ 3*d*p1*x[0]*phi1**2 - 3*d*p2*x[0]*phi1**2 - c*x[0]**2
-			+ 2*d*p1*x[0]**2 - d*p2*x[0]**2 - d*p1*x[0]**3 + d*p2*x[0]**3
-			]])
-
-
-def SLCT_newjac(x,phi1,r1,r2,z,p1,p2,M1,M2):
-		return array([[
-		- (1.0/(M1*(1 - x[0]))) - 1.0/(M2*x[0]) + 2*x[1]*((1.0/2)*(-2 + z) 
-		- (p1*(1 - x[0]) + p2*x[0])/z) + (2*(r1 - r2)**2)/z**2 
-		+ (2*(-p1 + p2)*(1 - x[0])*x[1])/z - (2*(-p1 + p2)*x[0]*x[1])/z,
-
-		  (1 - phi1)*((1.0/2)*(-2 + z) - (p1*(1 - phi1) + p2*phi1)/z) 
-		- phi1*((1.0/2)*(-2 + z) - (p1*(1 - phi1) + p2*phi1)/z) 
-		- (1 - x[0])*((1.0/2)*(-2 + z) - (p1*(1 - x[0]) + p2*x[0])/z) 
-		+ x[0]*((1.0/2)*(-2 + z) - (p1*(1 - x[0]) + p2*x[0])/z) 
-		- ((-p1 + p2)*(1 - phi1)*phi1)/z + ((-p1 + p2)*(1 - x[0])*x[0])/z],
-
-		  [2.0/M1 - 2.0/M2 + (1 - phi1)*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - phi1) 
+		  [2.0/m1 - 2.0/m2 + (1 - phi1)*(x[1]*((1.0/2)*(-2 + z) - (p1*(1 - phi1) 
 		+ p2*phi1)/z) + (r1 - r2)**2/z**2) - phi1*(x[1]*((1.0/2)*(-2 + z) 
 		- (p1*(1 - phi1) + p2*phi1)/z) + (r1 - r2)**2/z**2) - (1 - x[0])*(x[1]*((1.0/2)*(-2 + z) 
 		- (p1*(1 - x[0]) + p2*x[0])/z) + (r1 - r2)**2/z**2) + x[0]*(x[1]*((1.0/2)*(-2 + z) 
 		- (p1*(1 - x[0]) + p2*x[0])/z) + (r1 - r2)**2/z**2) - ((-p1 + p2)*(1 - phi1)*phi1*x[1])/z 
-		+ ((-p1 + p2)*(1 - x[0])*x[0]*x[1])/z - log(1 - phi1)/M2 + log(phi1)/M1 
-		+ log(1 - x[0])/M1 - log(x[0])/M2,
+		+ ((-p1 + p2)*(1 - x[0])*x[0]*x[1])/z - log(1 - phi1)/m2 + log(phi1)/m1 
+		+ log(1 - x[0])/m1 - log(x[0])/m2,
 
 		  (-phi1 + x[0])*((1 - phi1)*((1.0/2)*(-2 + z) - (p1*(1 - phi1) + p2*phi1)/z) 
 		- phi1*((1.0/2)*(-2 + z) - (p1*(1 - phi1) + p2*phi1)/z) - ((-p1 + p2)*(1 - phi1)*phi1)/z) 
 		+ (1 - phi1)*phi1*((1.0/2)*(-2 + z) - (p1*(1 - phi1) + p2*phi1)/z) 
 		- (1 - x[0])*x[0]*((1.0/2)*(-2 + z) - (p1*(1 - x[0]) + p2*x[0])/z)
 		]])
+
+
+"""insert df2/dphi'' and df2/db here """
 
 
 def SLCT_NR(r1,r2,z,p1,p2,na,nb):
@@ -430,12 +407,13 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 						damp = 0.01
 						print phi, iter, damp, guess[0]
 						"""
-				jacobian = SLCT_newjac(guess,phi,r1,r2,z,p1,p2,na,nb)
+				jacobian = SLCT_jac(guess,phi,r1,r2,z,p1,p2,na,nb)
+				print jacobian
 				invjac = inv(jacobian)
 				invjac = inv(jacobian)
-				f1 = SLCT_newfun(guess,phi,r1,r2,z,p1,p2,na,nb)
+				f1 = SLCT_fun(guess,phi,r1,r2,z,p1,p2,na,nb)
 				new_guess = guess - damp*dot(invjac,f1)
-				if abs(new_guess[0] - guess[0]) < 1e-12 and abs(new_guess[1]-guess[1]) < 1e-12: 
+				if abs(new_guess[0] - guess[0]) < 1e-10 and abs(new_guess[1]-guess[1]) < 1e-10: 
 					x1[index] = phi
 					x2[index] = new_guess[0]
 					y2[index] = new_guess[1]
@@ -482,14 +460,29 @@ crit_chi = .5
 crit_phi = 1
 alpha = 3.655
 N = 1
-"""
-phi, y2 = SLCT_NR(  1.2,1.2,6,1.2,1.2,100,200)
-phix,spinx2 = SLCT_Spinodal(1.2,1.2,6,1.2,1.2,100,200)
+phi, y2 = SLCT_NR(  1.2,1.2,6,1.2,1.2,100,100)
+phix,spinx2 = SLCT_Spinodal(1.2,1.2,6,1.2,1.2,100,100)
 plt.plot(phi,y2)
 plt.plot(phix,spinx2)
 
 plt.show()
-"""
+ 
+x = [.1,.2]
+phi1 = 0.3
+r1 = 1.2
+r2 = 1.2
+z = 6
+p1 = 1.2
+p2 = 1.2
+na = 100
+nb = 100
+
+print SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb)
+print SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb)
+
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 
