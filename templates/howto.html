@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- Things I know I will need --!>
+   	 <script src = "static/jquery-1.11.1.min.js"> </script>
+   	 <link rel="stylesheet" href="static/foundation/css/foundation.css">
+   	 <link rel="stylesheet" href="static/Flory.css">
+         <script src="static/foundation/js/foundation.min.js"></script>
+<!--Things I might need --!>
+    	<script src="static/foundation/js/foundation/foundation.js"></script>
+    	<script src="static/foundation/js/foundation/foundation.dropdown.js"></script>
+    	<script src="static/foundation/js/foundation/foundation.topbar.js"></script>
+    	<script src="static/foundation/js/vendor/custom.modernizer.js"></script>
+   </head>
+   <body>
+	<nav class="top-bar" data-topbar data-options="is_hover:true"> 
+		<ul class="title-area"> 
+			<li class="name"> 
+				<h1> <a href="/"> Materials Genome Project </a> </h1> 
+			</li> <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone --> 
+			<li class="toggle-topbar menu-icon"> 
+				<a href="#"> <span>Polymers</span></a>
+			</li> 
+		</ul> 
+		<section class="top-bar-section"> <!-- Right Nav Section --> 
+			<ul class="right"> 
+				<li class="active">
+					<a href="#">Applications</a>
+				</li> 
+				<li class="has-dropdown"> 
+					<a href="#">Popular Apps</a> 
+						<ul class="dropdown"> 
+							<li><a href="#">How-To</a>
+							</li> 
+							<li><a href="Flory.html">Flory-Huggins</a>
+							</li> 
+							<li><a href="vorn.html">Voorn-Overbeek</a>
+							</li> 
+							<li><a href="slct.html">SLCT</a>
+							</li> 
+							
+						</ul> 
+				</li> 
+			</ul> <!-- Left Nav Section --> 
+			<ul class="left"> 
+				<li>
+					<a href="#">About</a>
+				</li> 
+			</ul> 
+		</section> 
+	</nav>
+	<div id = "Header" style="text-align: left;">
+		<h1>How to Get Started  </h1>
+	</div>
+	<div class = "introduction">
+		<div class = "row">
+		<p>
+			<h2>Using the Phase Plot Generators:</h2>
+		The following are a set of tools created in order to generate phase diagrams for polymer-polymer or polymer-solvent blends using coarse-grain models. These graphs function similarly, varying in their underlying theory and specificity of use. While each of the plot generators vary, the method to generate each plot is roughly the same. For all 3 options, the spinodal curve appears red while the binodal curve appears blue. Each plot has zoom options by drawing a box, or by selecting options on the bottom left of the plot. Also on the bottom right is the current mouse position. The current method of outputting a plot is through matplotlib and mpld3, but this is temporary and another plot generator may be used in the future. All numerical data is generated in simple python.
+	
+</p>
+			<h3>Using the Flory-Huggins Model:</h3>
+			<p>
+			The Flory Huggins model offers a lattice model of binary polymer blends. The plot generates both a spinodal curve (red) and a binodal (blue) as a function of the volume fraction of the volume fraction of the 1st species. The volume fraction is plotted against chi, which is inversely related to the temperature of the system. The “inside” of the spinodal curve represents conditions for instability, signifying that the binary blend will separate into 2 distinct phases. The area outside the binodal represents the stability condition necessary for a single miscible phase. In between the spinodal and binodal regions is the metastable phase.
+			</p>
+
+			<p>
+			The Flory Huggins model is the most general of the 3 currently available phase generators, and does not take into account additional features such as charge of the polymer, salt concentration,or chain connectivity. Thus any interest in blends depending on such parameters is best directed towards more advanced models, such as Voorn-Overbeek or SLCT. 
+			</p>
+
+			<p>
+		To generate a plot, the user inputs a number of monomers for each polymer in the blend (Polymer A and Polymer B) and simply click the generate button.	
+</p>
+			<h3>Using the Voorn-Overbeek Model:</h3>
+			<p>
+			The Voorn-Overbeek model aims to describe complex coacervation behavior, which occurs when polyelectrolyte systems phase separate into a polymer-rich phase and a dilute, supernatant phase. This model therefore is more suited towards charged polymer systems. The current version of the VO Phase Generator assumes equal concentrations of the polyanion and polycation. Similarly, the current version of the system assumes a salt-free system. Given these assumptions, the current version of the phase generator only requires the total number of monomers, N, to generate the phase diagram. The output phase diagram is plotted as a function of the charge density, sigma. The plot generates both a spinodal curve (red) and a binodal (blue) as a function of the volume fraction of the volume fraction of the 1st species.
+			</p>
+			<p>
+			To generate a plot, the user inputs the number of total monomers in the system and clicks the generate button.
+			</p>
+			<h3>Using the SLCT Model:</h3>
+			<p>
+			The Simplified Lattice Cluster Theory is a generalized flory model which takes into account the connectivity of a polymer chain. Note that the Flory-Huggins phase generator does not take any parameter which offers details of chain structure or branching. Through counting methods, the connectivity of a polymer unit is accounted for into the theory, offering behaviors which deviate significantly from the more general Flory-Huggins model.
+			</p>
+			<p>
+			The current version of the SLCT phase generator has a select few polymer units available for selection. In the future, more general units will be added, as well as a possible database to account for a large host of units.
+			</p>
+			<p>
+			To use the SLCT generator, select the specified species and number of monomers for each species, and click generate. As of now, there are a select few available options for the species, with more to come.
+			</p>
+
+			
+		</div>
+
+<!-- Added jQuery at the End --!>
+<script> $(document).ready(function(){ $(document).foundation();}); </script>
+
+
+</body>
+</html>
