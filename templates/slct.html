@@ -1,52 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<!-- Things I know I will need --!>
-   	 <script src = "static/jquery-1.11.1.min.js"> </script>
-   	 <link rel="stylesheet" href="static/foundation/css/foundation.css">
-   	 <link rel="stylesheet" href="static/Flory.css">
-         <script src="static/foundation/js/foundation.min.js"></script>
-<!--Things I might need --!>
-    	<script src="static/foundation/js/foundation/foundation.js"></script>
-    	<script src="static/foundation/js/foundation/foundation.dropdown.js"></script>
-    	<script src="static/foundation/js/foundation/foundation.topbar.js"></script>
-    	<script src="static/foundation/js/vendor/custom.modernizer.js"></script>
-   </head>
-   <body>
-	<nav class="top-bar" data-topbar data-options="is_hover:true"> 
-		<ul class="title-area"> 
-			<li class="name"> 
-				<h1> <a href="/"> Materials Genome Project </a> </h1> 
-			</li> <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone --> 
-			<li class="toggle-topbar menu-icon"> 
-				<a href="#"> <span>Polymers</span></a>
-			</li> 
-		</ul> 
-		<section class="top-bar-section"> <!-- Right Nav Section --> 
-			<ul class="right"> 
-				<li class="active">
-					<a href="#">Applications</a>
-				</li> 
-				<li class="has-dropdown"> 
-					<a href="#">Popular Apps</a> 
-						<ul class="dropdown"> 
-							<li><a href="Flory.html">Flory-Huggins</a>
-							</li> 
-							<li><a href="vorn.html">Voorn-Overbeek</a>
-							</li> 
-							<li><a href="slct.html">SLCT</a>
-							</li> 
-							
-						</ul> 
-				</li> 
-			</ul> <!-- Left Nav Section --> 
-			<ul class="left"> 
-				<li>
-					<a href="#">About</a>
-				</li> 
-			</ul> 
-		</section> 
-	</nav>
+{% extends "base.html" %}
+ 
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block content %}
+
+
 	<div id = "Header" style="text-align: left;">
 		<h1>Generalized-Flory Lattice Cluster Graph Generator </h1>
 	</div>
@@ -110,9 +70,5 @@ The tools included here, in order of increasing complexity and sophistication, a
 		</div>
 	</form>
 	
-<!-- Added jQuery at the End --!>
-<script> $(document).ready(function(){ $(document).foundation();}); </script>
 
-
-</body>
-</html>
+{% endblock %}

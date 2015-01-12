@@ -1,59 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<!-- Things I know I will need --!>
-   	 <script src = "static/jquery-1.11.1.min.js"> </script>
-   	 <link rel="stylesheet" href="static/foundation/css/foundation.css">
-   	 <link rel="stylesheet" href="static/Flory.css">
-         <script src="static/foundation/js/foundation.min.js"></script>
-<!--Things I might need --!>
-    	<script src="static/foundation/js/foundation/foundation.js"></script>
-    	<script src="static/foundation/js/foundation/foundation.dropdown.js"></script>
-    	<script src="static/foundation/js/foundation/foundation.topbar.js"></script>
-    	<script src="static/foundation/js/vendor/custom.modernizer.js"></script>
-   </head>
-   <body>
-	<nav class="top-bar" data-topbar data-options="is_hover:true"> 
-		<ul class="title-area"> 
-			<li class="name"> 
-				<h1> <a href="/"> Materials Genome Project </a> </h1> 
-			</li> <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone --> 
-			<li class="toggle-topbar menu-icon"> 
-				<a href="#"> <span>Polymers</span></a>
-			</li> 
-		</ul> 
-		<section class="top-bar-section"> <!-- Right Nav Section --> 
-			<ul class="right"> 
-				<li class="active">
-					<a href="#">Applications</a>
-				</li> 
-				<li class="has-dropdown"> 
-					<a href="#">Popular Apps</a> 
-						<ul class="dropdown"> 
-							<li><a href="#">How-To</a>
-							</li> 
-							<li><a href="Flory.html">Flory-Huggins</a>
-							</li> 
-							<li><a href="vorn.html">Voorn-Overbeek</a>
-							</li> 
-							<li><a href="slct.html">SLCT</a>
-							</li> 
-							
-						</ul> 
-				</li> 
-			</ul> <!-- Left Nav Section --> 
-			<ul class="left"> 
-				<li>
-					<a href="#">About</a>
-				</li> 
-			</ul> 
-		</section> 
-	</nav>
-	<div id = "Header" style="text-align: left;">
+{% extends "base.html" %}
+ 
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block content %}
+<div id = "Header" style="text-align: left;">
 		<h1>How to Get Started  </h1>
-	</div>
-	<div class = "introduction">
-		<div class = "row">
+</div>
+
+<!-- Start Offcanvas --!>
+		<div class="off-canvas-wrap" data-offcanvas>
+		  <div class="inner-wrap">
+
+			<a class="left-off-canvas-toggle" href="#" >Menu</a>
+
+			<!-- Off Canvas Menu -->
+			<aside class="left-off-canvas-menu">
+				<!-- whatever you want goes here -->
+				<ul>
+				  <li><a href="#">Item 1</a></li>
+				...
+				</ul>
+			</aside>
+
+    <!-- main content goes here -->
+    <p>Set in the year 0 F.E. ("Foundation Era"), The Psychohistorians opens on Trantor, the capital of the 12,000-year-old Galactic Empire. Though the empire appears stable and powerful, it is slowly decaying in ways that parallel the decline of the Western Roman Empire. Hari Seldon, a mathematician and psychologist, has developed psychohistory, a new field of science and psychology that equates all possibilities in large societies to mathematics, allowing for the prediction of future events.</p>
+
+  <!-- close the off-canvas menu -->
+  <a class="exit-off-canvas"></a>
+
+  </div>
+</div>
+
+<!-- end thing --!>
+
+<!--
+<div>
+	<div>
 		<p>
 			<h2>Using the Phase Plot Generators:</h2>
 		The following are a set of tools created in order to generate phase diagrams for polymer-polymer or polymer-solvent blends using coarse-grain models. These graphs function similarly, varying in their underlying theory and specificity of use. While each of the plot generators vary, the method to generate each plot is roughly the same. For all 3 options, the spinodal curve appears red while the binodal curve appears blue. Each plot has zoom options by drawing a box, or by selecting options on the bottom left of the plot. Also on the bottom right is the current mouse position. The current method of outputting a plot is through matplotlib and mpld3, but this is temporary and another plot generator may be used in the future. All numerical data is generated in simple python.
@@ -90,11 +74,7 @@
 			</p>
 
 			
-		</div>
-
-<!-- Added jQuery at the End --!>
-<script> $(document).ready(function(){ $(document).foundation();}); </script>
-
-
-</body>
-</html>
+	</div>
+</div>
+--!>
+{% endblock %}
