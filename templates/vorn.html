@@ -30,31 +30,32 @@ The tools included here, in order of increasing complexity and sophistication, a
 		<div class="row">
 			<div class="large-12 columns">
 				<label>Number of Monomers 
-						<input type="text" placeholder="100" name = "N" />
+				   		<input type="text" placeholder="100" name = "N" />  
 				</label>
+						<div align="center">
+							<input class="button" type="submit" value="Generate!" />
+						</div>
 			</div>
-		</div>
-		<div align="center">
-			<input class="button" type="submit" value="Generate!" />
 		</div>
 				
 	</form>
-<div class="picker">
-	<select class="image-picker" >
-			<option data-img-src="http://placekitten.com/220/200" value="1">Cute Kitten 1</option>
-			<option data-img-src="http://placekitten.com/180/200" value="2">Cute Kitten 2</option>
-			<option data-img-src="http://placekitten.com/130/200" value="3">Cute Kitten 3</option>
-			<option data-img-src="http://placekitten.com/270/200" value="4">Cute Kitten 4</option>
-	</select>
 </div>
-	
+<a href="#" data-dropdown="drop1" data-options="is_hover:true" >Polymers</a>
+<ul id="drop1" class="f-dropdown" data-dropdown-content>
+    <li><a href="#">item1</a></li>
+    <li class="has-dropdown" ><a href="#">content arise</a>
+        <ul class="dropdown" >
+			<a data-dropdown="drop2" aria-controls="drop2" aria-expanded="false">Has Content Dropdown</a>
+			<div id="drop2" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
+				  <p>Some text that people will think is awesome! Some text that people will think is awesome! Some text that people will think is awesome!</p>
+			 </div>
+            <li class="right"><a href="#">This is a link</a></li>
+            <li class="right"><a href="#">This is another</a></li>
+            <li class="right"><a href="#">Yet another</a></li>
+        </ul>
+    </li> 
+    <li><a href="#">Third option</a></li>
+</ul>
 
 <!-- Added jQuery at the End --!>
 {% endblock %}
-
-<!--
-<script>
-$("select").imagepicker({show_label : true});
-$("select").show();
-</script>
---!>
