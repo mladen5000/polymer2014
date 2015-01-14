@@ -29,8 +29,9 @@ The tools included here, in order of increasing complexity and sophistication, a
 	<form action="/vornplot" method="post">
 		<div class="row">
 			<div class="large-12 columns">
+					<!-- radio buttons and text input cant have the same name --!>
 				<label>Number of Monomers 
-				   		<input type="text" placeholder="100" name = "N" />  
+				   		<input type="text" placeholder="100" name = "N1" />  
 				</label>
 						<div align="center">
 							<input class="button" type="submit" value="Generate!" />
@@ -40,22 +41,5 @@ The tools included here, in order of increasing complexity and sophistication, a
 				
 	</form>
 </div>
-<a href="#" data-dropdown="drop1" data-options="is_hover:true" >Polymers</a>
-<ul id="drop1" class="f-dropdown" data-dropdown-content>
-    <li><a href="#">item1</a></li>
-    <li class="has-dropdown" ><a href="#">content arise</a>
-        <ul class="dropdown" >
-			<a data-dropdown="drop2" aria-controls="drop2" aria-expanded="false">Has Content Dropdown</a>
-			<div id="drop2" data-dropdown-content class="f-dropdown content" aria-hidden="true" tabindex="-1">
-				  <p>Some text that people will think is awesome! Some text that people will think is awesome! Some text that people will think is awesome!</p>
-			 </div>
-            <li class="right"><a href="#">This is a link</a></li>
-            <li class="right"><a href="#">This is another</a></li>
-            <li class="right"><a href="#">Yet another</a></li>
-        </ul>
-    </li> 
-    <li><a href="#">Third option</a></li>
-</ul>
-
 <!-- Added jQuery at the End --!>
 {% endblock %}
