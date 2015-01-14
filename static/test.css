@@ -19,13 +19,13 @@
     background-size:contain;
     background-repeat:no-repeat;
     display:inline-block;
-    width:50px;height:50px;
+    width:100px;height:100px;
     -webkit-transition: all 100ms ease-in;
        -moz-transition: all 100ms ease-in;
             transition: all 100ms ease-in;
-    -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
-       -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
-            filter: brightness(1.8) grayscale(1) opacity(.7);
+    -webkit-filter: brightness(1.8) grayscale(1) opacity(.1);
+       -moz-filter: brightness(1.8) grayscale(1) opacity(.1);
+            filter: brightness(1.8) grayscale(1) opacity(.1);
 }
 .drinkcard-cc:hover{
     -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
