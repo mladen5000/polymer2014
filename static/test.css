@@ -4,7 +4,8 @@
        -moz-appearance:none;
             appearance:none;
 }
-.visa{background-image:url("img/ph1.png");}
+.visa{background-image:url("img/ph1.png");
+}
 .mastercard{background-image:url("img/pep.png");}
 .pib{background-image:url("img/pib.png");}
 
@@ -28,5 +29,7 @@
             filter: brightness(1.8) grayscale(1) opacity(.1);
 }
 .drinkcard-cc:hover{
+		background-color: #00ff00; 
     -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
+	}
 
