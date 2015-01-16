@@ -26,9 +26,9 @@ def index():
 def howto():
 	return render_template("howto.html")
 
-@app.route('/Flory.html',methods=['POST','GET'])
+@app.route('/flory.html',methods=['POST','GET'])
 def flory():
-	return render_template("Flory.html")
+	return render_template("flory.html")
 
 @app.route('/vorn.html',methods=['POST','GET'])
 def vorn():
@@ -109,7 +109,7 @@ def slctplot():
 
 	
 @app.route('/plot', methods=['GET','POST'])	
-def login():
+def plot():
 	
 	if request.method == 'POST':
 		na = float(request.form['NFA'])
@@ -122,10 +122,8 @@ def login():
 
 		"""Flipper"""
 		if na > nb:
-				print "we gotta flip!"
 				flipper = 1
 				na, nb, w,x,y,z=  flip(na,nb,1,1,1,1)
-				print na, nb 
 		else:
 				flipper = 0
 
@@ -270,9 +268,6 @@ def vNR(alpha,N):
 	#Convert Numpy arrays (x1,x2,y2) to a list
 		x1=x1.tolist()
 		x2=x2.tolist()
-		print x1
-		print x2
-		print y2
 		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
 		y2=y2.tolist()
 		y2i = y2[::-1]
