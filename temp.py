@@ -1,5 +1,5 @@
 
-
+#t
 def vfun(x,phi1,sigma,alpha):
 	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
 	return array([
