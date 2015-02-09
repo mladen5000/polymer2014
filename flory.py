@@ -59,6 +59,24 @@ def slctplot():
 		if polya == "PIB":
 				r1 = 1.750
 				p1 = 1.500
+		if polya == "PA":
+				r1 = 1.0
+				p1 = 1.0
+		if polya == "PB":
+				r1 = 1.333
+				p1 = 1.333
+		if polya == "PQ":
+				r1 = 1.350
+				p1 = 1.500
+		if polya == "PU":
+				r1 = 13.0/9.0
+				p1 = 16.0/9.0
+		if polya == "PR":
+				r1 = 11.0/7.0
+				p1 = 13.0/7.0
+		if polya == "PS":
+				r1 = 13.0/8.0
+				p1 = 16.0/9.0
 
 		if polyb == "PH1":
 				r2 = 1.150
@@ -69,7 +87,24 @@ def slctplot():
 		if polyb == "PIB":
 				r2 = 1.750
 				p2 = 1.500
-
+		if polyb == "PA":
+				r2 = 1.0
+				p2 = 1.0
+		if polyb == "PB":
+				r2 = 1.333
+				p2 = 1.333
+		if polyb == "PQ":
+				r2 = 1.350
+				p2 = 1.500
+		if polyb == "PU":
+				r2 = 13.0/9.0
+				p2 = 16.0/9.0
+		if polyb == "PR":
+				r2 = 11.0/7.0
+				p2 = 13.0/7.0
+		if polyb == "PS":
+				r2 = 13.0/8.0
+				p2 = 16.0/9.0
 		print r1, r2, z, p1, p2, na, nb
 		global flipper
 

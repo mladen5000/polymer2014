@@ -4,10 +4,16 @@
        -moz-appearance:none;
             appearance:none;
 }
-.visa{background-image:url("img/ph1.png");
-}
+.visa{background-image:url("img/ph1.png");}
 .mastercard{background-image:url("img/pep.png");}
 .pib{background-image:url("img/pib.png");}
+.p_a{background-image:url("img/a.png");}
+.p_b{background-image:url("img/b.png");}
+.p_e{background-image:url("img/e.png");}
+.p_q{background-image:url("img/q.png");}
+.p_u{background-image:url("img/u.png");}
+.p_r{background-image:url("img/r.png");}
+.p_s{background-image:url("img/s.png");}
 
 .cc-selector input:active +.drinkcard-cc{opacity: .9;}
 .cc-selector input:checked +.drinkcard-cc{
