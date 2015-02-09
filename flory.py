@@ -78,7 +78,7 @@ def slctplot():
 				print "we gotta flip!"
 				flipper = 1
 				na, nb, r1, r2, p1, p2 =  flip(na,nb,r1,r2,p1,p2)
-				print r1, r2, z, p1, p2, na, nb 
+				print r1, r2, z, p1, p2, na, nb
 		else:
 				flipper = 0
 
@@ -540,7 +540,7 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 		phi = x1 + x2
 		y2 = y2 + y2i
 
-		return (phi,x2,y2)
+		return (phi,y2)
 
 na = 1
 nb = 1
