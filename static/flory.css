@@ -1,0 +1,10 @@
+#Header {   border-bottom: solid #D0D0D0 7px;                                                   
+			padding-top: 20px;
+			padding-bottom: 50px;
+			background-color: #42647F;
+			margin-bottom:30px;
+ 		 }
+#Header h1 { color: white;
+			text-align: center;
+			}
+#fbox {border: solid black 7px;}
