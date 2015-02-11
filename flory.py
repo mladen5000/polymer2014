@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import StringIO
 import mpld3
 from mpld3 import plugins
+from scipy.optimize import fsolve
 
 from flask import Flask, request, make_response, render_template
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -235,37 +236,58 @@ def vjac(x,phi1,sigma,alpha,m):
 	"df1/dphi2, df1/dchi; df2/dphi2, df2/dchi"
 	return array([[
 
-	1.0 - 2*m - 1.0/x[0] + m*1.0/(1 - x[0] - x[1]) - (m*x[0])/(1.0 - x[0] - x[1]) - (m*x[1])/(1.0 - x[0] - x[1]) + 
-  (3.0*alpha*m*(sigma**2))/(4.0*(sigma*x[0] + x[1])**.5) - (alpha*m*(sigma**2)*x[0])/(4*(sigma*x[0] + x[1])**0.5) - 
-  (alpha*m*sigma*x[1])/(4.0*(sigma*x[0] + x[1])**.5) - (0.5)*alpha*m*sigma*(sigma*x[0] + x[1])**.5, # dF1/dphi2
+		1.0 - 2*m - 1.0/x[0] + m*1.0/(1 - x[0] - x[1]) 
+		- (m*x[0])/(1.0 - x[0] - x[1]) - (m*x[1])/(1.0 - x[0] - x[1]) 
+		+ (3.0*alpha*m*(sigma**2))/(4.0*(sigma*x[0] + x[1])**.5) 
+		- (alpha*m*(sigma**2)*x[0])/(4*(sigma*x[0] + x[1])**0.5) 
+		- (alpha*m*sigma*x[1])/(4.0*(sigma*x[0] + x[1])**.5) 
+		- (0.5)*alpha*m*sigma*(sigma*x[0] + x[1])**.5, # dF1/dphi2
 
-	-1.0*(m*1.0/(1 - phi1 - x[1])) + (m*phi1)/(1 - phi1 - x[1]) + m*1.0/(1 - x[0] - x[1]) - (m*x[0])/(1 - x[0] - x[1]) + (m*x[1])/(1 - phi1 - x[1]) - 
-  (m*x[1])/(1 - x[0] - x[1]) - (3*alpha*m*sigma)/(4*(phi1*sigma + x[1])**.5) + (alpha*m*phi1*sigma)/(4*(phi1*sigma + x[1])**.5) + 
-  (alpha*m*x[1])/(4*(phi1*sigma + x[1])**.5) + (1.0/2.0)*alpha*m*(phi1*sigma + x[1])**.5 + (3*alpha*m*sigma)/(4*(sigma*x[0] + x[1])**.5) - 
-  (alpha*m*sigma*x[0])/(4*(sigma*x[0] + x[1])**.5) - (alpha*m*x[1])/(4*(sigma*x[0] + x[1])**.5) - (1.0/2.0)*alpha*m*(sigma*x[0] + x[1])**.5
-		 	], #dF1/dpsi
+		-1.0*(m*1.0/(1 - phi1 - x[1])) + (m*phi1)/(1 - phi1 - x[1]) 
+		+ m*1.0/(1 - x[0] - x[1]) - (m*x[0])/(1 - x[0] - x[1]) 
+		+ (m*x[1])/(1 - phi1 - x[1]) - (m*x[1])/(1 - x[0] - x[1]) 
+		- (3*alpha*m*sigma)/(4*(phi1*sigma + x[1])**.5) 
+		+ (alpha*m*phi1*sigma)/(4*(phi1*sigma + x[1])**.5) 
+		+ (alpha*m*x[1])/(4*(phi1*sigma + x[1])**.5) 
+		+ (1.0/2.0)*alpha*m*(phi1*sigma + x[1])**.5 
+		+ (3*alpha*m*sigma)/(4*(sigma*x[0] + x[1])**.5) 
+		- (alpha*m*sigma*x[0])/(4*(sigma*x[0] + x[1])**.5) 
+		- (alpha*m*x[1])/(4*(sigma*x[0] + x[1])**.5) 
+		- (1.0/2.0)*alpha*m*(sigma*x[0] + x[1])**.5	], #dF1/dpsi
 
-	[log(phi1/2.0)/m - log(x[0]/2.0)/(m*1.0) - log(1 - phi1 - x[1]) + log(1 - x[0] - x[1]) - (1.5)*alpha*sigma*(phi1*sigma + x[1])**.5 + 
-  (1.5)*alpha*sigma*(sigma*x[0] + x[1])**.5 , #dF2/dphi2
+		[log(phi1/2.0)/m - log(x[0]/2.0)/(m*1.0) - log(1 - phi1 - x[1]) 
+		+ log(1 - x[0] - x[1]) - (1.5)*alpha*sigma*(phi1*sigma + x[1])**.5 
+		+ (1.5)*alpha*sigma*(sigma*x[0] + x[1])**.5 , #dF2/dphi2
 
-  -log(1 - phi1 - x[1]) + log(1 - x[0] - x[1]) - (1.5)*alpha*(phi1*sigma + x[1])**.5 + (1.5)*alpha*(sigma*x[0] + x[1])**.5 + 
-    (-phi1 + x[0])*(1.0/(1 - phi1 - x[1]) - (3*alpha*sigma)/(4*(phi1*sigma + x[1])**.5))
-
-			]]) #dF2/dpsi
+  		-log(1 - phi1 - x[1]) + log(1 - x[0] - x[1]) - (1.5)*alpha*(phi1*sigma 
+		+ x[1])**.5 + (1.5)*alpha*(sigma*x[0] + x[1])**.5 
+		+ (-phi1 + x[0])*(1.0/(1 - phi1 - x[1]) 
+		- (3*alpha*sigma)/(4*(phi1*sigma + x[1])**.5))   ]]) #dF2/dpsi
 
 
 def vfun(x,phi1,sigma,alpha,m):
 	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
+	print x, phi1,sigma,alpha,m
 	return array([
-		-phi1 + x[0] - m*(1 - phi1 - x[1]) + m*(1 - x[0] - x[1]) - (1.5)*alpha*m*sigma*(phi1*sigma + x[1])**.5 
-		+ (0.5)*alpha*m*phi1*sigma*(phi1*sigma + x[1])**0.5 + 0.5*alpha*m*x[1]*(phi1*sigma + x[1])**0.5 + (1.5)*alpha*m*sigma*(sigma*x[0] + x[1])**.5 - (0.5)*alpha*m*sigma*x[0]*(sigma*x[0] + x[1])**.5 - 
-  (0.5)*alpha*m*x[1]*(sigma*x[0] + x[1])**.5 + log(phi1/2.0) - log(x[0]/2.0) + m*log(1 - phi1 - x[1]) - m*phi1*log(1 - phi1 - x[1]) - 
-  m*(1 - phi1 - x[1])*log(1 - phi1 - x[1]) - m*x[1]*log(1 - phi1 - x[1]) - m*log(1 - x[0] - x[1]) + m*x[0]*log(1 - x[0] - x[1]) + 
-  m*(1 - x[0] - x[1])*log(1 - x[0] - x[1]) + m*x[1]*log(1 - x[0] - x[1]),
+		- phi1 + x[0] - m*(1 - phi1 - x[1]) + m*(1 - x[0] - x[1]) 
+		- (1.5)*alpha*m*sigma*(phi1*sigma + x[1])**.5 
+		+ (0.5)*alpha*m*phi1*sigma*(phi1*sigma + x[1])**0.5 
+		+ 0.5*alpha*m*x[1]*(phi1*sigma + x[1])**0.5 
+		+ (1.5)*alpha*m*sigma*(sigma*x[0] + x[1])**.5 
+		- (0.5)*alpha*m*sigma*x[0]*(sigma*x[0] + x[1])**.5 
+		- (0.5)*alpha*m*x[1]*(sigma*x[0] + x[1])**.5 + log(phi1/2.0) 
+		- log(x[0]/2.0) + m*log(1 - phi1 - x[1]) - m*phi1*log(1 - phi1 - x[1]) 
+		- m*(1 - phi1 - x[1])*log(1 - phi1 - x[1]) - m*x[1]*log(1 - phi1 - x[1]) 
+		- m*log(1 - x[0] - x[1]) + m*x[0]*log(1 - x[0] - x[1]) 
+		+ m*(1 - x[0] - x[1])*log(1 - x[0] - x[1]) + m*x[1]*log(1 - x[0] - x[1])
+		
+		,
 
-  (-alpha)*(x[1] + phi1*sigma)**1.5 + alpha*(x[1] + x[0]*sigma)**1.5 + (phi1*log(phi1/2))/m - (x[0]*log(x[0]/2))/m
-  + (-phi1 + x[0]) * (-1 + 1.0/m - 1.5*alpha*sigma*(x[1] + phi1*sigma)**.5 + log(phi1/2)/m - log(1-phi1-x[1])) 
-  + (1-phi1-x[1])*log(1-phi1-x[1]) - (1-x[0]-x[1])*log(1-x[0]-x[1])
+  		(-alpha)*(x[1] + phi1*sigma)**1.5 + alpha*(x[1] + x[0]*sigma)**1.5 
+		+ (phi1*log(phi1/2))/m - (x[0]*log(x[0]/2))/m
+		+ (-phi1 + x[0]) * (-1 + 1.0/m - 1.5*alpha*sigma*(x[1] + phi1*sigma)**.5 
+		+ log(phi1/2)/m - log(1-phi1-x[1])) + (1-phi1-x[1])*log(1-phi1-x[1]) 
+		- (1-x[0]-x[1])*log(1-x[0]-x[1])
   ])
 
 def v_crit(alpha,N):
@@ -589,8 +611,21 @@ sigma = .24
 #plt.plot(phi,y2)
 #plt.show()
 #print phi,y2
-if __name__ == '__main__':
-    app.run(debug=True)
+
+x0 = [0.1,0.1]
+phi1 = 0.2
+m = 100.
+
+args = (phi1,sigma,alpha,m)
+blah = fsolve(vfun, x0, args=(phi1,sigma,alpha,m), fprime = vjac)
+
+
+print vjac(x0,phi1,sigma,alpha,m)
+
+
+
+#if __name__ == '__main__':
+#    app.run(debug=True)
 
 
 
