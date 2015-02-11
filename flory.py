@@ -207,9 +207,8 @@ def vornplot():
 		canvas = FigureCanvas(fig)
 
 		"""Move Spinodal Elsewhere"""
-		sigma = .2
-		phi,y2 =  vNR(alpha,N,sigma)
-		#x, spinodal = vorn_Spinodal(alpha,N)
+		phi,y2 =  vNR(alpha,N)
+		x, spinodal = vorn_Spinodal(alpha,N)
 		line1 = axis.plot(x,spinodal,'r',lw=2)
 		spinline = axis.plot(phi,y2,'b',lw=2) 
 
@@ -228,67 +227,41 @@ def flip(a1,a2,b1,b2,c1,c2):
 """ Voorn-Overbeek """
 
 def vorn_Spinodal(alpha,N):
-		x = arange(1e-3,0.1,0.0001)
+		x = arange(1e-5,0.1,0.0001)
  		spinodal = ((2 * (2**.333) * ((N*x -x +1)**.666))/((3**.666)*(alpha**.666)*(N**.666)*(((x-1)**2)**(1./3.))*(x**.333)))
 		return x, spinodal
 
-def vjac(x,phi1,sigma,alpha,m):
+def vfun(x,alpha,N,phi1):
+	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
+	return array([
+
+			1.5*alpha*x[1]*(x[1]*phi1)**0.5 - 1.5*alpha*x[1]*(x[1]*x[0])**0.5
+			- log(phi1/2.)/N + log(x[0]/2.)/N + log(1-phi1) - log(1-x[0]),
+
+			-1.5*alpha*x[1]*x[0]*(x[1]*phi1)**.5 + .5*alpha*x[1]*phi1*(x[1]*phi1)**.5 
+			+ alpha*x[1]*x[0]*(x[1]*x[0])**.5 + x[0]*log(phi1/2)/N - phi1/N 
+			+ x[0]/N - x[0]*log(x[0]/2)/N - x[0]*log(1-phi1) + phi1 
+			+ log(1-phi1) - x[0] + x[0]*log(1-x[0]) - log(1-x[0])
+
+			])
+
+def vjac(x,alpha,N,phi1):
 	"df1/dphi2, df1/dchi; df2/dphi2, df2/dchi"
 	return array([[
 
-		1.0 - 2*m - 1.0/x[0] + m*1.0/(1 - x[0] - x[1]) 
-		- (m*x[0])/(1.0 - x[0] - x[1]) - (m*x[1])/(1.0 - x[0] - x[1]) 
-		+ (3.0*alpha*m*(sigma**2))/(4.0*(sigma*x[0] + x[1])**.5) 
-		- (alpha*m*(sigma**2)*x[0])/(4*(sigma*x[0] + x[1])**0.5) 
-		- (alpha*m*sigma*x[1])/(4.0*(sigma*x[0] + x[1])**.5) 
-		- (0.5)*alpha*m*sigma*(sigma*x[0] + x[1])**.5, # dF1/dphi2
+			((-3.*alpha*x[1]**2.)/(4.*(x[1]*x[0])**0.5)) 
+			+ 1./(N*x[0]) + 1./(1.-x[0]), # dF1/dphi2
 
-		-1.0*(m*1.0/(1 - phi1 - x[1])) + (m*phi1)/(1 - phi1 - x[1]) 
-		+ m*1.0/(1 - x[0] - x[1]) - (m*x[0])/(1 - x[0] - x[1]) 
-		+ (m*x[1])/(1 - phi1 - x[1]) - (m*x[1])/(1 - x[0] - x[1]) 
-		- (3*alpha*m*sigma)/(4*(phi1*sigma + x[1])**.5) 
-		+ (alpha*m*phi1*sigma)/(4*(phi1*sigma + x[1])**.5) 
-		+ (alpha*m*x[1])/(4*(phi1*sigma + x[1])**.5) 
-		+ (1.0/2.0)*alpha*m*(phi1*sigma + x[1])**.5 
-		+ (3*alpha*m*sigma)/(4*(sigma*x[0] + x[1])**.5) 
-		- (alpha*m*sigma*x[0])/(4*(sigma*x[0] + x[1])**.5) 
-		- (alpha*m*x[1])/(4*(sigma*x[0] + x[1])**.5) 
-		- (1.0/2.0)*alpha*m*(sigma*x[0] + x[1])**.5	], #dF1/dpsi
+		 	2.25*alpha*((x[1]*phi1)**0.5 - (x[1]*x[0])**0.5)], #dF1/dsigma
 
-		[log(phi1/2.0)/m - log(x[0]/2.0)/(m*1.0) - log(1 - phi1 - x[1]) 
-		+ log(1 - x[0] - x[1]) - (1.5)*alpha*sigma*(phi1*sigma + x[1])**.5 
-		+ (1.5)*alpha*sigma*(sigma*x[0] + x[1])**.5 , #dF2/dphi2
+		 	[
+			-1.5*alpha*x[1]*(x[1]*phi1)**0.5 + 1.5*alpha*x[1]*(x[1]*x[0])**0.5 
+			+ log(phi1)/N - log(x[0])/N - log(1.-phi1) + log(1.-x[0]), #dF2/dphi2
 
-  		-log(1 - phi1 - x[1]) + log(1 - x[0] - x[1]) - (1.5)*alpha*(phi1*sigma 
-		+ x[1])**.5 + (1.5)*alpha*(sigma*x[0] + x[1])**.5 
-		+ (-phi1 + x[0])*(1.0/(1 - phi1 - x[1]) 
-		- (3*alpha*sigma)/(4*(phi1*sigma + x[1])**.5))   ]]) #dF2/dpsi
+			0.75*alpha*(-3.*x[0]*(x[1]*phi1)**.5 + phi1*(x[1]*phi1)**.5 
+			+ 2.*x[0]*(x[1]*x[0])**.5)
 
-
-def vfun(x,phi1,sigma,alpha,m):
-	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
-	print x, phi1,sigma,alpha,m
-	return array([
-		- phi1 + x[0] - m*(1 - phi1 - x[1]) + m*(1 - x[0] - x[1]) 
-		- (1.5)*alpha*m*sigma*(phi1*sigma + x[1])**.5 
-		+ (0.5)*alpha*m*phi1*sigma*(phi1*sigma + x[1])**0.5 
-		+ 0.5*alpha*m*x[1]*(phi1*sigma + x[1])**0.5 
-		+ (1.5)*alpha*m*sigma*(sigma*x[0] + x[1])**.5 
-		- (0.5)*alpha*m*sigma*x[0]*(sigma*x[0] + x[1])**.5 
-		- (0.5)*alpha*m*x[1]*(sigma*x[0] + x[1])**.5 + log(phi1/2.0) 
-		- log(x[0]/2.0) + m*log(1 - phi1 - x[1]) - m*phi1*log(1 - phi1 - x[1]) 
-		- m*(1 - phi1 - x[1])*log(1 - phi1 - x[1]) - m*x[1]*log(1 - phi1 - x[1]) 
-		- m*log(1 - x[0] - x[1]) + m*x[0]*log(1 - x[0] - x[1]) 
-		+ m*(1 - x[0] - x[1])*log(1 - x[0] - x[1]) + m*x[1]*log(1 - x[0] - x[1])
-		
-		,
-
-  		(-alpha)*(x[1] + phi1*sigma)**1.5 + alpha*(x[1] + x[0]*sigma)**1.5 
-		+ (phi1*log(phi1/2))/m - (x[0]*log(x[0]/2))/m
-		+ (-phi1 + x[0]) * (-1 + 1.0/m - 1.5*alpha*sigma*(x[1] + phi1*sigma)**.5 
-		+ log(phi1/2)/m - log(1-phi1-x[1])) + (1-phi1-x[1])*log(1-phi1-x[1]) 
-		- (1-x[0]-x[1])*log(1-x[0]-x[1])
-  ])
+			]]) #dF2/dsigma
 
 def v_crit(alpha,N):
 		crit_phi = (-(N+2) + sqrt((N+2)**2 + 4*(N-1)))/(2*(N-1))
@@ -296,14 +269,15 @@ def v_crit(alpha,N):
 		return crit_phi
 
 
-def vNR(alpha,N,sigma):
+def vNR(alpha,N):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
+		crit_phi = v_crit(alpha,N)
 
-		phi1vals = arange(0.001,.1,.002)
+		phi1vals = arange(2e-7,crit_phi,.0001)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
-		new_guess = [0.1,.1] #phi2, psi
+		new_guess = [0.9,.9] #phi2, sigma
 		iter = 0
 		y2 = zeros((len(phi1vals),1))
 		x2 = zeros((len(phi1vals),1))
@@ -317,12 +291,11 @@ def vNR(alpha,N,sigma):
 				iter += 1
 				index = phi1vals.index(phi)
 				guess = new_guess
-				#print guess
-				jacobian = vjac(guess,phi,sigma,alpha,N)
+				jacobian = vjac(guess,alpha,N,phi)
 				invjac = inv(jacobian)
-				f1 = vfun(guess,phi,sigma,alpha,N)
-				new_guess = guess - .5*dot(invjac,f1)
-				if abs(new_guess[0] - guess[0]) < 1e-6 and abs(new_guess[1]-guess[1]) < 1e-6: 
+				f1 = vfun(guess,alpha,N,phi)
+				new_guess = guess - .1*dot(invjac,f1)
+				if abs(new_guess[0] - guess[0]) < 1e-8 and abs(new_guess[1]-guess[1]) < 1e-8: 
 					x1[index] = phi
 					x2[index] = new_guess[0]
 					y2[index] = new_guess[1]
@@ -336,11 +309,8 @@ def vNR(alpha,N,sigma):
 		y2i = y2[::-1]
 
 		#Concatenate the lists together
-		phi = x1
-		phi2 = x2
-
-	#	phi = x1 + x2
-#		y2 = y2 + y2i
+		phi = x1 + x2
+		y2 = y2 + y2i
 		return (phi,y2)
 		
 
@@ -604,28 +574,12 @@ nb = 1
 crit_chi = .5 
 crit_phi = 1
 alpha = 3.655
-N = 2000
-sigma = .24
-
-#phi,y2 = vNR(alpha,N,sigma)
-#plt.plot(phi,y2)
-#plt.show()
-#print phi,y2
-
-x0 = [0.1,0.1]
-phi1 = 0.2
-m = 100.
-
-args = (phi1,sigma,alpha,m)
-blah = fsolve(vfun, x0, args=(phi1,sigma,alpha,m), fprime = vjac)
-
-
-print vjac(x0,phi1,sigma,alpha,m)
+N = 1
 
 
 
-#if __name__ == '__main__':
-#    app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 
