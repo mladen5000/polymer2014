@@ -57,7 +57,8 @@ def vjac(x,phi1,sigma,alpha,m):
 
 def vfun(x,phi1,sigma,alpha,m):
 	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
-	return array([
+	print x,phi1,sigma,alpha,m
+	"""
 		- phi1 + x[0] - m*(1 - phi1 - x[1]) + m*(1 - x[0] - x[1]) 
 		- (1.5)*alpha*m*sigma*(phi1*sigma + x[1])**.5 
 		+ (0.5)*alpha*m*phi1*sigma*(phi1*sigma + x[1])**0.5 
@@ -69,6 +70,14 @@ def vfun(x,phi1,sigma,alpha,m):
 		- m*(1 - phi1 - x[1])*log(1 - phi1 - x[1]) - m*x[1]*log(1 - phi1 - x[1]) 
 		- m*log(1 - x[0] - x[1]) + m*x[0]*log(1 - x[0] - x[1]) 
 		+ m*(1 - x[0] - x[1])*log(1 - x[0] - x[1]) + m*x[1]*log(1 - x[0] - x[1])
+
+	"""
+	return array([
+		  (-1.5)*alpha*sigma*sqrt(x[1] + phi1*sigma) 
+		+ (1.5)*alpha*sigma*sqrt(x[1] + x[0]*sigma) 
+		+ log(phi1/2.)/m - log(x[0]/2.)/m - log(1 - phi1 - x[1]) 
+		+ log(1 - x[0] - x[1])
+
 		
 		,
 
@@ -76,7 +85,7 @@ def vfun(x,phi1,sigma,alpha,m):
 		+ (phi1*log(phi1/2))/m - (x[0]*log(x[0]/2))/m
 		+ (-phi1 + x[0]) * (-1 + 1.0/m - 1.5*alpha*sigma*(x[1] + phi1*sigma)**.5 
 		+ log(phi1/2)/m - log(1-phi1-x[1])) + (1-phi1-x[1])*log(1-phi1-x[1]) 
-		- (1-x[0]-x[1])*log(1-x[0]-x[1])
+		- (1-x[0]-x[1])*log(1.-x[0]-x[1])
   ])
 
 def v_crit(alpha,N):
@@ -138,16 +147,19 @@ crit_chi = .5
 crit_phi = 1
 alpha = 3.655
 N = 2000
-sigma = .24
+sigma = .5
 
-phi,y2 = vNR(alpha,N,sigma)
+#phi,y2 = vNR(alpha,N,sigma)
 #plt.plot(phi,y2)
 #plt.show()
 #print phi,y2
 
-x0 = [0.1,0.1]
+# [phi2,psi]
+x = [0.5,0.0]
 phi1 = 0.2
-m = 100.
+m = 100.0
+print vfun(x,phi1,sigma,alpha,m)
+print vjac(x,phi1,sigma,alpha,m)
 
 
 

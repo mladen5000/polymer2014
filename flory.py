@@ -574,12 +574,18 @@ nb = 1
 crit_chi = .5 
 crit_phi = 1
 alpha = 3.655
-N = 1
+N = 100
+# [phi2, sigma]
+x = [0.5,0.5]
+phi1 = .2
+
+print x, phi1,alpha, N
+print vfun(x,alpha,N,phi1)
+print vjac(x,alpha,N,phi1)
 
 
-
-if __name__ == '__main__':
-    app.run(debug=True)
+#if __name__ == '__main__':
+#    app.run(debug=True)
 
 
 
