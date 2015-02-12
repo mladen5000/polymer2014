@@ -24,8 +24,7 @@ def vorn_Spinodal(alpha,N):
 
 def vjac(x,phi1,sigma,alpha,m):
 	"df1/dphi2, df1/dchi; df2/dphi2, df2/dchi"
-	return array([[
-
+	"""
 		1.0 - 2*m - 1.0/x[0] + m*1.0/(1 - x[0] - x[1]) 
 		- (m*x[0])/(1.0 - x[0] - x[1]) - (m*x[1])/(1.0 - x[0] - x[1]) 
 		+ (3.0*alpha*m*(sigma**2))/(4.0*(sigma*x[0] + x[1])**.5) 
@@ -43,7 +42,20 @@ def vjac(x,phi1,sigma,alpha,m):
 		+ (3*alpha*m*sigma)/(4*(sigma*x[0] + x[1])**.5) 
 		- (alpha*m*sigma*x[0])/(4*(sigma*x[0] + x[1])**.5) 
 		- (alpha*m*x[1])/(4*(sigma*x[0] + x[1])**.5) 
-		- (1.0/2.0)*alpha*m*(sigma*x[0] + x[1])**.5	], #dF1/dpsi
+		- (1.0/2.0)*alpha*m*(sigma*x[0] + x[1])**.5	
+	"""
+	return array([[
+		 - (1./(m*x[0])) - 1./(1. - x[0]- x[1]) 
+		+ (3*alpha*sigma**2)/(4*sqrt(x[1]+ x[0]*sigma)),
+
+		
+		1.0/(1 - phi1 - x[1]) - 1.0/(1 - x[0] - x[1]) 
+		- (3*alpha*sigma)/(4.*sqrt(x[1] + phi1*sigma)) 
+		+ (3*alpha*sigma)/(4.*sqrt(x[1] + x[0]*sigma))
+		
+
+		
+		], #dF1/dpsi
 
 		[log(phi1/2.0)/m - log(x[0]/2.0)/(m*1.0) - log(1 - phi1 - x[1]) 
 		+ log(1 - x[0] - x[1]) - (1.5)*alpha*sigma*(phi1*sigma + x[1])**.5 
@@ -57,7 +69,6 @@ def vjac(x,phi1,sigma,alpha,m):
 
 def vfun(x,phi1,sigma,alpha,m):
 	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
-	print x,phi1,sigma,alpha,m
 	"""
 		- phi1 + x[0] - m*(1 - phi1 - x[1]) + m*(1 - x[0] - x[1]) 
 		- (1.5)*alpha*m*sigma*(phi1*sigma + x[1])**.5 
@@ -73,10 +84,10 @@ def vfun(x,phi1,sigma,alpha,m):
 
 	"""
 	return array([
-		  (-1.5)*alpha*sigma*sqrt(x[1] + phi1*sigma) 
+		   (-1.5)*alpha*sigma*sqrt(x[1] + phi1*sigma) 
 		+ (1.5)*alpha*sigma*sqrt(x[1] + x[0]*sigma) 
 		+ log(phi1/2.)/m - log(x[0]/2.)/m - log(1 - phi1 - x[1]) 
-		+ log(1 - x[0] - x[1])
+		+ log(1 - x[0] - x[1]) 
 
 		
 		,
@@ -98,7 +109,7 @@ def vNR(alpha,N,sigma):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
 
-		phi1vals = arange(0.001,.1,.002)
+		phi1vals = arange(1e-2,.1,.002)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
 		new_guess = [0.1,.1] #phi2, psi
@@ -106,7 +117,7 @@ def vNR(alpha,N,sigma):
 		y2 = zeros((len(phi1vals),1))
 		x2 = zeros((len(phi1vals),1))
 		x1 = zeros((len(phi1vals),1))
-		max_iter = 20000
+		max_iter = 2000
 
 		#Loop to find the roots using Multivariate Newton-Rhapson
 		for phi in phi1vals:
@@ -115,12 +126,11 @@ def vNR(alpha,N,sigma):
 				iter += 1
 				index = phi1vals.index(phi)
 				guess = new_guess
-				print guess
 				jacobian = vjac(guess,phi,sigma,alpha,N)
 				invjac = inv(jacobian)
 				f1 = vfun(guess,phi,sigma,alpha,N)
-				new_guess = guess - .001*dot(invjac,f1)
-				if abs(new_guess[0] - guess[0]) < 1e-6 and abs(new_guess[1]-guess[1]) < 1e-6: 
+				new_guess = guess - .1*dot(invjac,f1)
+				if abs(new_guess[0] - guess[0]) < 1e-8 and abs(new_guess[1]-guess[1]) < 1e-8: 
 					x1[index] = phi
 					x2[index] = new_guess[0]
 					y2[index] = new_guess[1]
@@ -137,7 +147,7 @@ def vNR(alpha,N,sigma):
 		phi = x1
 		phi2 = x2
 
-	#	phi = x1 + x2
+#		phi = x1 + x2
 #		y2 = y2 + y2i
 		return (phi,y2)
 
@@ -146,20 +156,20 @@ nb = 1
 crit_chi = .5 
 crit_phi = 1
 alpha = 3.655
-N = 2000
-sigma = .5
+N = 1000
+sigma = .44
 
-#phi,y2 = vNR(alpha,N,sigma)
-#plt.plot(phi,y2)
-#plt.show()
+phi,y2 = vNR(alpha,N,sigma)
+plt.plot(phi,y2)
+plt.xlabel('phi')
+plt.ylabel('psi')
+plt.show()
 #print phi,y2
 
 # [phi2,psi]
-x = [0.5,0.0]
+x = [0.5,0.2]
 phi1 = 0.2
 m = 100.0
-print vfun(x,phi1,sigma,alpha,m)
-print vjac(x,phi1,sigma,alpha,m)
 
 
 

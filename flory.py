@@ -196,20 +196,21 @@ def plot():
 def vornplot():
 	if request.method == 'POST':
 		N = float(request.form['N'])
+		sigma = float(request.form['sigma'])
 
 		"""Set up the plot"""
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		axis.set_xlabel('Volume Fraction')
-		axis.set_ylabel('Charge Density')
+		axis.set_xlabel('Volume Fraction, Phi')
+		axis.set_ylabel('Salt Concentration, Psi')
 		axis.set_title('Voorn-Overbeek Phase Diagram')
 		canvas = FigureCanvas(fig)
 
 		"""Move Spinodal Elsewhere"""
-		phi,y2 =  vNR(alpha,N)
-		x, spinodal = vorn_Spinodal(alpha,N)
-		line1 = axis.plot(x,spinodal,'r',lw=2)
+		phi,y2 =  vNR(alpha,N,sigma)
+		#x, spinodal = vorn_Spinodal(alpha,N)
+		#line1 = axis.plot(x,spinodal,'r',lw=2)
 		spinline = axis.plot(phi,y2,'b',lw=2) 
 
 		"""Make this organized like the other stuff"""
@@ -227,41 +228,86 @@ def flip(a1,a2,b1,b2,c1,c2):
 """ Voorn-Overbeek """
 
 def vorn_Spinodal(alpha,N):
-		x = arange(1e-5,0.1,0.0001)
+		x = arange(1e-3,0.1,0.0001)
  		spinodal = ((2 * (2**.333) * ((N*x -x +1)**.666))/((3**.666)*(alpha**.666)*(N**.666)*(((x-1)**2)**(1./3.))*(x**.333)))
 		return x, spinodal
 
-def vfun(x,alpha,N,phi1):
-	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
-	return array([
-
-			1.5*alpha*x[1]*(x[1]*phi1)**0.5 - 1.5*alpha*x[1]*(x[1]*x[0])**0.5
-			- log(phi1/2.)/N + log(x[0]/2.)/N + log(1-phi1) - log(1-x[0]),
-
-			-1.5*alpha*x[1]*x[0]*(x[1]*phi1)**.5 + .5*alpha*x[1]*phi1*(x[1]*phi1)**.5 
-			+ alpha*x[1]*x[0]*(x[1]*x[0])**.5 + x[0]*log(phi1/2)/N - phi1/N 
-			+ x[0]/N - x[0]*log(x[0]/2)/N - x[0]*log(1-phi1) + phi1 
-			+ log(1-phi1) - x[0] + x[0]*log(1-x[0]) - log(1-x[0])
-
-			])
-
-def vjac(x,alpha,N,phi1):
+def vjac(x,phi1,sigma,alpha,m):
 	"df1/dphi2, df1/dchi; df2/dphi2, df2/dchi"
+	"""
+		1.0 - 2*m - 1.0/x[0] + m*1.0/(1 - x[0] - x[1]) 
+		- (m*x[0])/(1.0 - x[0] - x[1]) - (m*x[1])/(1.0 - x[0] - x[1]) 
+		+ (3.0*alpha*m*(sigma**2))/(4.0*(sigma*x[0] + x[1])**.5) 
+		- (alpha*m*(sigma**2)*x[0])/(4*(sigma*x[0] + x[1])**0.5) 
+		- (alpha*m*sigma*x[1])/(4.0*(sigma*x[0] + x[1])**.5) 
+		- (0.5)*alpha*m*sigma*(sigma*x[0] + x[1])**.5, # dF1/dphi2
+
+		-1.0*(m*1.0/(1 - phi1 - x[1])) + (m*phi1)/(1 - phi1 - x[1]) 
+		+ m*1.0/(1 - x[0] - x[1]) - (m*x[0])/(1 - x[0] - x[1]) 
+		+ (m*x[1])/(1 - phi1 - x[1]) - (m*x[1])/(1 - x[0] - x[1]) 
+		- (3*alpha*m*sigma)/(4*(phi1*sigma + x[1])**.5) 
+		+ (alpha*m*phi1*sigma)/(4*(phi1*sigma + x[1])**.5) 
+		+ (alpha*m*x[1])/(4*(phi1*sigma + x[1])**.5) 
+		+ (1.0/2.0)*alpha*m*(phi1*sigma + x[1])**.5 
+		+ (3*alpha*m*sigma)/(4*(sigma*x[0] + x[1])**.5) 
+		- (alpha*m*sigma*x[0])/(4*(sigma*x[0] + x[1])**.5) 
+		- (alpha*m*x[1])/(4*(sigma*x[0] + x[1])**.5) 
+		- (1.0/2.0)*alpha*m*(sigma*x[0] + x[1])**.5	
+	"""
 	return array([[
+		 - (1./(m*x[0])) - 1./(1. - x[0]- x[1]) 
+		+ (3*alpha*sigma**2)/(4*sqrt(x[1]+ x[0]*sigma)),
 
-			((-3.*alpha*x[1]**2.)/(4.*(x[1]*x[0])**0.5)) 
-			+ 1./(N*x[0]) + 1./(1.-x[0]), # dF1/dphi2
+		
+		1.0/(1 - phi1 - x[1]) - 1.0/(1 - x[0] - x[1]) 
+		- (3*alpha*sigma)/(4.*sqrt(x[1] + phi1*sigma)) 
+		+ (3*alpha*sigma)/(4.*sqrt(x[1] + x[0]*sigma))
+		
 
-		 	2.25*alpha*((x[1]*phi1)**0.5 - (x[1]*x[0])**0.5)], #dF1/dsigma
+		
+		], #dF1/dpsi
 
-		 	[
-			-1.5*alpha*x[1]*(x[1]*phi1)**0.5 + 1.5*alpha*x[1]*(x[1]*x[0])**0.5 
-			+ log(phi1)/N - log(x[0])/N - log(1.-phi1) + log(1.-x[0]), #dF2/dphi2
+		[log(phi1/2.0)/m - log(x[0]/2.0)/(m*1.0) - log(1 - phi1 - x[1]) 
+		+ log(1 - x[0] - x[1]) - (1.5)*alpha*sigma*(phi1*sigma + x[1])**.5 
+		+ (1.5)*alpha*sigma*(sigma*x[0] + x[1])**.5 , #dF2/dphi2
 
-			0.75*alpha*(-3.*x[0]*(x[1]*phi1)**.5 + phi1*(x[1]*phi1)**.5 
-			+ 2.*x[0]*(x[1]*x[0])**.5)
+  		-log(1 - phi1 - x[1]) + log(1 - x[0] - x[1]) - (1.5)*alpha*(phi1*sigma 
+		+ x[1])**.5 + (1.5)*alpha*(sigma*x[0] + x[1])**.5 
+		+ (-phi1 + x[0])*(1.0/(1 - phi1 - x[1]) 
+		- (3*alpha*sigma)/(4*(phi1*sigma + x[1])**.5))   ]]) #dF2/dpsi
 
-			]]) #dF2/dsigma
+
+def vfun(x,phi1,sigma,alpha,m):
+	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
+	"""
+		- phi1 + x[0] - m*(1 - phi1 - x[1]) + m*(1 - x[0] - x[1]) 
+		- (1.5)*alpha*m*sigma*(phi1*sigma + x[1])**.5 
+		+ (0.5)*alpha*m*phi1*sigma*(phi1*sigma + x[1])**0.5 
+		+ 0.5*alpha*m*x[1]*(phi1*sigma + x[1])**0.5 
+		+ (1.5)*alpha*m*sigma*(sigma*x[0] + x[1])**.5 
+		- (0.5)*alpha*m*sigma*x[0]*(sigma*x[0] + x[1])**.5 
+		- (0.5)*alpha*m*x[1]*(sigma*x[0] + x[1])**.5 + log(phi1/2.0) 
+		- log(x[0]/2.0) + m*log(1 - phi1 - x[1]) - m*phi1*log(1 - phi1 - x[1]) 
+		- m*(1 - phi1 - x[1])*log(1 - phi1 - x[1]) - m*x[1]*log(1 - phi1 - x[1]) 
+		- m*log(1 - x[0] - x[1]) + m*x[0]*log(1 - x[0] - x[1]) 
+		+ m*(1 - x[0] - x[1])*log(1 - x[0] - x[1]) + m*x[1]*log(1 - x[0] - x[1])
+
+	"""
+	return array([
+		   (-1.5)*alpha*sigma*sqrt(x[1] + phi1*sigma) 
+		+ (1.5)*alpha*sigma*sqrt(x[1] + x[0]*sigma) 
+		+ log(phi1/2.)/m - log(x[0]/2.)/m - log(1 - phi1 - x[1]) 
+		+ log(1 - x[0] - x[1]) 
+
+		
+		,
+
+  		(-alpha)*(x[1] + phi1*sigma)**1.5 + alpha*(x[1] + x[0]*sigma)**1.5 
+		+ (phi1*log(phi1/2))/m - (x[0]*log(x[0]/2))/m
+		+ (-phi1 + x[0]) * (-1 + 1.0/m - 1.5*alpha*sigma*(x[1] + phi1*sigma)**.5 
+		+ log(phi1/2)/m - log(1-phi1-x[1])) + (1-phi1-x[1])*log(1-phi1-x[1]) 
+		- (1-x[0]-x[1])*log(1.-x[0]-x[1])
+  ])
 
 def v_crit(alpha,N):
 		crit_phi = (-(N+2) + sqrt((N+2)**2 + 4*(N-1)))/(2*(N-1))
@@ -269,15 +315,14 @@ def v_crit(alpha,N):
 		return crit_phi
 
 
-def vNR(alpha,N):
+def vNR(alpha,N,sigma):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
-		crit_phi = v_crit(alpha,N)
 
-		phi1vals = arange(2e-7,crit_phi,.0001)
+		phi1vals = arange(1e-2,.1,.002)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
-		new_guess = [0.9,.9] #phi2, sigma
+		new_guess = [0.1,.1] #phi2, psi
 		iter = 0
 		y2 = zeros((len(phi1vals),1))
 		x2 = zeros((len(phi1vals),1))
@@ -291,9 +336,9 @@ def vNR(alpha,N):
 				iter += 1
 				index = phi1vals.index(phi)
 				guess = new_guess
-				jacobian = vjac(guess,alpha,N,phi)
+				jacobian = vjac(guess,phi,sigma,alpha,N)
 				invjac = inv(jacobian)
-				f1 = vfun(guess,alpha,N,phi)
+				f1 = vfun(guess,phi,sigma,alpha,N)
 				new_guess = guess - .1*dot(invjac,f1)
 				if abs(new_guess[0] - guess[0]) < 1e-8 and abs(new_guess[1]-guess[1]) < 1e-8: 
 					x1[index] = phi
@@ -309,8 +354,11 @@ def vNR(alpha,N):
 		y2i = y2[::-1]
 
 		#Concatenate the lists together
-		phi = x1 + x2
-		y2 = y2 + y2i
+		phi = x1
+		phi2 = x2
+
+#		phi = x1 + x2
+#		y2 = y2 + y2i
 		return (phi,y2)
 		
 
@@ -564,8 +612,8 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 		y2=y2.tolist()
 		x2 = x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
 		y2i = y2[::-1]
-		phi = x1 + x2
-		y2 = y2 + y2i
+#		phi = x1 + x2
+#		y2 = y2 + y2i
 
 		return (phi,y2)
 
@@ -575,17 +623,11 @@ crit_chi = .5
 crit_phi = 1
 alpha = 3.655
 N = 100
-# [phi2, sigma]
-x = [0.5,0.5]
-phi1 = .2
-
-print x, phi1,alpha, N
-print vfun(x,alpha,N,phi1)
-print vjac(x,alpha,N,phi1)
 
 
-#if __name__ == '__main__':
-#    app.run(debug=True)
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 
