@@ -612,8 +612,8 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 		y2=y2.tolist()
 		x2 = x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
 		y2i = y2[::-1]
-#		phi = x1 + x2
-#		y2 = y2 + y2i
+		phi = x1 + x2
+		y2 = y2 + y2i
 
 		return (phi,y2)
 
