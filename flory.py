@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import StringIO
 import mpld3
 from mpld3 import plugins
-from scipy.optimize import fsolve
 
 from flask import Flask, request, make_response, render_template
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
