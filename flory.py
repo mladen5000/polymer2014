@@ -50,6 +50,7 @@ def slctplot():
 		k2 = request.form['k2']
 		m1 = request.form['m1']
 		m2 = request.form['m2']
+		print polya,polyb,k1,k2,m1,m2
 
 		z = 6.0
 		
