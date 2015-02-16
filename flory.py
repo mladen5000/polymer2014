@@ -617,6 +617,13 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 
 		return (phi,y2)
 
+def vcrit():
+	firstderiv = (1 + log(phi))/N + (-1)*(1 + log(1-phi-psi)) - (3*sigma*alpha/2.)*(sigma*phi + psi)**(1./2.)
+	secondderiv = 1./(N*phi) + 1./(1-phi-psi) - (3*sigma*sigma*alpha/4.)*(sigma*phi + psi)**(-1./2.)
+	thirdderiv = -1./(N*phi*phi) + (1./(1-phi-psi))**2 + (3*alpha*(sigma**3)/8.)*(sigma*phi + psi)**(-3./2.)
+
+
+
 na = 1
 nb = 1
 crit_chi = .5 
