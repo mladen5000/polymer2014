@@ -9,11 +9,25 @@
 .pib1{background-image:url("img/pib.png");}
 .p_a1{background-image:url("img/a.png");}
 .p_b1{background-image:url("img/b.png");}
+.p_c1{background-image:url("img/c.png");}
+.p_d1{background-image:url("img/d.png");}
 .p_e1{background-image:url("img/e.png");}
+.p_f1{background-image:url("img/f.png");}
+.p_g1{background-image:url("img/g.png");}
+.p_h1{background-image:url("img/h.png");}
+.p_i1{background-image:url("img/i.png");}
+.p_j1{background-image:url("img/j.png");}
+.p_k1{background-image:url("img/k.png");}
+.p_l1{background-image:url("img/l.png");}
+.p_m1{background-image:url("img/m.png");}
+.p_n1{background-image:url("img/n.png");}
+.p_o1{background-image:url("img/o.png");}
+.p_p1{background-image:url("img/p.png");}
 .p_q1{background-image:url("img/q.png");}
-.p_u1{background-image:url("img/u.png");}
 .p_r1{background-image:url("img/r.png");}
 .p_s1{background-image:url("img/s.png");}
+.p_t1{background-image:url("img/t.png");}
+.p_u1{background-image:url("img/u.png");}
 
 .cc-selector1 input:active +.drinkcard-cc{opacity: .9;}
 .cc-selector1 input:checked +.drinkcard-cc{
