@@ -46,10 +46,10 @@ def slctplot():
 		nb = float(request.form['NFB'])
 		polya = request.form['polya']
 		polyb = request.form['polyb']
-		k1 = request.form['k1']
-		k2 = request.form['k2']
-		m1 = request.form['m1']
-		m2 = request.form['m2']
+		k1 = float(request.form['k1'])
+		k2 = float(request.form['k2'])
+		m1 = float(request.form['m1'])
+		m2 = float(request.form['m2'])
 		print polya,polyb,k1,k2,m1,m2
 
 		z = 6.0
@@ -74,20 +74,20 @@ def slctplot():
 				r1 = 7./4.
 				p1 = 6./4.
 		if polya == "PF":
-				r1 = (3.+k)/(2.+k)
-				p1 = (4.+k)/(2.+k)
+				r1 = (3.+k1)/(2.+k1)
+				p1 = (4.+k1)/(2.+k1)
 		if polya == "PG":
-				r1 = (5.+k)/(4.+k)
-				p1 = (6.+k)/(4.+k)
+				r1 = (5.+k1)/(4.+k1)
+				p1 = (6.+k1)/(4.+k1)
 		if polya == "PH":
-				r1 = (4.+k)/(3.+k)
-				p1 = (5.+k)/(3.+k)
+				r1 = (4.+k1)/(3.+k1)
+				p1 = (5.+k1)/(3.+k1)
 		if polya == "PI":
-				r1 = (6.+k)/(3.+k)
-				p1 = (7.+k)/(3.+k)
+				r1 = (6.+k1)/(3.+k1)
+				p1 = (7.+k1)/(3.+k1)
 		if polya == "PJ":
-				r1 = (5.+k+m)/(2.+k+m)
-				p1 = (8.+k+m)/(2.+k+m)
+				r1 = (5.+k1+m1)/(2.+k1+m1)
+				p1 = (8.+k1+m1)/(2.+k1+m1)
 		if polya == "PK":
 				r1 = 7./5.
 				p1 = 8./5.
@@ -138,20 +138,20 @@ def slctplot():
 				r2 = 7./4.
 				p2 = 6./4.
 		if polyb == "PF":
-				r2 = (3.+k)/(2.+k)
-				p2 = (4.+k)/(2.+k)
+				r2 = (3.+k2)/(2.+k2)
+				p2 = (4.+k2)/(2.+k2)
 		if polyb == "PG":
-				r2 = (5.+k)/(4.+k)
-				p2 = (6.+k)/(4.+k)
+				r2 = (5.+k2)/(4.+k2)
+				p2 = (6.+k2)/(4.+k2)
 		if polyb == "PH":
-				r2 = (4.+k)/(3.+k)
-				p2 = (5.+k)/(3.+k)
+				r2 = (4.+k2)/(3.+k2)
+				p2 = (5.+k2)/(3.+k2)
 		if polyb == "PI":
-				r2 = (6.+k)/(3.+k)
-				p2 = (7.+k)/(3.+k)
+				r2 = (6.+k2)/(3.+k2)
+				p2 = (7.+k2)/(3.+k2)
 		if polyb == "PJ":
-				r2 = (5.+k+m)/(2.+k+m)
-				p2 = (8.+k+m)/(2.+k+m)
+				r2 = (5.+k2+m2)/(2.+k2+m2)
+				p2 = (8.+k2+m2)/(2.+k2+m2)
 		if polyb == "PK":
 				r2 = 7./5.
 				p2 = 8./5.
