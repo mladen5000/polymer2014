@@ -45,63 +45,145 @@ def slctplot():
 		nb = float(request.form['NFB'])
 		polya = request.form['polya']
 		polyb = request.form['polyb']
+		k1 = float(request.form['k1'])
+		k2 = float(request.form['k2'])
+		m1 = float(request.form['m1'])
+		m2 = float(request.form['m2'])
+		print polya,polyb,k1,k2,m1,m2
+
 		z = 6.0
 		
 		""" Parameters for specific polymers"""
+		#FIXMELATER
 		""" Should encapsulate this elsewhere eventually """
 
-		if polya == "PH1":
-				r1 = 1.150
-				p1 = 1.333
-		if polya == "PEP":
-				r1 = 1.200
-				p1 = 1.200
-		if polya == "PIB":
-				r1 = 1.750
-				p1 = 1.500
 		if polya == "PA":
 				r1 = 1.0
 				p1 = 1.0
 		if polya == "PB":
 				r1 = 1.333
 				p1 = 1.333
+		if polya == "PC":
+				r1 = 6./5.
+				p1 = 6./5.
+		if polya == "PD":
+				r1 = 4./3.
+				p1 = 9./6.
+		if polya == "PE":
+				r1 = 7./4.
+				p1 = 6./4.
+		if polya == "PF":
+				r1 = (3.+k1)/(2.+k1)
+				p1 = (4.+k1)/(2.+k1)
+		if polya == "PG":
+				r1 = (5.+k1)/(4.+k1)
+				p1 = (6.+k1)/(4.+k1)
+		if polya == "PH":
+				r1 = (4.+k1)/(3.+k1)
+				p1 = (5.+k1)/(3.+k1)
+		if polya == "PI":
+				r1 = (6.+k1)/(3.+k1)
+				p1 = (7.+k1)/(3.+k1)
+		if polya == "PJ":
+				r1 = (5.+k1+m1)/(2.+k1+m1)
+				p1 = (8.+k1+m1)/(2.+k1+m1)
+		if polya == "PK":
+				r1 = 7./5.
+				p1 = 8./5.
+		if polya == "PL":
+				r1 = 5./3.
+				p1 = 5./3.
+		if polya == "PM":
+				r1 = 16./9.
+				p1 = 19./9.
+		if polya == "PN":
+				r1 = 4./3.
+				p1 = 5./3.
+		if polya == "PO":
+				r1 = 10./7.
+				p1 = 12./7.
+		if polya == "PP":
+				r1 = 9./7.
+				p1 = 14./7.
 		if polya == "PQ":
-				r1 = 1.350
-				p1 = 1.500
-		if polya == "PU":
-				r1 = 13.0/9.0
-				p1 = 16.0/9.0
+				r1 = 11./7.
+				p1 = 14./7.
 		if polya == "PR":
-				r1 = 11.0/7.0
-				p1 = 13.0/7.0
+				r1 = 11./7.
+				p1 = 13./7.
 		if polya == "PS":
-				r1 = 13.0/8.0
-				p1 = 16.0/9.0
+				r1 = 13./8.
+				p1 = 16./9.
+		if polya == "PT":
+				r1 = 11./8.
+				p1 = 14./8.
+		if polya == "PU":
+				r1 = 13./9.
+				p1 = 16./9.
 
-		if polyb == "PH1":
-				r2 = 1.150
-				p2 = 1.333
-		if polyb == "PEP":
-				r2 = 1.200
-				p2 = 1.200
-		if polyb == "PIB":
-				r2 = 1.750
-				p2 = 1.500
 		if polyb == "PA":
 				r2 = 1.0
 				p2 = 1.0
 		if polyb == "PB":
 				r2 = 1.333
 				p2 = 1.333
+		if polyb == "PC":
+				r2 = 6./5.
+				p2 = 6./5.
+		if polyb == "PD":
+				r2 = 4./3.
+				p2 = 9./6.
+		if polyb == "PE":
+				r2 = 7./4.
+				p2 = 6./4.
+		if polyb == "PF":
+				r2 = (3.+k2)/(2.+k2)
+				p2 = (4.+k2)/(2.+k2)
+		if polyb == "PG":
+				r2 = (5.+k2)/(4.+k2)
+				p2 = (6.+k2)/(4.+k2)
+		if polyb == "PH":
+				r2 = (4.+k2)/(3.+k2)
+				p2 = (5.+k2)/(3.+k2)
+		if polyb == "PI":
+				r2 = (6.+k2)/(3.+k2)
+				p2 = (7.+k2)/(3.+k2)
+		if polyb == "PJ":
+				r2 = (5.+k2+m2)/(2.+k2+m2)
+				p2 = (8.+k2+m2)/(2.+k2+m2)
+		if polyb == "PK":
+				r2 = 7./5.
+				p2 = 8./5.
+		if polyb == "PL":
+				r2 = 5./3.
+				p2 = 5./3.
+		if polyb == "PM":
+				r2 = 16./9.
+				p2 = 19./9.
+		if polyb == "PN":
+				r2 = 4./3.
+				p2 = 5./3.
+		if polyb == "PO":
+				r2 = 10./7.
+				p2 = 12./7.
+		if polyb == "PP":
+				r2 = 9./7.
+				p2 = 14./7.
 		if polyb == "PQ":
-				r2 = 1.350
-				p2 = 1.500
-		if polyb == "PU":
-				r2 = 13.0/9.0
-				p2 = 16.0/9.0
+				r2 = 11./7.
+				p2 = 14./7.
 		if polyb == "PR":
-				r2 = 11.0/7.0
-				p2 = 13.0/7.0
+				r2 = 11./7.
+				p2 = 13./7.
+		if polyb == "PS":
+				r2 = 13./8.
+				p2 = 16./9.
+		if polyb == "PT":
+				r2 = 11./8.
+				p2 = 14./8.
+		if polyb == "PU":
+				r2 = 13./9.
+				p2 = 16./9.
 		if polyb == "PS":
 				r2 = 13.0/8.0
 				p2 = 16.0/9.0
@@ -615,6 +697,13 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb):
 		y2 = y2 + y2i
 
 		return (phi,y2)
+
+def vcrit():
+	firstderiv = (1 + log(phi))/N + (-1)*(1 + log(1-phi-psi)) - (3*sigma*alpha/2.)*(sigma*phi + psi)**(1./2.)
+	secondderiv = 1./(N*phi) + 1./(1-phi-psi) - (3*sigma*sigma*alpha/4.)*(sigma*phi + psi)**(-1./2.)
+	thirdderiv = -1./(N*phi*phi) + (1./(1-phi-psi))**2 + (3*alpha*(sigma**3)/8.)*(sigma*phi + psi)**(-3./2.)
+
+
 
 na = 1
 nb = 1

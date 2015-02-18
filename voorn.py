@@ -108,8 +108,10 @@ def v_crit(alpha,N):
 def vNR(alpha,N,sigma):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
+		crit_phi = v_crit(alpha,N)
+		print crit_phi
 
-		phi1vals = arange(1e-2,.1,.002)
+		phi1vals = arange(1e-5,.1,.002)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
 		new_guess = [0.1,.1] #phi2, psi
@@ -134,6 +136,7 @@ def vNR(alpha,N,sigma):
 					x1[index] = phi
 					x2[index] = new_guess[0]
 					y2[index] = new_guess[1]
+					print x1[index], x2[index], y2[index]
 					break
 
 	#Convert Numpy arrays (x1,x2,y2) to a list
@@ -149,7 +152,7 @@ def vNR(alpha,N,sigma):
 
 #		phi = x1 + x2
 #		y2 = y2 + y2i
-		return (phi,y2)
+		return (phi,phi2,y2,y2i)
 
 na = 1
 nb = 1
@@ -159,8 +162,9 @@ alpha = 3.655
 N = 1000
 sigma = .44
 
-phi,y2 = vNR(alpha,N,sigma)
+phi,phi2,y2,y2i = vNR(alpha,N,sigma)
 plt.plot(phi,y2)
+plt.plot(phi2,y2i)
 plt.xlabel('phi')
 plt.ylabel('psi')
 plt.show()
