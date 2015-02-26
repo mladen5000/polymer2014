@@ -38,6 +38,46 @@ def vorn():
 def slct():
 	return render_template("slct.html")
 
+@app.route('/plotfree', methods = ['GET', 'POST'])
+def flory_free_energy():
+	if request.method == 'POST':
+		na = float(request.form['NFA'])
+		nb = float(request.form['NFB'])
+		chi = float(request.form['chivalue'])
+
+		fig = Figure()
+		fig.set_facecolor('white')
+		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+		axis.set_xlabel('Volume Fraction')
+		axis.set_ylabel('Free Energy')
+		axis.set_title('Flory-Huggins Free Energy Diagram')
+
+		"""Run Optimization"""
+		"""Need to move these lines it's own function"""
+		phi = arange(0.0001,0.99,0.001)
+		h = zeros(( len(phi) ))
+		s = zeros(( len(phi) ))
+		g = zeros(( len(phi) ))
+
+		i = 0
+		for current_phi in phi:
+			h[i],s[i],g[i] = flory_G(current_phi,na,nb,chi)
+			i += 1
+
+
+		hline = axis.plot(phi,h,'r',lw=2)
+		sline = axis.plot(phi,s,'b',lw=2)
+		gline = axis.plot(phi,g,'g',lw=2)
+
+		"""Add d3 stuff"""
+		canvas = FigureCanvas(fig)
+		output = StringIO.StringIO()
+		canvas.print_png(output, bbox_inches='tight')
+		plugins.connect(fig, plugins.MousePosition())
+
+		return mpld3.fig_to_html(fig,template_type='simple')
+
+
 @app.route('/slctplot', methods=['GET','POST'])	
 def slctplot():
 	if request.method == 'POST':
@@ -703,6 +743,14 @@ def vcrit():
 	secondderiv = 1./(N*phi) + 1./(1-phi-psi) - (3*sigma*sigma*alpha/4.)*(sigma*phi + psi)**(-1./2.)
 	thirdderiv = -1./(N*phi*phi) + (1./(1-phi-psi))**2 + (3*alpha*(sigma**3)/8.)*(sigma*phi + psi)**(-3./2.)
 
+"Flory huggins formula"
+def flory_G(phi,na,nb,chi):
+	"""Plots free energy"""
+	enthalpy = chi*phi*(1-phi)
+	entropy = phi/na * log(phi) + (1.-phi)/nb * log(1-phi) 
+	f = phi/na * log(phi) + (1.-phi)/nb * log(1-phi) + chi*phi*(1-phi)
+	print "The value is",f
+	return enthalpy,entropy,f
 
 
 na = 1
