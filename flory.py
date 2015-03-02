@@ -37,6 +37,46 @@ def flory():
 def vorn():
 	return render_template("vorn.html")
 
+@app.route('/plotvfree', methods = ['GET', 'POST'])
+def plotvfree():
+	if request.method == 'POST':
+		N = float(request.form['N'])
+		sigma = float(request.form['sigma'])
+		psi = float(request.form['psi'])
+
+		fig = generate_vfigure(N,psi,sigma)
+
+		"""Add d3 stuff"""
+		canvas = FigureCanvas(fig)
+		output = StringIO.StringIO()
+		canvas.print_png(output, bbox_inches='tight')
+		plugins.connect(fig, plugins.MousePosition())
+
+		return mpld3.fig_to_html(fig,template_type='simple')
+
+@app.route('/plotslctfree', methods = ['GET', 'POST'])
+def plotslctfree():
+	if request.method == 'POST':
+		na = float(request.form['NFA'])
+		nb = float(request.form['NFB'])
+		polya = request.form['polya']
+		polyb = request.form['polyb']
+		k1 = float(request.form['k1'])
+		k2 = float(request.form['k2'])
+		m1 = float(request.form['m1'])
+		m2 = float(request.form['m2'])
+		print "HEY"
+		print na,nb,polya,polyb,k1,k2,m1,m2
+
+		fig = generate_SLCTfigure(NFA,NFB,polya,polyb,k1,k2,m1,m2)
+
+		"""Add d3 stuff"""
+		canvas = FigureCanvas(fig)
+		output = StringIO.StringIO()
+		canvas.print_png(output, bbox_inches='tight')
+		plugins.connect(fig, plugins.MousePosition())
+
+		return mpld3.fig_to_html(fig,template_type='simple')
 @app.route('/slct.html',methods=['POST','GET'])
 def slct():
 	return render_template("slct.html")
@@ -48,29 +88,7 @@ def flory_free_energy():
 		nb = float(request.form['NFB'])
 		chi = float(request.form['chivalue'])
 
-		fig = Figure()
-		fig.set_facecolor('white')
-		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		axis.set_xlabel('Volume Fraction')
-		axis.set_ylabel('Free Energy')
-		axis.set_title('Flory-Huggins Free Energy Diagram')
-
-		"""Run Optimization"""
-		"""Need to move these lines it's own function"""
-		phi = arange(0.0001,0.99,0.001)
-		h = zeros(( len(phi) ))
-		s = zeros(( len(phi) ))
-		g = zeros(( len(phi) ))
-
-		i = 0
-		for current_phi in phi:
-			h[i],s[i],g[i] = flory_G(current_phi,na,nb,chi)
-			i += 1
-
-
-		hline = axis.plot(phi,h,'r',lw=2)
-		sline = axis.plot(phi,s,'b',lw=2)
-		gline = axis.plot(phi,g,'g',lw=2)
+		fig = generate_figure(na,nb,chi)
 
 		"""Add d3 stuff"""
 		canvas = FigureCanvas(fig)
@@ -92,8 +110,8 @@ def slctplot():
 		k2 = float(request.form['k2'])
 		m1 = float(request.form['m1'])
 		m2 = float(request.form['m2'])
+		eps = float(request.form['eps'])
 		print polya,polyb,k1,k2,m1,m2
-
 		z = 6.0
 		
 		""" Parameters for specific polymers"""
@@ -113,6 +131,21 @@ def slctplot():
 				flipper = 0
 
 		"""Set up the plot"""
+		if request.form['slctbutton'] == 'Generate Free Energy!':
+			print "THIS LOOP IS WORKING"
+
+			fig = generate_SLCTfigure(na,nb,polya,polyb,k1,k2,m1,m2,eps)
+
+			"""Add d3 stuff"""
+			canvas = FigureCanvas(fig)
+			output = StringIO.StringIO()
+			canvas.print_png(output, bbox_inches='tight')
+			plugins.connect(fig, plugins.MousePosition())
+			return mpld3.fig_to_html(fig,template_type='simple')
+
+		else:
+			"ELSE PART HAPPENED"
+
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
@@ -232,9 +265,75 @@ def flory_G(phi,na,nb,chi):
 	enthalpy = chi*phi*(1-phi)
 	entropy = phi/na * log(phi) + (1.-phi)/nb * log(1-phi) 
 	f = phi/na * log(phi) + (1.-phi)/nb * log(1-phi) + chi*phi*(1-phi)
-	print "The value is",f
 	return enthalpy,entropy,f
 
+def generate_figure(na,nb,chi):
+		fig = Figure()
+		fig.set_facecolor('white')
+		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+		axis.set_xlabel('Volume Fraction')
+		axis.set_ylabel('Free Energy')
+		axis.set_title('Flory-Huggins Free Energy Diagram')
+
+		"""Run Optimization"""
+		"""Need to move these lines it's own function"""
+		phi = arange(0.0001,0.99,0.001)
+		h = zeros(( len(phi) ))
+		s = zeros(( len(phi) ))
+		g = zeros(( len(phi) ))
+
+		i = 0
+		for current_phi in phi:
+			h[i],s[i],g[i] = flory_G(current_phi,na,nb,chi)
+			i += 1
+
+
+		hline = axis.plot(phi,h,'r',lw=2)
+		sline = axis.plot(phi,s,'b',lw=2)
+		gline = axis.plot(phi,g,'g',lw=2)
+		return fig
+
+def generate_vfigure(N,psi,sigma):
+		fig = Figure()
+		fig.set_facecolor('white')
+		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+		axis.set_xlabel('Volume Fraction')
+		axis.set_ylabel('Free Energy')
+		axis.set_title('Voorn-Overbeek Free Energy Diagram')
+
+		"""Run Optimization"""
+		"""Need to move these lines it's own function"""
+		phi,h,s,g = vfree(N,psi,sigma)
+		print phi
+		print h
+		print s
+		print g
+
+		
+		hline = axis.plot(phi,h,'r',lw=2)
+		sline = axis.plot(phi,s,'b',lw=2)
+		gline = axis.plot(phi,g,'g',lw=2)
+		return fig
+
+def generate_SLCTfigure(NFA,NFB,polya,polyb,k1,k2,m1,m2,eps):
+		fig = Figure()
+		fig.set_facecolor('white')
+		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+		axis.set_xlabel('Volume Fraction')
+		axis.set_ylabel('Free Energy')
+		axis.set_title('SLCT Free Energy Diagram')
+
+		"""Run Optimization"""
+		"""Need to move these lines it's own function"""
+		r1, p1, r2, p2 = SLCT_constants(polya,polyb)
+		z = 6.0
+		phi,h,s,g = SLCTfree(r1,r2,z,p1,p2,na,nb,eps)
+
+		
+		hline = axis.plot(phi,h,'r',lw=2)
+		sline = axis.plot(phi,s,'b',lw=2)
+		gline = axis.plot(phi,g,'g',lw=2)
+		return fig
 
 na = 1
 nb = 1

@@ -151,3 +151,22 @@ def vNR(alpha,N,sigma):
 #		y2 = y2 + y2i
 		return (phi,y2)
 
+def vfree(N,psi,sigma):
+	alpha = 3.655
+	phivals = arange(0.0,1.0,0.001)
+	i=0
+	enthalpy = zeros(( len(phivals) ))
+	entropy = zeros(( len(phivals) ))
+	f = zeros(( len(phivals) ))
+	print N,psi,sigma
+	
+	for phi in phivals:
+		enthalpy[i] = -alpha*(phi*sigma + psi)**1.5
+		entropy[i] = (phi/N)*log(phi/2.0) + psi*log(psi/2.0) + (1-phi-psi)*log(1-phi-psi) 
+		f[i] = (phi/N)*log(phi/2.0) + psi*log(psi/2.0) + (1-phi-psi)*log(1-phi-psi) - alpha*(phi*sigma + psi)**1.5
+		i += 1
+
+	return phivals, enthalpy,entropy, f
+
+
+

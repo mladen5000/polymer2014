@@ -230,11 +230,45 @@ The tools included here, in order of increasing complexity and sophistication, a
 			</div>
 		</div>
 		<div class="row">
+			<div class="large-6 columns">
+				<label> EPSILON (for free energy)
+						<input type="text" name="eps" placeholder="0.2" />
+				</label>
+			</div>
+		</div>
+		<div class="row">
 			<div align="center">
-				<input class="button" type="submit" value="Generate!" />
+				<input class="button" type="submit" name="slctbutton" value="Generate!" />
+			</div>
+		</div>
+		<div class="row">
+			<div align="center">
+				<input class="button" type="submit" name="slctbutton" value="Generate Free Energy!" />
+			</div>
+		</div>
+	</form>
+
+	<!--
+	<form action="/plotslctfree" method="post">
+		<div class="row">
+			<div class="large-6 columns">
+				<label>Monomers of Species A
+						<input type="text" name="NFA" placeholder="100" />
+				</label>
+			</div>
+			<div class="large-6 columns">
+				<label>Monomers of Species B
+						<input type="text" name="NFB" placeholder="100" />
+				</label>
+			</div>
+		</div>
+		<div class="row">
+			<div align="center">
+				<input class="button" type="submit" name="slctbutton" value="Generate Free Energy!" />
 			</div>
 		</div>
 	</form>
 	
+	--!>
 
 {% endblock %}

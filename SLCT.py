@@ -18,6 +18,25 @@ import json
 
 """ Simple Lattice Cluster """
 
+def SLCTfree(r1,r2,z,p1,p2,na,nb,eps):
+		z = 6.0
+		phivals = arange(0.0,1.0,0.001)
+		i=0
+		enthalpy = zeros(( len(phivals) ))
+		entropy = zeros(( len(phivals) ))
+		f = zeros(( len(phivals) ))
+
+		for phi in phivals:
+			chiterm = (r1-r2)**2 / z**2 + eps*( (z-2)/2.0 - (1.0/z)*(p1*(1-phi) + p2*phi))
+			enthalpy[i] = phi*(1-phi)*chiterm
+			entropy[i] = (phi/na)*log(phi) + ((1-phi)/nb)*log(1-phi) 
+			f[i] = entropy[i] + enthalpy[i]
+			i += 1
+		return phivals, enthalpy, entropy, f
+
+
+
+
 
 def SLCT_crit(r1,r2,z,p1,p2,na,nb):
 		#Use numpy root to calculate phi_c
