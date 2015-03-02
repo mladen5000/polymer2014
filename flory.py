@@ -37,66 +37,65 @@ def flory():
 def vorn():
 	return render_template("vorn.html")
 
-@app.route('/plotvfree', methods = ['GET', 'POST'])
-def plotvfree():
+@app.route('/vornplot', methods=['GET','POST'])	
+def vornplot():
 	if request.method == 'POST':
 		N = float(request.form['N'])
 		sigma = float(request.form['sigma'])
-		psi = float(request.form['psi'])
 
-		fig = generate_vfigure(N,psi,sigma)
 
-		"""Add d3 stuff"""
-		canvas = FigureCanvas(fig)
-		output = StringIO.StringIO()
-		canvas.print_png(output, bbox_inches='tight')
-		plugins.connect(fig, plugins.MousePosition())
+		if request.form['vornbutton'] == 'Generate Free Energy!':
+			print "free energy"
+			
+			psi = float(request.form['psi'])
 
-		return mpld3.fig_to_html(fig,template_type='simple')
+			fig = Figure()
+			fig.set_facecolor('white')
+			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+			axis.set_xlabel('Volume Fraction, Phi')
+			axis.set_ylabel('Salt Concentration, Psi')
+			axis.set_title('Voorn-Overbeek Phase Diagram')
+			canvas = FigureCanvas(fig)
+			phi,h,s,g = vfree(N,psi,sigma)
 
-@app.route('/plotslctfree', methods = ['GET', 'POST'])
-def plotslctfree():
-	if request.method == 'POST':
-		na = float(request.form['NFA'])
-		nb = float(request.form['NFB'])
-		polya = request.form['polya']
-		polyb = request.form['polyb']
-		k1 = float(request.form['k1'])
-		k2 = float(request.form['k2'])
-		m1 = float(request.form['m1'])
-		m2 = float(request.form['m2'])
-		print "HEY"
-		print na,nb,polya,polyb,k1,k2,m1,m2
+			
+			hline = axis.plot(phi,h,'r',lw=2)
+			sline = axis.plot(phi,s,'b',lw=2)
+			gline = axis.plot(phi,g,'g',lw=2)
 
-		fig = generate_SLCTfigure(NFA,NFB,polya,polyb,k1,k2,m1,m2)
+			"""Add d3 stuff"""
+			canvas = FigureCanvas(fig)
+			output = StringIO.StringIO()
+			canvas.print_png(output, bbox_inches='tight')
+			plugins.connect(fig, plugins.MousePosition())
 
-		"""Add d3 stuff"""
-		canvas = FigureCanvas(fig)
-		output = StringIO.StringIO()
-		canvas.print_png(output, bbox_inches='tight')
-		plugins.connect(fig, plugins.MousePosition())
+			return mpld3.fig_to_html(fig,template_type='simple')
 
-		return mpld3.fig_to_html(fig,template_type='simple')
+		elif request.form['vornbutton'] == 'Generate!':
+			"""Set up the plot"""
+			print "spinodal"
+			fig = Figure()
+			fig.set_facecolor('white')
+			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+			axis.set_xlabel('Volume Fraction, Phi')
+			axis.set_ylabel('Salt Concentration, Psi')
+			axis.set_title('Voorn-Overbeek Phase Diagram')
+			canvas = FigureCanvas(fig)
+
+			"""Move Spinodal Elsewhere"""
+			phi,y2 =  vNR(alpha,N,sigma)
+			#x, spinodal = vorn_Spinodal(alpha,N)
+			#line1 = axis.plot(x,spinodal,'r',lw=2)
+			spinline = axis.plot(phi,y2,'b',lw=2) 
+
+			"""Make this organized like the other stuff"""
+			plugins.connect(fig, plugins.MousePosition())
+			return mpld3.fig_to_html(fig)
+
 @app.route('/slct.html',methods=['POST','GET'])
 def slct():
 	return render_template("slct.html")
 
-@app.route('/plotfree', methods = ['GET', 'POST'])
-def flory_free_energy():
-	if request.method == 'POST':
-		na = float(request.form['NFA'])
-		nb = float(request.form['NFB'])
-		chi = float(request.form['chivalue'])
-
-		fig = generate_figure(na,nb,chi)
-
-		"""Add d3 stuff"""
-		canvas = FigureCanvas(fig)
-		output = StringIO.StringIO()
-		canvas.print_png(output, bbox_inches='tight')
-		plugins.connect(fig, plugins.MousePosition())
-
-		return mpld3.fig_to_html(fig,template_type='simple')
 
 
 @app.route('/slctplot', methods=['GET','POST'])	
@@ -110,13 +109,10 @@ def slctplot():
 		k2 = float(request.form['k2'])
 		m1 = float(request.form['m1'])
 		m2 = float(request.form['m2'])
-		eps = float(request.form['eps'])
-		print polya,polyb,k1,k2,m1,m2
+
 		z = 6.0
 		
 		""" Parameters for specific polymers"""
-		#FIXMELATER
-		""" Should encapsulate this elsewhere eventually """
 		r1, p1, r2, p2 = SLCT_constants(polya,polyb)
 
 		global flipper
@@ -132,7 +128,7 @@ def slctplot():
 
 		"""Set up the plot"""
 		if request.form['slctbutton'] == 'Generate Free Energy!':
-			print "THIS LOOP IS WORKING"
+			eps = float(request.form['eps'])
 
 			fig = generate_SLCTfigure(na,nb,polya,polyb,k1,k2,m1,m2,eps)
 
@@ -178,73 +174,58 @@ def plot():
 		na = float(request.form['NFA'])
 		nb = float(request.form['NFB'])
 
-		"""Spinodal"""
-		crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
-		nav = 2./crit_chi
-		global flipper
+		if request.form['florybutton'] == 'Generate Free Energy!':
+			chi = float(request.form['chivalue'])
 
-		"""Flipper"""
-		if na > nb:
-				flipper = 1
-				na, nb, w,x,y,z=  flip(na,nb,1,1,1,1)
-		else:
-				flipper = 0
+			fig = generate_figure(na,nb,chi)
 
- 
-		"""Set up the plot"""
-		fig = Figure()
-		fig.set_facecolor('white')
-		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		axis.set_xlabel('Volume Fraction')
-		axis.set_ylabel('Chi')
-		axis.set_title('Flory-Huggins Phase Diagram')
+			"""Add d3 stuff"""
+			canvas = FigureCanvas(fig)
+			output = StringIO.StringIO()
+			canvas.print_png(output, bbox_inches='tight')
+			plugins.connect(fig, plugins.MousePosition())
 
-		"""Run Optimization"""
-		"""Need to move these lines it's own function"""
-		x = arange(0.05,0.95,0.001)
-		spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
+			return mpld3.fig_to_html(fig,template_type='simple')
 
-		if flipper == 1:
-			x = 1 - x
+		elif request.form['florybutton'] == 'Generate!':
 
-		phi,y2 =  NR(na,nb,nav,crit_chi,flipper)
-		spinline = axis.plot(x,spinodal,'r',lw=2) 
-		binline = axis.plot(phi,y2,'b',lw=2)
+			"""Spinodal"""
+			crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
+			nav = 2./crit_chi
+			global flipper
 
-		"""Add d3 stuff"""
-		canvas = FigureCanvas(fig)
-		output = StringIO.StringIO()
-		canvas.print_png(output, bbox_inches='tight')
-		plugins.connect(fig, plugins.MousePosition())
+			"""Flipper"""
+			if na > nb:
+					flipper = 1
+					na, nb, w,x,y,z=  flip(na,nb,1,1,1,1)
+			else:
+					flipper = 0
+			"""Set up the plot"""
+			fig = Figure()
+			fig.set_facecolor('white')
+			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+			axis.set_xlabel('Volume Fraction')
+			axis.set_ylabel('Chi')
+			axis.set_title('Flory-Huggins Phase Diagram')
 
-		return mpld3.fig_to_html(fig,template_type='simple')
+			"""Run Optimization"""
+			x = arange(0.05,0.95,0.001)
+			spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
 
-@app.route('/vornplot', methods=['GET','POST'])	
-def vornplot():
-	if request.method == 'POST':
-		N = float(request.form['N'])
-		sigma = float(request.form['sigma'])
+			if flipper == 1:
+				x = 1 - x
 
-		"""Set up the plot"""
-		fig = Figure()
-		fig.set_facecolor('white')
-		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		axis.set_xlabel('Volume Fraction, Phi')
-		axis.set_ylabel('Salt Concentration, Psi')
-		axis.set_title('Voorn-Overbeek Phase Diagram')
-		canvas = FigureCanvas(fig)
+			phi,y2 =  NR(na,nb,nav,crit_chi,flipper)
+			spinline = axis.plot(x,spinodal,'r',lw=2) 
+			binline = axis.plot(phi,y2,'b',lw=2)
 
-		"""Move Spinodal Elsewhere"""
-		phi,y2 =  vNR(alpha,N,sigma)
-		#x, spinodal = vorn_Spinodal(alpha,N)
-		#line1 = axis.plot(x,spinodal,'r',lw=2)
-		spinline = axis.plot(phi,y2,'b',lw=2) 
+			"""Add d3 stuff"""
+			canvas = FigureCanvas(fig)
+			output = StringIO.StringIO()
+			canvas.print_png(output, bbox_inches='tight')
+			plugins.connect(fig, plugins.MousePosition())
 
-		"""Make this organized like the other stuff"""
-		plugins.connect(fig, plugins.MousePosition())
-		return mpld3.fig_to_html(fig)
-
-		
+			return mpld3.fig_to_html(fig,template_type='simple')
 
 
 def flip(a1,a2,b1,b2,c1,c2):
@@ -288,28 +269,6 @@ def generate_figure(na,nb,chi):
 			i += 1
 
 
-		hline = axis.plot(phi,h,'r',lw=2)
-		sline = axis.plot(phi,s,'b',lw=2)
-		gline = axis.plot(phi,g,'g',lw=2)
-		return fig
-
-def generate_vfigure(N,psi,sigma):
-		fig = Figure()
-		fig.set_facecolor('white')
-		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		axis.set_xlabel('Volume Fraction')
-		axis.set_ylabel('Free Energy')
-		axis.set_title('Voorn-Overbeek Free Energy Diagram')
-
-		"""Run Optimization"""
-		"""Need to move these lines it's own function"""
-		phi,h,s,g = vfree(N,psi,sigma)
-		print phi
-		print h
-		print s
-		print g
-
-		
 		hline = axis.plot(phi,h,'r',lw=2)
 		sline = axis.plot(phi,s,'b',lw=2)
 		gline = axis.plot(phi,g,'g',lw=2)

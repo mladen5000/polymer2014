@@ -30,15 +30,28 @@ The tools included here, in order of increasing complexity and sophistication, a
 		<div class="row">
 			<div class="large-12 columns">
 					<!-- radio buttons and text input cant have the same name --!>
+
 				<label>Number of Monomers 
 				   		<input type="text" placeholder="100" name = "N" />  
 				</label>
+
 				<label>Charge Density, Sigma 
 				   		<input type="text" placeholder="0.24" name = "sigma" />  
 				</label>
-						<div align="center">
-							<input class="button" type="submit" value="Generate!" />
-						</div>
+
+				<div class="large-4 columns">
+					<label> Salt Concentration, Psi
+							<input type="text" name="psi" placeholder="0.1" />
+					</label>
+				</div>
+
+				<div align="center">
+					<input class="button" type="submit" name = 'vornbutton' value="Generate!" />
+				</div>
+
+				<div align="center">
+					<input class="button" type="submit" name = 'vornbutton' value="Generate Free Energy!" />
+				</div>
 			</div>
 		</div>
 				
@@ -46,6 +59,7 @@ The tools included here, in order of increasing complexity and sophistication, a
 		<br>
 		<br>
 		<br>
+		<!--
 		<div class="row">
 			<h2> Free Energy Diagram </h2>
 			<p> Plots Enthalpy, Entropy, Free-Energy </p>
@@ -80,6 +94,7 @@ The tools included here, in order of increasing complexity and sophistication, a
 		</div>
 
 	</form>
+	--!>
 </div>
 <!-- Added jQuery at the End --!>
 {% endblock %}
