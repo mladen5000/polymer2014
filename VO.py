@@ -14,6 +14,7 @@ from flask import Flask, request, make_response, render_template
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import json
+from scipy.optimize import root,fsolve
 
 """ Voorn-Overbeek """
 
@@ -21,6 +22,22 @@ def vorn_Spinodal(alpha,N):
 		x = arange(1e-3,0.1,0.0001)
  		spinodal = ((2 * (2**.333) * ((N*x -x +1)**.666))/((3**.666)*(alpha**.666)*(N**.666)*(((x-1)**2)**(1./3.))*(x**.333)))
 		return x, spinodal
+
+def vspin(x,sigma,alpha,m):
+	"""2nd and 3rd derivative of free energy function wrt phi"""
+	phi = x[0]
+	psi = x[1]
+	f2 = 1.0/(m*phi) - (3*alpha*sigma**2)/(4.*sqrt(sigma*phi + psi)) + 1.0/(1-phi-psi)
+	f3 =  -1.0/(m*phi*phi) + 3*alpha*sigma**3/(8.*(sigma*phi + psi)**1.5) + 1.0/(1-phi-psi)**2
+
+	return array([f2,f3])
+
+def vcrit(sigma,alpha,m):
+	x0 = zeros((2))
+	x0.fill(0.01)
+	x = fsolve(vspin, x0, args = (sigma, alpha, m))
+	return x
+
 
 def vjac(x,phi1,sigma,alpha,m):
 	"df1/dphi2, df1/dchi; df2/dphi2, df2/dchi"
@@ -99,20 +116,24 @@ def vfun(x,phi1,sigma,alpha,m):
 		- (1-x[0]-x[1])*log(1.-x[0]-x[1])
   ])
 
+"""
 def v_crit(alpha,N):
 		crit_phi = (-(N+2) + sqrt((N+2)**2 + 4*(N-1)))/(2*(N-1))
 		crit_phi = crit_phi - .0001
 		return crit_phi
+"""
 
 
 def vNR(alpha,N,sigma):
-		" Newton Raphson solver for the binary mixture"
+		""" Newton Raphson solver for the binary mixture"""
 		# Set up parameters, initial guesses, formatting, initializing etc.
 
-		phi1vals = arange(1e-2,.1,.002)
+		critphi = vcrit(sigma,alpha,N)
+		phi1vals = arange(5e-4,critphi[0]- 0.001,.001)
 		phi1vals = phi1vals.tolist()
+		print phi1vals
 		guess = [0,0]
-		new_guess = [0.1,.1] #phi2, psi
+		new_guess = [0.01,0.01] #phi2, psi
 		iter = 0
 		y2 = zeros((len(phi1vals),1))
 		x2 = zeros((len(phi1vals),1))
@@ -138,20 +159,34 @@ def vNR(alpha,N,sigma):
 
 	#Convert Numpy arrays (x1,x2,y2) to a list
 		x1=x1.tolist()
+		x1 =x1[::-1]
 		x2=x2.tolist()
-		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
+		#x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
 		y2=y2.tolist()
 		y2i = y2[::-1]
 
 		#Concatenate the lists together
 		phi = x1
 		phi2 = x2
+		print "PHI"
+		print phi
 
-#		phi = x1 + x2
-#		y2 = y2 + y2i
+		print "PHI2"
+		print phi2
+		print "Y2"
+		print y2
+
+		phi = x1 + x2
+		print "NEWPHI"
+		print phi
+
+		y2 = y2 + y2i
+		print "NEWY"
+		print y2
 		return (phi,y2)
 
 def vfree(N,psi,sigma):
+	"""Calculates the free energy, enthalpy, entropy of VO"""
 	alpha = 3.655
 	phivals = arange(0.0,1.0,0.001)
 	i=0
