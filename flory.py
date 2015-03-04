@@ -45,7 +45,6 @@ def vornplot():
 
 
 		if request.form['vornbutton'] == 'Generate Free Energy!':
-			print "free energy"
 			
 			psi = float(request.form['psi'])
 
@@ -73,7 +72,6 @@ def vornplot():
 
 		elif request.form['vornbutton'] == 'Generate!':
 			"""Set up the plot"""
-			print "spinodal"
 			fig = Figure()
 			fig.set_facecolor('white')
 			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
@@ -84,9 +82,9 @@ def vornplot():
 
 			"""Move Spinodal Elsewhere"""
 			phi,y2 =  vNR(alpha,N,sigma)
-			#x, spinodal = vorn_Spinodal(alpha,N)
-			#line1 = axis.plot(x,spinodal,'r',lw=2)
-			spinline = axis.plot(phi,y2,'b',lw=2) 
+			x, spinodal = vSpinodal(sigma,alpha,N)
+			spinline = axis.plot(x,spinodal,'r',lw=2)
+			binline = axis.plot(phi,y2,'b',lw=2) 
 
 			"""Make this organized like the other stuff"""
 			plugins.connect(fig, plugins.MousePosition())
