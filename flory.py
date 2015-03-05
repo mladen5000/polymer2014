@@ -16,12 +16,13 @@ from VO import *
 from FH import *
 
 
-from flask import Flask, request, make_response, render_template
+from flask import Flask, flash, request, make_response, render_template
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import json
 
 app = Flask(__name__)
+app.secret_key = 'mladen'
 
 @app.route('/')
 
@@ -49,7 +50,6 @@ def vornplot():
 
 
 		if request.form['vornbutton'] == 'Generate Free Energy!':
-			
 			psi = float(request.form['psi'])
 
 			#I Use axis, instead of plt, same stuff though
@@ -217,6 +217,8 @@ def plot():
 			"""Run Optimization"""
 			x = arange(0.05,0.95,0.001)
 			spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
+			spinodal = spinodal/nav
+			spinodal = 1./spinodal
 
 			if flipper == 1:
 				x = 1 - x

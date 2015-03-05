@@ -68,6 +68,8 @@ def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper):
 		c = (3.0/z)*(p1 - p2) #Technically c / (eps/kt) 
 		f = (.5*(1./(na*phi) + 1./(nb-nb*phi)))
 		spin1 = (f - a) / (b + c*phi)
+		#Invert it so not versus chi anymore
+		spin1 = 1./spin1
 
 		if flipper == 1:
 				phi = 1 - phi
@@ -182,6 +184,7 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper):
 
 		x1=x1.tolist()
 		x2=x2.tolist()
+		y2 = 1./y2
 		y2=y2.tolist()
 		x2 = x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
 		y2i = y2[::-1]

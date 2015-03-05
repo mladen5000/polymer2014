@@ -46,7 +46,7 @@ def vSpinodal(sigma,alpha,m):
 	5. Feed back into flory function
 	"""
 	#Range of Phi
-	phivals = arange(1e-2,0.10,0.001)
+	phivals = arange(1e-2,0.10,0.01)
 
 	i=0
 	xvals = zeros((len(phivals)))
@@ -218,7 +218,6 @@ def vfree(N,psi,sigma):
 		f[i] = (phi/N)*log(phi/2.0) + psi*log(psi/2.0) + (1-phi-psi)*log(1-phi-psi) - alpha*(phi*sigma + psi)**1.5
 		i += 1
 
-	print phivals, entropy, f
 	return phivals, enthalpy,entropy, f
 
 
