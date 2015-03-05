@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import random
 from math import *
@@ -8,9 +10,11 @@ import matplotlib.pyplot as plt
 import StringIO
 import mpld3
 from mpld3 import plugins
+
 from SLCT import *
 from VO import *
 from FH import *
+
 
 from flask import Flask, request, make_response, render_template
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -48,19 +52,21 @@ def vornplot():
 			
 			psi = float(request.form['psi'])
 
+			#I Use axis, instead of plt, same stuff though
 			fig = Figure()
 			fig.set_facecolor('white')
 			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-			axis.set_xlabel('Volume Fraction, Phi')
-			axis.set_ylabel('Salt Concentration, Psi')
+			axis.set_xlabel('Volume Fraction, \u03a6')
+			axis.set_ylabel('Free Energy ')
 			axis.set_title('Voorn-Overbeek Phase Diagram')
 			canvas = FigureCanvas(fig)
 			phi,h,s,g = vfree(N,psi,sigma)
 
 			
-			hline = axis.plot(phi,h,'r',lw=2)
-			sline = axis.plot(phi,s,'b',lw=2)
-			gline = axis.plot(phi,g,'g',lw=2)
+			hline = axis.plot(phi,h,'r',lw=1,alpha = 0.5,label='Enthalpy')
+			sline = axis.plot(phi,s,'b',lw=1,alpha = 0.5,label='Entropy')
+			gline = axis.plot(phi,g,'g',lw=3,label="Free Energy")
+			legend = axis.legend()
 
 			"""Add d3 stuff"""
 			canvas = FigureCanvas(fig)
@@ -70,21 +76,22 @@ def vornplot():
 
 			return mpld3.fig_to_html(fig,template_type='simple')
 
-		elif request.form['vornbutton'] == 'Generate!':
+		elif request.form['vornbutton'] == 'Generate Phase!':
 			"""Set up the plot"""
 			fig = Figure()
 			fig.set_facecolor('white')
 			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-			axis.set_xlabel('Volume Fraction, Phi')
-			axis.set_ylabel('Salt Concentration, Psi')
+			axis.set_xlabel('Volume Fraction, \u03a6')
+			axis.set_ylabel('Salt Concentration, \u03a8')
 			axis.set_title('Voorn-Overbeek Phase Diagram')
 			canvas = FigureCanvas(fig)
 
 			"""Move Spinodal Elsewhere"""
 			phi,y2 =  vNR(alpha,N,sigma)
 			x, spinodal = vSpinodal(sigma,alpha,N)
-			spinline = axis.plot(x,spinodal,'r',lw=2)
-			binline = axis.plot(phi,y2,'b',lw=2) 
+			spinline = axis.plot(x,spinodal,'r',lw=2,label = "Spinodal")
+			binline = axis.plot(phi,y2,'b',lw=2, label = "Binodal") 
+			axis.legend()
 
 			"""Make this organized like the other stuff"""
 			plugins.connect(fig, plugins.MousePosition())
@@ -143,8 +150,8 @@ def slctplot():
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		axis.set_xlabel('Volume Fraction')
-		axis.set_ylabel('eps/kbT')
+		axis.set_xlabel('Volume Fraction, \u03a6')
+		axis.set_ylabel('\u03b5/kbT')
 		axis.set_title('SLCT Phase Diagram')
 
 		"""Run Optimization"""
@@ -153,8 +160,9 @@ def slctplot():
 
 
 		"""Plot"""
-		spinline = axis.plot(spinx,spiny,'r',lw=2) 
-		binline = axis.plot(phi,y2,'b',lw=2)
+		spinline = axis.plot(spinx,spiny,'r',lw=2,label="Spinodal") 
+		binline = axis.plot(phi,y2,'b',lw=2,label="Binodal")
+		axis.legend()
 
 		"""Add d3 stuff"""
 		canvas = FigureCanvas(fig)
@@ -185,7 +193,7 @@ def plot():
 
 			return mpld3.fig_to_html(fig,template_type='simple')
 
-		elif request.form['florybutton'] == 'Generate!':
+		elif request.form['florybutton'] == 'Generate Phase!':
 
 			"""Spinodal"""
 			crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
@@ -202,8 +210,8 @@ def plot():
 			fig = Figure()
 			fig.set_facecolor('white')
 			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-			axis.set_xlabel('Volume Fraction')
-			axis.set_ylabel('Chi')
+			axis.set_xlabel('Volume Fraction, \u03a6')
+			axis.set_ylabel('\u03c7')
 			axis.set_title('Flory-Huggins Phase Diagram')
 
 			"""Run Optimization"""
@@ -214,8 +222,9 @@ def plot():
 				x = 1 - x
 
 			phi,y2 =  NR(na,nb,nav,crit_chi,flipper)
-			spinline = axis.plot(x,spinodal,'r',lw=2) 
-			binline = axis.plot(phi,y2,'b',lw=2)
+			spinline = axis.plot(x,spinodal,'r',lw=2,label="Spinodal") 
+			binline = axis.plot(phi,y2,'b',lw=2,label="Binodal")
+			axis.legend()
 
 			"""Add d3 stuff"""
 			canvas = FigureCanvas(fig)
@@ -250,7 +259,7 @@ def generate_figure(na,nb,chi):
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		axis.set_xlabel('Volume Fraction')
+		axis.set_xlabel('Volume Fraction, \u03a6')
 		axis.set_ylabel('Free Energy')
 		axis.set_title('Flory-Huggins Free Energy Diagram')
 
@@ -267,16 +276,17 @@ def generate_figure(na,nb,chi):
 			i += 1
 
 
-		hline = axis.plot(phi,h,'r',lw=2)
-		sline = axis.plot(phi,s,'b',lw=2)
-		gline = axis.plot(phi,g,'g',lw=2)
+		hline = axis.plot(phi,h,'r',lw=1,alpha = 0.5,label='Enthalpy')
+		sline = axis.plot(phi,s,'b',lw=1,alpha = 0.5,label='Entropy')
+		gline = axis.plot(phi,g,'g',lw=3,label="Free Energy")
+		legend = axis.legend()
 		return fig
 
 def generate_SLCTfigure(NFA,NFB,polya,polyb,k1,k2,m1,m2,eps):
 		fig = Figure()
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		axis.set_xlabel('Volume Fraction')
+		axis.set_xlabel('Volume Fraction, \u03a6')
 		axis.set_ylabel('Free Energy')
 		axis.set_title('SLCT Free Energy Diagram')
 
@@ -287,9 +297,10 @@ def generate_SLCTfigure(NFA,NFB,polya,polyb,k1,k2,m1,m2,eps):
 		phi,h,s,g = SLCTfree(r1,r2,z,p1,p2,na,nb,eps)
 
 		
-		hline = axis.plot(phi,h,'r',lw=2)
-		sline = axis.plot(phi,s,'b',lw=2)
-		gline = axis.plot(phi,g,'g',lw=2)
+		hline = axis.plot(phi,h,'r',lw=1,alpha = 0.5,label='Enthalpy')
+		sline = axis.plot(phi,s,'b',lw=1,alpha = 0.5,label='Entropy')
+		gline = axis.plot(phi,g,'g',lw=3,label="Free Energy")
+		legend = axis.legend()
 		return fig
 
 na = 1

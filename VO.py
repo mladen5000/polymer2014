@@ -200,7 +200,10 @@ def vfree(N,psi,sigma):
 	"""Calculates the free energy, enthalpy, entropy of VO"""
 	#Define
 	alpha = 3.655
-	phivals = arange(0.0,1.0,0.001)
+	phivals = arange(0.0,1.0-psi,0.001)
+	if psi ==0:
+		psi = 0.000000000001
+	
 
 	#Initalize
 	enthalpy = zeros(( len(phivals) ))
@@ -215,6 +218,7 @@ def vfree(N,psi,sigma):
 		f[i] = (phi/N)*log(phi/2.0) + psi*log(psi/2.0) + (1-phi-psi)*log(1-phi-psi) - alpha*(phi*sigma + psi)**1.5
 		i += 1
 
+	print phivals, entropy, f
 	return phivals, enthalpy,entropy, f
 
 
