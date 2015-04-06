@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block content %}
+	  <h2>Contact</h2>
+
+	{% for message in get_flashed_messages() %}
+		<div class="flash">{{ message }}</div>
+	{% endfor %}
+
+	<form action="{{ url_for('contact') }}" method=post>
+		<div class="row">
+			<div class="large-12 columns">
+				<label> Number of Monomers
+					<input type="text" placeholder="100" name="N" />
+					{{ form.hidden_tag() }}
+				</label>
+			</div>
+
+		{{ form.name.label }}
+		{{ form.name }}
+		 
+		{{ form.email.label }}
+		{{ form.email }}
+		 
+		{{ form.subject.label }}
+		{{ form.subject }}
+		 
+		{{ form.message.label }}
+		{{ form.message }}
+			 
+		{{ form.submit }}
+		</div>
+	</form>
+{% endblock %}
+

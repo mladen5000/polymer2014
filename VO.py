@@ -46,7 +46,7 @@ def vSpinodal(sigma,alpha,m):
 	5. Feed back into flory function
 	"""
 	#Range of Phi
-	phivals = arange(1e-2,0.10,0.01)
+	phivals = arange(1e-2,0.10,0.001)
 
 	i=0
 	xvals = zeros((len(phivals)))

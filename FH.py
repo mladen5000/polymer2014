@@ -103,7 +103,6 @@ def NR(na,nb,nav,crit_chi,flipper):
 		#Adds crit chi to the end of y2
 		y2 = reshape(append(y2,crit_chi),(n,1))
 		#y2 = nav*y2
-		y2 = 1.0/y2
 		y2=y2.tolist()
 		y2i = y2[::-1]
 		y2i.pop(0)

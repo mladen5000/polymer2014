@@ -60,5 +60,15 @@ The tools included here, in order of increasing complexity and sophistication, a
 		<br>
 		<br>
 </div>
+<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="http://mpld3.github.io/js/mpld3.v0.1.js"></script>
+
+<body>
+	<div id= "{{ id }}" ></div>
+<script type="text/javascript">
+	mpld3.draw_figure("{{ id }}", {{ json01|safe }});
+</script>
+</body>
+
 <!-- Added jQuery at the End --!>
 {% endblock %}

@@ -6,17 +6,20 @@ import random
 from math import *
 from numpy import *
 from numpy.linalg import inv
+import numpy.random as npr
 import matplotlib.pyplot as plt
 import StringIO
 import mpld3
 from mpld3 import plugins
+import pandas
 
 from SLCT import *
 from VO import *
 from FH import *
+from forms import ContactForm
 
 
-from flask import Flask, flash, request, make_response, render_template
+from flask import Flask,flash, request, make_response, render_template
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import json
@@ -24,11 +27,58 @@ import json
 app = Flask(__name__)
 app.secret_key = 'mladen'
 
-@app.route('/')
 
+
+# Define a function that will return an HTML snippet.
+def build_plot():
+	#defined numpy.random as npr
+    x_deets = npr.random(10)
+    y_deets = npr.random(10)
+    fig, ax = plt.subplots()
+	#replaced pd with pandas, and imported pandas
+    indata = pandas.DataFrame(x_deets, y_deets,)
+    indata.plot(ax=ax)
+	#replaced dumbs with json.dumps
+    output = json.dumps(mpld3.fig_to_dict(fig))
+    return output
+
+# Define our URLs and pages.
+@app.route('/blah')
+def render_plot():
+    sample_list = list(npr.randint(1,99999999,size=1))
+    dict_of_plots = list()
+    for i in sample_list:
+        single_chart = dict()
+        single_chart['id'] = "fig_" + str(i)
+        print single_chart['id']
+
+        single_chart['json'] = build_plot()     
+        dict_of_plots.append(single_chart)
+	id = "fig01"
+	json01 = build_plot()
+		#changed plots.html to exampleplots.html
+    return render_template('exampleplots.html', id = id,json01=json01)#snippet=plot_snippet)
+
+@app.route('/')
 @app.route('/index')
 def index():
     return render_template("index.html")
+
+@app.route('/contact',methods=['GET','POST'])
+def contact():
+	form = ContactForm()
+	if request.method == 'POST':
+		if form.validate() == False:
+			flash('FILL ALL FIELDS')
+			return render_template('contact.html', form=form)
+		else:
+			return 'Form posted.'
+	 
+	elif request.method == 'GET':
+		return render_template('contact.html', form=form)
+
+	return render_template('contact.html', form=form)
+
 
 @app.route('/howto.html')
 def howto():
@@ -69,12 +119,18 @@ def vornplot():
 			legend = axis.legend()
 
 			"""Add d3 stuff"""
+			"""
+			"""
 			canvas = FigureCanvas(fig)
 			output = StringIO.StringIO()
 			canvas.print_png(output, bbox_inches='tight')
 			plugins.connect(fig, plugins.MousePosition())
 
-			return mpld3.fig_to_html(fig,template_type='simple')
+			id = "fig01"
+			json01 = json.dumps(mpld3.fig_to_dict(fig))
+
+			return render_template("exampleplots.html",id=id,json01=json01)
+			#return mpld3.show(fig)
 
 		elif request.form['vornbutton'] == 'Generate Phase!':
 			"""Set up the plot"""
@@ -110,15 +166,26 @@ def slctplot():
 		nb = float(request.form['NFB'])
 		polya = request.form['polya']
 		polyb = request.form['polyb']
-		k1 = float(request.form['k1'])
-		k2 = float(request.form['k2'])
-		m1 = float(request.form['m1'])
-		m2 = float(request.form['m2'])
+
+		#Deal with k and m values for now
+		if polya == 'PE' or polya =='PF' or polya == 'PG' or polya == 'PH' or polya == 'PI' or polya == 'PJ':
+			k1 = float(request.form['k1'])
+			m1 = float(request.form['m1'])
+		else:
+			k1 = 0
+			m1 = 0
+
+		if polyb == 'PE' or polyb =='PF' or polyb == 'PG' or polyb == 'PH' or polyb == 'PI' or polyb == 'PJ':
+			k2 = float(request.form['k2'])
+			m2 = float(request.form['m2'])
+		else:
+			k2 = 0
+			m2 = 0
 
 		z = 6.0
 		
 		""" Parameters for specific polymers"""
-		r1, p1, r2, p2 = SLCT_constants(polya,polyb)
+		r1, p1, r2, p2 = SLCT_constants(polya,polyb,k1,k2)
 
 		global flipper
 
@@ -151,7 +218,7 @@ def slctplot():
 		fig.set_facecolor('white')
 		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
 		axis.set_xlabel('Volume Fraction, \u03a6')
-		axis.set_ylabel('\u03b5/kbT')
+		axis.set_ylabel('Interaction Strength, \u03b5/kbT')
 		axis.set_title('SLCT Phase Diagram')
 
 		"""Run Optimization"""
@@ -211,14 +278,13 @@ def plot():
 			fig.set_facecolor('white')
 			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
 			axis.set_xlabel('Volume Fraction, \u03a6')
-			axis.set_ylabel('\u03c7')
+			axis.set_ylabel('Chi Parameter, \u03c7')
 			axis.set_title('Flory-Huggins Phase Diagram')
 
 			"""Run Optimization"""
 			x = arange(0.05,0.95,0.001)
 			spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
 			spinodal = spinodal/nav
-			spinodal = 1./spinodal
 
 			if flipper == 1:
 				x = 1 - x
