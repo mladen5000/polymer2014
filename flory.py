@@ -13,9 +13,11 @@ import mpld3
 from mpld3 import plugins
 import pandas
 
+
 from SLCT import *
 from VO import *
 from FH import *
+from structurefactor import structure_factor
 from forms import ContactForm
 
 
@@ -99,7 +101,7 @@ def vornplot():
 		sigma = float(request.form['sigma'])
 
 
-		if request.form['vornbutton'] == 'Generate Free Energy!':
+		if request.form['vornbutton'] == 'Generate Profile!':
 			psi = float(request.form['psi'])
 
 			#I Use axis, instead of plt, same stuff though
@@ -108,7 +110,7 @@ def vornplot():
 			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
 			axis.set_xlabel('Volume Fraction, \u03a6')
 			axis.set_ylabel('Free Energy ')
-			axis.set_title('Voorn-Overbeek Phase Diagram')
+			axis.set_title('Voorn-Overbeek  Diagram')
 			canvas = FigureCanvas(fig)
 			phi,h,s,g = vfree(N,psi,sigma)
 
@@ -119,8 +121,6 @@ def vornplot():
 			legend = axis.legend()
 
 			"""Add d3 stuff"""
-			"""
-			"""
 			canvas = FigureCanvas(fig)
 			output = StringIO.StringIO()
 			canvas.print_png(output, bbox_inches='tight')
@@ -129,10 +129,18 @@ def vornplot():
 			id = "fig01"
 			json01 = json.dumps(mpld3.fig_to_dict(fig))
 
-			return render_template("exampleplots.html",id=id,json01=json01)
+			list_of_plots = list()
+			#Attempt to make dictionary of plots
+			plot_dict= dict()
+			plot_dict['id'] = "fig01"
+			plot_dict['json'] = json01
+			list_of_plots.append(plot_dict)
+			
+
+			#return render_template("exampleplots.html",id=id,json01=json01)
 			#return mpld3.show(fig)
 
-		elif request.form['vornbutton'] == 'Generate Phase!':
+		#elif request.form['vornbutton'] == 'Generate Phase!':
 			"""Set up the plot"""
 			fig = Figure()
 			fig.set_facecolor('white')
@@ -148,15 +156,32 @@ def vornplot():
 			spinline = axis.plot(x,spinodal,'r',lw=2,label = "Spinodal")
 			binline = axis.plot(phi,y2,'b',lw=2, label = "Binodal") 
 			axis.legend()
-
-			"""Make this organized like the other stuff"""
 			plugins.connect(fig, plugins.MousePosition())
-			return mpld3.fig_to_html(fig)
+
+			id2 = "fig02"
+			json02 = json.dumps(mpld3.fig_to_dict(fig))
+
+			#Attempt to make dictionary of plots
+			plot_dict= dict()
+			plot_dict['id'] = "fig02"
+			plot_dict['json'] = json02
+			list_of_plots.append(plot_dict)
+
+			#Generate table
+			zipped = zip(x,spinodal,y2)
+			
+			#Critical point form
+			critphi = vCriticalpoint(sigma,alpha,N)
+
+			return render_template("exampleplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
 
 @app.route('/slct.html',methods=['POST','GET'])
 def slct():
 	return render_template("slct.html")
 
+@app.route('/structurefactor.html',methods=['POST','GET'])
+def structurefactor():
+	return render_template("radiusgyration.html")
 
 
 @app.route('/slctplot', methods=['GET','POST'])	
@@ -370,6 +395,44 @@ def generate_SLCTfigure(NFA,NFB,polya,polyb,k1,k2,m1,m2,eps):
 		gline = axis.plot(phi,g,'g',lw=3,label="Free Energy")
 		legend = axis.legend()
 		return fig
+
+@app.route('/sfplot', methods=['GET','POST'])	
+def sfplot():
+	if request.method == 'POST':
+		na = float(request.form['Na'])
+		nb = float(request.form['Nb'])
+		ba = float(request.form['Ba'])
+		bb = float(request.form['Bb'])
+		phi = float(request.form['phia'])
+		chi = float(request.form['chi'])
+
+
+		if request.form['sfbutton'] == 'Generate Plot!':
+
+			#I Use axis, instead of plt, same stuff though
+			fig = Figure()
+			fig.set_facecolor('white')
+			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+			axis.set_xlabel('q')
+			axis.set_ylabel('S(q)')
+			axis.set_title('Structure Factor')
+			canvas = FigureCanvas(fig)
+			q,sq = structure_factor(na,nb,ba,bb,phi,chi)
+
+			
+			gline = axis.plot(q,sq,'m',lw=3)
+			legend = axis.legend()
+
+			"""Add d3 stuff"""
+			canvas = FigureCanvas(fig)
+			output = StringIO.StringIO()
+			canvas.print_png(output, bbox_inches='tight')
+			plugins.connect(fig, plugins.MousePosition())
+
+			id = "fig01"
+			json01 = json.dumps(mpld3.fig_to_dict(fig))
+			return render_template("sfplot.html",id=id,json01=json01)
+
 
 na = 1
 nb = 1

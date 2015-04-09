@@ -6,7 +6,7 @@
 
 {% block content %}
 	<div id = "Header" style="text-align: left;">
-		<h1> Voorn-Overbeek Graph Generator </h1>
+		<h1> Structure Factor Graph Generator </h1>
 	</div>
 
 	<div class = "introduction">
@@ -26,32 +26,49 @@ The tools included here, in order of increasing complexity and sophistication, a
 	
 </p>
 		</div>
-	<form action="/vornplot" method="post">
+	<form action="/sfplot" method="post">
 				<div class="row">
 		<fieldset>
 			<legend> Input Parameters </legend>
-					<div class="large-4 columns">
-							<!-- radio buttons and text input cant have the same name --!>
-
-						<label>Number of Monomers 
-								<input type="text" placeholder="100" name = "N" />  
+				<div class="row">
+					<div class="large-6 columns">
+						<label>Number of Monomers A
+								<input type="text" placeholder="100" name = "Na" />  
 						</label>
 					</div>
-					<div class="large-4 columns">
-						<label>Charge Density, Sigma 
-								<input type="text" placeholder="0.24" name = "sigma" />  
+					<div class="large-6 columns">
+						<label>Number of Monomers B
+								<input type="text" placeholder="100" name = "Nb" />  
 						</label>
 					</div>
-
-					<div class="large-4 columns">
-						<label> Salt Concentration, Psi
-							<input type="text" name="psi" placeholder="0.1" />
+				</div>
+				<div class="row">
+					<div class="large-6 columns">
+						<label> Effective bond length,A
+								<input type="text" placeholder="0.1" name = "Ba" />  
 						</label>
 					</div>
-		</div>
+					<div class="large-6 columns">
+						<label> Effective bond length, B
+								<input type="text" placeholder="0.1" name = "Bb" />  
+						</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="large-6 columns">
+						<label> Volume Fraction,A
+								<input type="text" placeholder="0.1" name = "phia" />  
+						</label>
+					</div>
+					<div class="large-6 columns">
+						<label> Chi Parameter
+								<input type="text" placeholder="0.1" name = "chi" />  
+						</label>
+					</div>
+				</div>
 
 				<div align="center">
-					<input class="button" type="submit" name = 'vornbutton' value="Generate Profile!" />
+					<input class="button" type="submit" name = 'sfbutton' value="Generate Plot!" />
 				</div>
 			</div>
 		</div>
@@ -61,15 +78,5 @@ The tools included here, in order of increasing complexity and sophistication, a
 		<br>
 		<br>
 </div>
-<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
-<script type="text/javascript" src="http://mpld3.github.io/js/mpld3.v0.1.js"></script>
-
-<body>
-	<div id= "{{ id }}" ></div>
-<script type="text/javascript">
-	mpld3.draw_figure("{{ id }}", {{ json01|safe }});
-</script>
-</body>
-
 <!-- Added jQuery at the End --!>
 {% endblock %}

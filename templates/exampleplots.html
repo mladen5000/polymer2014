@@ -10,13 +10,59 @@
 	</div>
 
 	<div class="row">
-		<div id="{{ id }}" class = "large-8 large-centered columns">
-			<script type="text/javascript">
-				mpld3.draw_figure("{{ id }}", {{ json01|safe }});
-			</script>
+		<h2> Plots </h2>
+		{% for plot in list_of_plots %}
+			<div id="{{ plot['id'] }}" class = "large-8 large-centered columns"></div>
+		{% endfor %}
+		<script type="text/javascript">
+			{% for plot in list_of_plots %}
+				mpld3.draw_figure("{{ plot['id'] }}", {{ plot['json']|safe }});
+			{% endfor %}
+		</script>
 		</div>
 	</div>
+
+	<br>
+	<br>
+
+	<h2> Critical Point </h2>
+
+	<div class = "large-12 columns">
+	<table>
+	  <thead>
+		<tr>
+		  <th width="150">Critical Volume Fraction</th>
+		  <th width="150">Critical Salt Concentration</th>
+		</tr>
+	  </thead>
+	  <tbody>
+			<tr>
+				<td> {{ critphi[0] }} </td>
+				<td> {{ critphi[1] }} </td>
+			</tr>
+	  </tbody>
+	</table>
+
+
+	<div class = "large-12 columns">
+		<h2> Data Table </h2>
+	<table>
+	  <thead>
+		<tr>
+		  <th width="100">Volume Fraction</th>
+		  <th width="150">Spinodal</th>
+		  <th width="150">Binodal</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		{% for row in zipped %}
+			<tr>
+				<td> {{ row[0] }} </td>
+				<td> {{ row[1] }} </td>
+				<td> {{ row[2] }} </td>
+			</tr>
+		{% endfor %}
+	  </tbody>
+	</table>
+	{% endblock %}
 </div>
-	<div class="row">
-	</div>
-{% endblock %}
