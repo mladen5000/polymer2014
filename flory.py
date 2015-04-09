@@ -6,12 +6,11 @@ import random
 from math import *
 from numpy import *
 from numpy.linalg import inv
-import numpy.random as npr
+#import numpy.random as npr
 import matplotlib.pyplot as plt
 import StringIO
 import mpld3
 from mpld3 import plugins
-import pandas
 
 
 from SLCT import *
@@ -24,7 +23,7 @@ from forms import ContactForm
 from flask import Flask,flash, request, make_response, render_template
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-import json
+#import json
 
 app = Flask(__name__)
 app.secret_key = 'mladen'
