@@ -6,18 +6,16 @@ import random
 from math import *
 from numpy import *
 from numpy.linalg import inv
-#import numpy.random as npr
 import matplotlib.pyplot as plt
 import StringIO
 import mpld3
-#from mpld3 import plugins
+from mpld3 import plugins
 
 
 from SLCT import *
 from VO import *
 from FH import *
-#from structurefactor import structure_factor
-#from forms import ContactForm
+from structurefactor import structure_factor
 
 
 from flask import Flask,flash, request, make_response, render_template
