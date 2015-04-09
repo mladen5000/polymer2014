@@ -10,7 +10,11 @@ def structure_factor(na,nb,ba,bb,phi,chi):
 	Rga = na*ba**2 / 6.0 
 	Rgb = nb*bb**2 / 6.0
 
-	qvals = np.arange(0.01,5,0.01)
+	maxb = min(ba,bb)
+
+	endq = 1.0/maxb
+
+	qvals = np.arange(0.01,endq,0.01)
 	sinv = np.zeros(( len(qvals) ))
 
 	i = 0

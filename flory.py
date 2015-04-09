@@ -21,7 +21,6 @@ from structurefactor import structure_factor
 from flask import Flask,flash, request, make_response, render_template
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-#import json
 
 app = Flask(__name__)
 app.secret_key = 'mladen'
