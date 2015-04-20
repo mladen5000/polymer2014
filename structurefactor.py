@@ -14,7 +14,7 @@ def structure_factor(na,nb,ba,bb,phi,chi):
 
 	endq = 1.0/maxb
 
-	qvals = np.arange(0.01,endq,0.01)
+	qvals = np.arange(0.001,endq,0.005)
 	sinv = np.zeros(( len(qvals) ))
 
 	i = 0
@@ -26,29 +26,15 @@ def structure_factor(na,nb,ba,bb,phi,chi):
 
 		xb = q**2 * Rgb**2
 		g_b =(2.0/(xb**2)) * (xb - 1 + exp(-1*xb) )
+		print Rga,Rgb,xa,xb,g_a,g_b
 
 		#Inverse Structure Factor
 		S1 = 1.0 / (na * phi * g_a)
-		S2 = 1.0 / (nb * (1-phi) * g_b)
+		S2 = 1.0 / (nb * (1.0-phi) * g_b)
 		sinv[i] = S1 + S2 - 2*chi
+		print sinv[i]
 		sinv[i] = 1.0/sinv[i]
+
 		i += 1
 	return qvals,sinv
-
-na = 1000
-nb = 1000
-ba = 2.2
-bb = 2.1
-phi = 0.8
-chi = 0.8
-"""
-x = np.arange(0.0,5.0,0.1)
-y = x**2
-plt.plot(x,y)
-plt.plot(y,x)
-plt.show()
-q,sinv = structure_factor(na,nb,ba,bb,phi,chi)
-plt.plot(q,sinv)
-plt.show()
-"""
 

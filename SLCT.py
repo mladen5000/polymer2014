@@ -191,6 +191,29 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper):
 
 		return (phi,y2)
 
+def SLCT_semiflex(Eb_a):
+		z = 6.0
+		T = 300
+
+		g_a =  z / ( z - 1 + exp(Eb_a/T) )
+		print g_a
+		#g_b =  z / ( z - 1 + exp(Eb_b/(kb*T)) )
+
+		gamma111 = 0
+		gamma21 = 2./3.
+		gamma3 = 2./3.
+		alpha0 = 2./3.
+		alpha1 = 2./3.
+		
+		p_a = gamma111 + gamma21*g_a + gamma3*g_a**2
+		r_a = alpha0 + alpha1*g_a
+		print r_a, p_a
+		return r_a, p_a
+		
+Eb_a = 600
+SLCT_semiflex(Eb_a)
+
+
 def SLCT_constants(polya,polyb,k1,k2):
 		if polya == "PA":
 				r1 = 1.0

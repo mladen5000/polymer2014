@@ -1,9 +1,31 @@
+/*.cc-selector {
+	background-color:#eeeeee
+}
+	*/
+	
+
 .cc-selector input{
+	background-color: #eeeeee
     margin:0;padding:0;
+	background-image:none;
     -webkit-appearance:none;
        -moz-appearance:none;
             appearance:none;
 }
+
+#showmore_a{
+	cursor:pointer;
+	color:#42747f;
+	font-weight:bold;
+}
+
+#showmore_b{
+	cursor:pointer;
+	color:#42747f;
+	font-weight:bold;
+}
+
+
 .visa{background-image:url("img/ph1.png");}
 .mastercard{background-image:url("img/pep.png");}
 .pib{background-image:url("img/pib.png");}
@@ -31,7 +53,8 @@
 
 .cc-selector input:active +.drinkcard-cc{opacity: .9;}
 .cc-selector input:checked +.drinkcard-cc{
-    -webkit-filter: none;
+	opacity: .99;
+	-webkit-filter: none;
        -moz-filter: none;
             filter: none;
 }
@@ -41,15 +64,19 @@
     background-repeat:no-repeat;
     display:inline-block;
     width:120px;height:150px;
-    -webkit-transition: all 100ms ease-in;
-       -moz-transition: all 100ms ease-in;
-            transition: all 100ms ease-in;
-    -webkit-filter: brightness(1.8) grayscale(1) opacity(.1);
-       -moz-filter: brightness(1.8) grayscale(1) opacity(.1);
-            filter: brightness(1.8) grayscale(1) opacity(.1);
+    -webkit-transition: all 130ms ease-in;
+       -moz-transition: all 130ms ease-in;
+            transition: all 130ms ease-in;
+    -webkit-filter: brightness(1.8) grayscale(0) opacity(.1);
+       -moz-filter: brightness(1.8) grayscale(0) opacity(.1);
+            filter: brightness(1.8) grayscale(0) opacity(.1);
 }
+
 .drinkcard-cc:hover{
-		background-color: #ffffff; 
-    -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
+    -webkit-filter: brightness(1.2) grayscale(0) opacity(.9) blur(0.5px);
+	width: 120px;
+	height: 150px;
 	}
+
+
 

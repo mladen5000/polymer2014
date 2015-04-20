@@ -30,35 +30,35 @@ The tools included here, in order of increasing complexity and sophistication, a
 	{% if error %}
 		<p class=error><strong>Error:</strong> {{ error }}
 	{% endif %}
+	<fieldset>
+		<legend> Input Parameters </legend>
 	<form action="/plot" method="post">
 		<div class="row">
-			<div class="large-4 columns">
-					<label>Monomers of Species A
+
+					<div class="large-4 columns">
+						<label>Monomers of Species A
 							<input type="text" name="NFA" placeholder="100" />
-					</label>
-				</div>
-				<div class="large-4 columns">
-					<label>Monomers of Species B
-							<input type="text" name="NFB" placeholder="100" />
-					</label>
-				</div>
-			</div>
-		<div class="row">
-			<div class="large-4 columns">
-					<label> Chi Value (For Free Energy only)
-							<input type="text" name="chivalue" placeholder="0.2" />
-					</label>
-				</div>
-			</div>
-		</div>
-			<div class="row">
-					<div align="center">
-						<input class="button" type="submit" name="florybutton" value="Generate Phase!" />
+						</label>
 					</div>
-			</div>
+
+					<div class="large-4 columns">
+						<label>Monomers of Species B
+							<input type="text" name="NFB" placeholder="100" />
+						</label>
+					</div>
+
+
+					<div class="large-4 columns">
+						<label> Chi Value
+							<input type="text" name="chivalue" placeholder="0.2" />
+						</label>
+					</div>
+
+		</div>
+
 			<div class="row">
 					<div align="center">
-						<input class="button" type="submit" name="florybutton" value="Generate Free Energy!" />
+						<input class="button" type="submit" name="florybutton" value="Generate Profile!" />
 					</div>
 			</div>
 		</form>

@@ -42,10 +42,10 @@ The tools included here, in order of increasing complexity and sophistication, a
 					</select>
 					--!>
 				</label>
-					<div class="cc-selector">
+					<div id = "section_a" class="cc-selector">
 						<input id="p_a" type="radio" name="polya" value="PA" />
 						<label class="drinkcard-cc p_a" for="p_a"></label>
-
+						
 						<input id="p_b" type="radio" name="polya" value="PB" />
 						<label class="drinkcard-cc p_b" for="p_b"></label>
 
@@ -61,6 +61,11 @@ The tools included here, in order of increasing complexity and sophistication, a
 						<input id="p_f" type="radio" name="polya" value="PF" />
 						<label class="drinkcard-cc p_f" for="p_f"></label>
 
+					</div>
+					 
+					<div id="showmore_a" align=center>Show More...</div>
+
+					<div id = "section_aplus" class="cc-selector">
 						<input id="p_g" type="radio" name="polya" value="PG" />
 						<label class="drinkcard-cc p_g" for="p_g"></label>
 
@@ -123,7 +128,7 @@ The tools included here, in order of increasing complexity and sophistication, a
 					</select>
 					--!>
 				</label>
-					<div class="cc-selector1">
+					<div id="section_b" class="cc-selector">
 						<input id="p_a1" type="radio" name="polyb" value="PA" />
 						<label class="drinkcard-cc p_a" for="p_a1"></label>
 
@@ -141,7 +146,10 @@ The tools included here, in order of increasing complexity and sophistication, a
 
 						<input id="p_f1" type="radio" name="polyb" value="PF" />
 						<label class="drinkcard-cc p_f" for="p_f1"></label>
+					</div>
+					<div id="showmore_b" align=center>Show More...</div>
 
+					<div id="section_bplus" class="cc-selector">
 						<input id="p_g1" type="radio" name="polyb" value="PG" />
 						<label class="drinkcard-cc p_g" for="p_g1"></label>
 
@@ -188,57 +196,95 @@ The tools included here, in order of increasing complexity and sophistication, a
 						<label class="drinkcard-cc p_u" for="p_u1"></label>
 
 
-
-
 					</div>
 			</div>
 		</div>
+
+		<br>
+							<!-- K and M values --!>
+
+		<!-- LHS --!>
 		<div class="row">
 			<div class="large-6 columns">
-				<label>Input k value (if necessary)
-						<input type="text" name="k1" placeholder="2" />
+				<fieldset id= "field1">
+					<legend>Side chain length </legend>
+				<div class="large-6 columns">
+					<label for='kval1'> K
+							<input id='kval1' type="text" name="k1" placeholder="2" />
+					</label>
+				</div>
+				<div class="large-6 columns">
+					<label for='mval1'> M 
+							<input id='mval1' type="text" name="m1" placeholder="2" />
+					</label>
+				</div>
+			</div>
+
+		<!-- RHS --!>
+			<div class="large-6 columns">
+				<fieldset id = field2>
+					<legend> Side chain length </legend>
+				<div class="large-6 columns">
+					<label for='kval2'> K
+							<input id='kval2' type="text" name="k2" placeholder="2" />
+					</label>
+				</div>
+				<div class="large-6 columns">
+					<label for='mval2'> M 
+							<input id='mval2' type="text" name="m2" placeholder="2" />
+					</label>
+				</div>
+			</div>
+		</div>
+		<div align=center>
+				<input id="checkbox_semiflex" type="checkbox"><label for="checkbox_semiflex">Semiflexible</label>
+		</div>
+
+		<!-- Bending Energy Forms --!>
+		<div id="bending_energies" class="row">
+			<fieldset id= "bending">
+
+				<legend> Bending Energies for Semilflexibility </legend>
+			<div class="large-6 columns">
+				<label for='bend_a'> Bending Energy, K
+						<input id='eb_a' type="text" name="eba" placeholder="250" />
 				</label>
 			</div>
 			<div class="large-6 columns">
-				<label>Input k value (if necessary)
-						<input type="text" name="k2" placeholder="2" />
+				<label for='bend_b'> Bending Energy, K
+						<input id='eb_b' type="text" name="ebb" placeholder="250" />
 				</label>
 			</div>
 		</div>
+
+		<!-- Input Parameters --!>
 		<div class="row">
-			<div class="large-6 columns">
-				<label>Input m value (if necessary)
-						<input type="text" name="m1" placeholder="2" />
-				</label>
-			</div>
-			<div class="large-6 columns">
-				<label>Input m value (if necessary)
-						<input type="text" name="m2" placeholder="2" />
-				</label>
-			</div>
+			<fieldset>
+				<legend> Input Parameters </legend>
+
+				<div class="large-4 columns">
+					<label>Monomers of Species A
+							<input type="text" name="NFA" placeholder="100" />
+					</label>
+				</div>
+
+				<div class="large-4 columns">
+					<label>Monomers of Species B
+							<input type="text" name="NFB" placeholder="100" />
+					</label>
+				</div>
+
+				<div class="large-3 columns">
+					<label> Epsilon
+							<input type="text" name="eps" placeholder="0.2" />
+					</label>
+				</div>
+
 		</div>
-		<div class="row">
-			<div class="large-6 columns">
-				<label>Monomers of Species A
-						<input type="text" name="NFA" placeholder="100" />
-				</label>
-			</div>
-			<div class="large-6 columns">
-				<label>Monomers of Species B
-						<input type="text" name="NFB" placeholder="100" />
-				</label>
-			</div>
-		</div>
-		<div class="row">
-			<div class="large-6 columns">
-				<label> EPSILON (for free energy)
-						<input type="text" name="eps" placeholder="0.2" />
-				</label>
-			</div>
-		</div>
+
 		<div class="row">
 			<div align="center">
-				<input class="button" type="submit" name="slctbutton" value="Generate Phase!" />
+				<input class="button" type="submit" name="slctbutton" value="Generate Profile!" />
 			</div>
 		</div>
 		<div class="row">
@@ -249,4 +295,101 @@ The tools included here, in order of increasing complexity and sophistication, a
 	</form>
 
 
+		<script>
+			// jquery starts here
+			// Hides kvals until clicked
+
+			$('#bending_energies').hide();
+
+			$('#checkbox_semiflex').click(function () {
+				if( $('#checkbox_semiflex').is(':checked') )
+				{
+					$('#bending_energies').slideDown('slow');
+
+				}
+				else{
+					$('#bending_energies').hide();
+				}
+			});
+
+			var kvals = '#p_f,#p_g,#p_h,#p_i,#p_j'
+			var kvals1 = '#p_f1,#p_g1,#p_h1,#p_i1,#p_j1'
+
+			var nonkvals = "#p_a, #p_b, #p_c #p_d, #p_e, #p_k, #p_l, #p_m, #p_n, #p_o, #p_p, #p_q, #p_r, #p_s, #p_t, #p_u"
+			var nonkvals1 = "#p_a1, #p_b1, #p_c1 #p_d1, #p_e1, #p_k1, #p_l1, #p_m1, #p_n1, #p_o1, #p_p1, #p_q1, #p_r1, #p_s1, #p_t1, #p_u1"
+
+
+			/* HIDE ALL THIS FIRST */
+			//kval
+			$('label[for="kval1"]').hide();
+			$('#kval1').hide()
+			$('label[for="kval2"]').hide();
+			$('#kval2').hide()
+
+			//mval
+			$('label[for="mval1"]').hide();
+			$('#mval1').hide()
+			$('label[for="mval2"]').hide();
+			$('#mval2').hide()
+
+			//Showmore stuff
+			$('#section_aplus').hide();
+			$('#section_bplus').hide();
+			//k and m fields
+			$('#field1, #field2').hide();
+
+
+			//Limits the number of polymers on the page
+			$('#showmore_a').click(function() {
+					$('#section_aplus').slideDown(1400);
+					$('#showmore_a').hide();
+				});
+
+			$('#showmore_b').click(function() {
+					$('#section_bplus').slideDown(1400);
+					$('#showmore_b').hide();
+				});
+				
+
+			//Allows the kvalues to pop in/out when necessary
+
+			//LEFT SIDE
+			$( kvals ).click(function() {
+
+					$('#field1').show()
+					$('label[for="kval1"]').slideDown(600);
+					$('#kval1').slideDown(600);
+					$('label[for="mval1"]').slideDown(600);
+					$('#mval1').slideDown(600);
+				});
+
+			//RIGHT SIDE
+			$( kvals1 ).click(function() {
+
+					$('#field2').show()
+					$('label[for="kval2"]').slideDown(600);
+					$('#kval2').slideDown(600);
+					$('label[for="mval2"]').slideDown(600);
+					$('#mval2').slideDown(600);
+				});
+
+			//LEFT SIDE
+			$( nonkvals ).click(function() {
+
+					$('#field1').hide()
+					$('label[for="kval1"]').hide('slow');
+					$('#kval1').hide('slow');
+					$('label[for="mval1"]').hide('slow');
+					$('#mval1').hide('slow');
+				});
+
+			//RIGHT SIDE
+			$( nonkvals1 ).click(function() {
+					$('#field2').hide()
+					$('label[for="kval2"]').hide('slow');
+					$('#kval2').hide('slow');
+					$('label[for="mval2"]').hide('slow');
+					$('#mval2').hide('slow');
+						    });
+		</script>
 {% endblock %}
