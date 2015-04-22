@@ -189,6 +189,15 @@ def slctplot():
 		polyb = request.form['polyb']
 		print polya,polyb
 
+		if request.form['eba'] == "":
+			eba = 0
+			ebb = 0
+
+		else:
+			eba = float(request.form['eba'])
+			ebb = float(request.form['ebb'])
+
+
 		#Deal with k and m values for now
 		if  polya =='PF' or polya == 'PG' or polya == 'PH' or polya == 'PI' or polya == 'PJ':
 			k1 = float(request.form['k1'])
@@ -204,10 +213,17 @@ def slctplot():
 			k2 = 0
 			m2 = 0
 
+		#ADD
+		#If checkmarked, take bending energies, else put in dummy value
+
 		z = 6.0
 		
 		""" Parameters for specific polymers"""
-		r1, p1, r2, p2 = SLCT_constants(polya,polyb,k1,k2)
+		if eba == 0 and ebb == 0:
+			r1, p1, r2, p2 = SLCT_constants(polya,polyb,k1,k2,m1,m2)
+		else:
+			r1, p1 = SLCT_semiflex(polya,k1,m1,eba)
+			r2, p2 =SLCT_semiflex(polyb,k2,m2,ebb)
 
 		global flipper
 
@@ -221,7 +237,7 @@ def slctplot():
 				flipper = 0
 
 		"""Set up the plot"""
-		if request.form['slctbutton'] == 'Generate Free Energy!':
+		if request.form['slctbutton'] == 'Generate Profile!':
 			eps = float(request.form['eps'])
 
 			fig = generate_SLCTfigure(na,nb,polya,polyb,k1,k2,m1,m2,eps)
@@ -231,22 +247,40 @@ def slctplot():
 			output = StringIO.StringIO()
 			canvas.print_png(output, bbox_inches='tight')
 			plugins.connect(fig, plugins.MousePosition())
-			return mpld3.fig_to_html(fig,template_type='simple')
 
-		else:
-			"ELSE PART HAPPENED"
+
+			id = "fig01"
+			json01 = json.dumps(mpld3.fig_to_dict(fig))
+			list_of_plots = list()
+
+			#Attempt to make dictionary of plots
+			plot_dict = dict()
+			plot_dict['id'] = "fig01"
+			plot_dict['json'] = json01
+			list_of_plots.append(plot_dict)
 
 
 			fig = Figure()
 			fig.set_facecolor('white')
 			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
 			axis.set_xlabel('Volume Fraction, \u03a6')
-			axis.set_ylabel('Interaction Strength, \u03b5/kbT')
+			#axis.set_ylabel('Interaction Strength, \u03b5/kbT')
+			axis.set_ylabel('Temperature, K')
 			axis.set_title('SLCT Phase Diagram')
 
 			"""Run Optimization"""
-			phi, y2 = SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper)
+			phi, y2 = SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps)
 			spinx,spiny = SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper)
+
+			"""Incorporate Epsilon"""
+			#Convert list to np array
+			y2 = asarray(y2)
+			spiny= asarray(spiny)
+
+			#Evaluate w/ epsilon
+			y2 = eps/y2
+			spiny = eps/spiny
+
 
 
 			"""Plot"""
@@ -259,8 +293,31 @@ def slctplot():
 			output = StringIO.StringIO()
 			canvas.print_png(output, bbox_inches='tight')
 			plugins.connect(fig, plugins.MousePosition())
+			id2 = "fig02"
+			json02 = json.dumps(mpld3.fig_to_dict(fig))
 
-			return mpld3.fig_to_html(fig,template_type='simple')
+			#Attempt to make dictionary of plots
+			plot_dict = dict()
+			plot_dict['id'] = "fig02"
+			plot_dict['json'] = json02
+			list_of_plots.append(plot_dict)
+
+			#Generate table
+			zipped = zip(spinx,spiny,y2)
+
+			#Critical point
+			critphi = SLCT_crit(r1,r2,z,p1,p2,na,nb,eps)
+			critphi = list(critphi)
+
+			if nb > na:
+				#logic behind this, if nb>na, then already flipped
+				critphi[0] = 1.0 - critphi[0]
+				print critphi[0]
+
+			print critphi
+
+			#return mpld3.fig_to_html(fig,template_type='simple')
+			return render_template("slctplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
 
 	
 @app.route('/plot', methods=['GET','POST'])	
@@ -410,7 +467,7 @@ def generate_SLCTfigure(NFA,NFB,polya,polyb,k1,k2,m1,m2,eps):
 
 		"""Run Optimization"""
 		"""Need to move these lines it's own function"""
-		r1, p1, r2, p2 = SLCT_constants(polya,polyb,k1,k2)
+		r1, p1, r2, p2 = SLCT_constants(polya,polyb,k1,k2,m1,m2)
 		z = 6.0
 		phi,h,s,g = SLCTfree(r1,r2,z,p1,p2,na,nb,eps)
 

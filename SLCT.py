@@ -38,7 +38,7 @@ def SLCTfree(r1,r2,z,p1,p2,na,nb,eps):
 
 
 
-def SLCT_crit(r1,r2,z,p1,p2,na,nb):
+def SLCT_crit(r1,r2,z,p1,p2,na,nb,eps):
 		#Use numpy root to calculate phi_c
 		a = (r1 - r2)**2 / z**2
 		b =((z-2)/2 + (1/z)*(-2*p1 + p2)) #Technically this is b/(eps/kt) which is factored out
@@ -57,6 +57,7 @@ def SLCT_crit(r1,r2,z,p1,p2,na,nb):
 
 		"Calculate the critical temperature"
 		Tc = 2*(b + c*phi_c)/(1.0/(m*phi_c) + 1.0/(m*k*(1-phi_c)) - 2*a)
+		Tc = Tc*eps #matches
 		return phi_c, Tc
 
 
@@ -142,10 +143,10 @@ def SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb):
 """insert df2/dphi'' and df2/db here """
 
 
-def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper):
+def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
-		phi_c, Tc = SLCT_crit(r1,r2,z,p1,p2,na,nb)
+		phi_c, Tc = SLCT_crit(r1,r2,z,p1,p2,na,nb,eps)
 	
 		phi1vals = arange(.01,phi_c,.009)
 		phi1vals = phi1vals.tolist()
@@ -191,30 +192,178 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper):
 
 		return (phi,y2)
 
-def SLCT_semiflex(Eb_a):
+def SLCT_semiflex(poly,k,m,Eb_a):
 		z = 6.0
+
+		#Need to fix this temp thing
 		T = 300
 
 		g_a =  z / ( z - 1 + exp(Eb_a/T) )
-		print g_a
-		#g_b =  z / ( z - 1 + exp(Eb_b/(kb*T)) )
 
-		gamma111 = 0
-		gamma21 = 2./3.
-		gamma3 = 2./3.
-		alpha0 = 2./3.
-		alpha1 = 2./3.
-		
+		if poly == "PA":
+			#PE
+			gamma111 = 0.0
+			gamma21 = 0.0
+			gamma3 = 1.0
+			alpha0 = 0.0
+			alpha1 = 1.0
+
+		elif poly == "PB":
+			gamma111 = 0.0 
+			gamma21 = 2./3.
+			gamma3 = 2./3.
+			alpha0 = 2./3.
+			alpha1 = 2./3.
+
+		elif poly == "PC":
+			gamma111 = 0	
+			gamma21 = 0.4
+			gamma3 = 0.8
+			alpha0 = 0.4	
+			alpha1 = 0.8
+
+		elif poly == "PD":
+			gamma111 = 1./6.
+			gamma21 = 4./6.
+			gamma3 = 4./6.
+			alpha0 = 4./6.
+			alpha1 = 4./6.
+			 
+		elif poly == "PE":
+			#PIB
+			gamma111 = 0
+			gamma21 = 1.0
+			gamma3 = 0.5
+			alpha0 = 1.0
+			alpha1 = 0.25
+			
+		elif poly == "PF":
+			#uses k
+			gamma111 = 0.0
+			gamma21 = 4.0/(2.0+k)
+			gamma3 = k/(2.0+k)
+			alpha0 = 2 * ( 1.0/(2+k) )
+			alpha1 = 1.0 - 1.0/(2+k) 
+
+		elif poly == "PG":
+			#uses k
+			gamma111 = 0.0
+			gamma21 = 4.0/(4.0+k)
+			gamma3 = (2.0+k)/(4.0+k)
+			alpha0 = 2.0/(4.0+k)
+			alpha1 = 1.0 - 1.0/(4+k)
+
+		elif poly == "PH":
+			#uses k
+			gamma111 = 0.0
+			gamma21 = 4.0/(3.0+k)
+			gamma3 = (1.0+k)/(3.0+k)
+			alpha0 = 2.0/(3.0+k)
+			alpha1 = 1.0 - 1.0/(3+k)
+
+		elif poly == "PI":
+			#uses k
+			gamma111 = 0.0
+			gamma21 = 6.0/(3.0+k)
+			gamma3 = (1.0+k)/(3.0+k)
+			alpha0 = 4.0/(3+k)
+			alpha1 = 1.0 - 3.0*(1.0/(3+k) )
+
+		elif poly == "PJ":
+			#uses k and m
+			gamma111 = 0.0
+			gamma21 = 8.0/(2 + m + k)
+			gamma3 = (m+k)/((1.0)*(2+m+k))
+			alpha0 = 4.0/(2+m+k)
+			alpha1 = 1 - 3.0/(2+m+k)
+
+		elif poly == "PK":
+			gamma111 = 0.4
+			gamma21 = 0.8
+			gamma3 = 0.4
+			alpha0 = 0.8
+			alpha1 = 0.6
+
+		elif poly == "PL":
+			gamma111 = 2.0/3.0
+			gamma21 = 2.0/3.0
+			gamma3 = 1.0/3.0
+			alpha0 = 1.0
+			alpha1 = 0.33
+
+		elif poly == "PM":
+			gamma111 = 1./3.
+			gamma21 = 1./3.
+			gamma3 = 0.5
+			alpha0 =2./3.
+			alpha1 =2./3.
+
+		elif poly == "PN":
+			gamma111 = 3./7.
+			gamma21 = 6./7.
+			gamma3 = 3./7.
+			alpha0 = 6./7.
+			alpha1 = 4./7.
+
+		elif poly == "PO":
+			gamma111 = 2./7.
+			gamma21 = 1.0
+			gamma3 = 4./7.
+			alpha0 = 6./7.
+			alpha1 = 3./7.
+
+		elif poly == "PP":
+			gamma111 = 0.5
+			gamma21 = 0.375
+			gamma3 = 0.375
+			alpha0 = 0.75
+			alpha1 = 0.625
+
+		elif poly == "PQ":
+			gamma111 = 8./9.
+			gamma21 = 7./9.
+			gamma3 = 3./9.
+			alpha0 = 10./9.
+			alpha1 = 2./9.
+
+		elif poly == "PR":
+			gamma111 = 4./9.
+			gamma21 = 8./9.
+			gamma3 = 4./9.
+			alpha0 = 8./9.
+			alpha1 = 5./9.
+			 
+		elif poly == "PS":
+			gamma111 = .375
+			gamma21 = .875
+			gamma3 = 0.5
+			alpha0 = .75
+			alpha1 = .625
+
+		elif poly == "PT":
+			gamma111 = 1.0
+			gamma21 = .75
+			gamma3 = .25
+			alpha0 = 1.0
+			alpha1 = 0.375
+
+		elif poly == "PU":
+			gamma111 = 4./7.
+			gamma21 = 4./7.
+			gamma3 = 3./7.
+			alpha0 = 6./7.
+			alpha1 = 3./7.
+
+		#Evaluate semiflexibility constants
 		p_a = gamma111 + gamma21*g_a + gamma3*g_a**2
 		r_a = alpha0 + alpha1*g_a
-		print r_a, p_a
+
+		print "THE POLYMER IS",poly
 		return r_a, p_a
 		
-Eb_a = 600
-SLCT_semiflex(Eb_a)
 
 
-def SLCT_constants(polya,polyb,k1,k2):
+def SLCT_constants(polya,polyb,k1,k2,m1,m2):
 		if polya == "PA":
 				r1 = 1.0
 				p1 = 1.0
