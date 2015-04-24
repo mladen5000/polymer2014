@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+ 
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block content %}
+	<div id = "Header" style="text-align: center;">
+		<h1> SAFT-LLE Demo</h1>
+	</div>
+
+<div class = "introduction">
+	<div class="row">
+		<h2> About </h2>
+	</div>
+	<div class = "row">
+	<p>
+The primary computational tool for prediction of structural, thermodynamic, and dynamic properties of functional polymers and block polymers must rely on a coarse-grained modeling approach capable of describing the structure and dynamics of soft matter, including block polymers during solvent mediated assembly, both in the bulk and in films.
+ 
+The tools included here, in order of increasing complexity and sophistication, are:</p>
+		<ul>
+				<li>Flory Huggins polymer mixture phase behavior</li>
+				<li>Vorn-Overbeek polyelectrolyte mixture phase behavior</li>
+				<li>Generalized-Flory Lattice Cluster Theory for structure polymer phase behavior and glass transition temperature</li>
+		</ul>
+	
+</p>
+	</div>
+</div>
+	{% if error %}
+		<p class=error><strong>Error:</strong> {{ error }}
+	{% endif %}
+	<form data-abide action="/plot" method="post">
+		<div class="row">
+	<fieldset>
+		<legend> Input Parameters </legend>
+
+					<div class="large-4 columns">
+						<label>Monomers of Species A
+							<input required pattern="number" type="text" name="NFA" placeholder="100" />
+							<small class="error"> Please input a valid number.</small>
+						</label>
+					</div>
+
+					<div class="large-4 columns">
+						<label>Monomers of Species B
+							<input required pattern="number" type="text" name="NFB" placeholder="100" />
+							<small class="error"> Please input a valid number.</small>
+						</label>
+					</div>
+
+
+					<div class="large-4 columns">
+						<label> Chi Value
+							<input required pattern="number" type="text" name="chivalue" placeholder="0.2" />
+							<small class="error"> Please input a valid number.</small>
+						</label>
+					</div>
+
+		</div>
+
+			<div class="row">
+					<div align="center">
+						<input class="button" type="submit" name="florybutton" value="Generate Profile!" />
+					</div>
+			</div>
+		</form>
+	<div>
+
+
+{% endblock %}
+

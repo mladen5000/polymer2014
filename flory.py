@@ -27,60 +27,16 @@ app.secret_key = 'mladen'
 
 
 
-# Define a function that will return an HTML snippet.
-def build_plot():
-	#defined numpy.random as npr
-    x_deets = npr.random(10)
-    y_deets = npr.random(10)
-    fig, ax = plt.subplots()
-	#replaced pd with pandas, and imported pandas
-    indata = pandas.DataFrame(x_deets, y_deets,)
-    indata.plot(ax=ax)
-	#replaced dumbs with json.dumps
-    output = json.dumps(mpld3.fig_to_dict(fig))
-    return output
-
-# Define our URLs and pages.
-@app.route('/blah')
-def render_plot():
-    sample_list = list(npr.randint(1,99999999,size=1))
-    dict_of_plots = list()
-    for i in sample_list:
-        single_chart = dict()
-        single_chart['id'] = "fig_" + str(i)
-        print single_chart['id']
-
-        single_chart['json'] = build_plot()     
-        dict_of_plots.append(single_chart)
-	id = "fig01"
-	json01 = build_plot()
-		#changed plots.html to exampleplots.html
-    return render_template('exampleplots.html', id = id,json01=json01)#snippet=plot_snippet)
 
 @app.route('/')
 @app.route('/index')
 def index():
     return render_template("index.html")
 
-@app.route('/contact',methods=['GET','POST'])
-def contact():
-	form = ContactForm()
-	if request.method == 'POST':
-		if form.validate() == False:
-			flash('FILL ALL FIELDS')
-			return render_template('contact.html', form=form)
-		else:
-			return 'Form posted.'
-	 
-	elif request.method == 'GET':
-		return render_template('contact.html', form=form)
-
-	return render_template('contact.html', form=form)
-
 
 @app.route('/howto.html')
 def howto():
-	return render_template("howto.html")
+	return render_template("fbexample.html")
 
 @app.route('/flory.html',methods=['POST','GET'])
 def flory():
