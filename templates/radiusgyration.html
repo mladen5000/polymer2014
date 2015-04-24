@@ -26,43 +26,49 @@ The tools included here, in order of increasing complexity and sophistication, a
 	
 </p>
 		</div>
-	<form action="/sfplot" method="post">
+	<form action="/sfplot" method="post" data-abide>
 				<div class="row">
 		<fieldset>
 			<legend> Input Parameters </legend>
 				<div class="row">
 					<div class="large-6 columns">
 						<label>Number of Monomers A
-								<input type="text" placeholder="100" name = "Na" />  
+								<input required pattern="number" type="text" placeholder="100" name = "Na" />  
+								<small class="error"> Please input a valid number.</small>
 						</label>
 					</div>
 					<div class="large-6 columns">
 						<label>Number of Monomers B
-								<input type="text" placeholder="100" name = "Nb" />  
+								<input required pattern="number" type="text" placeholder="100" name = "Nb" />  
+								<small class="error"> Please input a valid number.</small>
 						</label>
 					</div>
 				</div>
 				<div class="row">
 					<div class="large-6 columns">
 						<label> Statistical Segment Length,A
-								<input type="text" placeholder="1.0" name = "Ba" />  
+								<input required pattern="number" type="text" placeholder="1.0" name = "Ba" />  
+								<small class="error"> Please input a valid number.</small>
 						</label>
 					</div>
 					<div class="large-6 columns">
 						<label> Statistical Segment Length,b
-								<input type="text" placeholder="1.0" name = "Bb" />  
+								<input required pattern="number" type="text" placeholder="1.0" name = "Bb" />  
+								<small class="error"> Please input a valid number.</small>
 						</label>
 					</div>
 				</div>
 				<div class="row">
 					<div class="large-6 columns">
 						<label> Volume Fraction,A
-								<input type="text" placeholder="0.5" name = "phia" />  
+								<input required pattern="number" type="text" placeholder="0.5" name = "phia" />  
+								<small class="error"> Please input a valid number.</small>
 						</label>
 					</div>
 					<div class="large-6 columns">
 						<label> Chi Parameter
-								<input type="text" placeholder="0.01" name = "chi" />  
+								<input required pattern="number" type="text" placeholder="0.01" name = "chi" />  
+								<small class="error"> Please input a valid number.</small>
 						</label>
 					</div>
 				</div>

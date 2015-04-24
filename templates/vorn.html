@@ -26,26 +26,28 @@ The tools included here, in order of increasing complexity and sophistication, a
 	
 </p>
 		</div>
-	<form action="/vornplot" method="post">
+	<form action="/vornplot" method="post" data-abide>
 				<div class="row">
 		<fieldset>
 			<legend> Input Parameters </legend>
 					<div class="large-4 columns">
-							<!-- radio buttons and text input cant have the same name --!>
 
 						<label>Number of Monomers 
-								<input type="text" placeholder="100" name = "N" />  
+								<input required pattern="number" type="text" placeholder="100" name = "N" />  
+								<small class="error"> Please input a valid number.</small>
 						</label>
 					</div>
 					<div class="large-4 columns">
 						<label>Charge Density, Sigma 
-								<input type="text" placeholder="0.24" name = "sigma" />  
+								<input required pattern="number" type="text" placeholder="0.24" name = "sigma" />  
+								<small class="error"> Please input a valid number.</small>
 						</label>
 					</div>
 
 					<div class="large-4 columns">
 						<label> Salt Concentration, Psi
-							<input type="text" name="psi" placeholder="0.1" />
+							<input required pattern="number" type="text" name="psi" placeholder="0.1" />
+								<small class="error"> Please input a valid number.</small>
 						</label>
 					</div>
 		</div>

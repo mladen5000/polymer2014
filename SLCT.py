@@ -19,6 +19,8 @@ import json
 """ Simple Lattice Cluster """
 
 def SLCTfree(r1,r2,z,p1,p2,na,nb,eps):
+		"""This is a function that generates the enthalpy,
+		entropy, and free energy curve and returns them"""
 		z = 6.0
 		phivals = arange(0.0,1.0,0.001)
 		i=0
@@ -39,6 +41,7 @@ def SLCTfree(r1,r2,z,p1,p2,na,nb,eps):
 
 
 def SLCT_crit(r1,r2,z,p1,p2,na,nb,eps):
+		"""This is a function that calculates the critical point"""
 		#Use numpy root to calculate phi_c
 		a = (r1 - r2)**2 / z**2
 		b =((z-2)/2 + (1/z)*(-2*p1 + p2)) #Technically this is b/(eps/kt) which is factored out
@@ -63,6 +66,7 @@ def SLCT_crit(r1,r2,z,p1,p2,na,nb,eps):
 
 
 def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper):
+		"""This is a function that calculates the Spinodal curve, this is not numerical"""
 		phi = arange(0.01,.99,0.001)
 		a = (r1 - r2)**2 / z**2
 		b =((z-2)/2 + (1.0/z)*(-2*p1 + p2)) #Technically this is b/(eps/kt) which is factored out
@@ -77,7 +81,11 @@ def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper):
 		return phi,spin1
 
 def SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb):
+		"""This is a function that gives the 2 functions which need to simultaneously be solved for roots,
+		This is called in the numerical solver, returns an array of the 2 functions evaluated, [f1,f2]"""
 		a = (r1 - r2)**2 / z**2
+
+		#Convert to float
 		m1 = na*1.0
 		m2 = nb*1.0
 		
@@ -146,18 +154,24 @@ def SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb):
 def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
-		phi_c, Tc = SLCT_crit(r1,r2,z,p1,p2,na,nb,eps)
+
+		#Generates the critical point,
+		#this provides the vertex of the plot, also provides a good guess
+		phi_c, Tc = SLCT_crit(r1,r2,z,p1,p2,na,nb,eps) #Critical Point
 	
-		phi1vals = arange(.01,phi_c,.009)
-		phi1vals = phi1vals.tolist()
+		phi1vals = arange(.01,phi_c,.009)#Set up values from 0.01 to the critical phi(abscissa)
+		phi1vals = phi1vals.tolist() #Convert to a list
+
+		#Initialize boring stuff
 		guess = [0,0]
-		new_guess = [0.88,2]
+		new_guess = [0.88,2] 
 		iter = 0
 		length = len(phi1vals)
 		y2 = zeros((length,1))
 		x2 = zeros((length,1))
 		x1 = zeros((length,1))
-		max_iter = 5000
+
+		max_iter = 5000 #Max number of iterations
 		#Loop to find the roots using Multivariate Newton-Rhapson
 		for phi in phi1vals:
 			iter = 0
@@ -167,9 +181,11 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps):
 				iter += 1
 				index = phi1vals.index(phi)
 				guess = new_guess
+				#Calculate analytical jacobian, and inverse
 				jacobian = SLCT_jac(guess,phi,r1,r2,z,p1,p2,na,nb)
 				invjac = inv(jacobian)
-				invjac = inv(jacobian)
+
+				#Set of functions f1[0],f1[1] to satisfy
 				f1 = SLCT_fun(guess,phi,r1,r2,z,p1,p2,na,nb)
 				new_guess = guess - damp*dot(invjac,f1)
 				if abs(new_guess[0] - guess[0]) < 1e-6 and abs(new_guess[1]-guess[1]) < 1e-6: 
@@ -182,6 +198,7 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps):
 			x1 = 1 - x1
 			x2 = 1 - x2
 
+		#This is mostly to make the plot, plottable, I'd leave this be
 		x1=x1.tolist()
 		x2=x2.tolist()
 		y2=y2.tolist()
