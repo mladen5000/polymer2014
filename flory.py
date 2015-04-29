@@ -16,6 +16,7 @@ from SLCT import *
 from VO import *
 from FH import *
 from structurefactor import structure_factor
+import simpleA
 
 
 from flask import Flask,flash, request, make_response, render_template
@@ -33,6 +34,76 @@ app.secret_key = 'mladen'
 def index():
     return render_template("index.html")
 
+@app.route('/saftdemo.html',methods=['POST','GET'])
+def saftdemo():
+	return render_template("saftdemo.html")
+
+@app.route('/saftplot',methods=['POST','GET'])
+def saftplot():
+	if request.method == 'POST':
+
+		#Initalization constants
+		m = 2.457 #segment length
+		sigma = 3.044 #segment diameter
+		epsilon = 213.48 #well depth
+		num_assocs = 3.0 #number of association sites
+		ikappa = 1.0 #interaction strength paramater kappa
+		ieps_ass = 1.0 #interaction strength paramater epsilon
+
+		dens_num = 0.001
+
+		#Put these into a single class
+		compound = simpleA.Compound(sigma,epsilon,m,num_assocs,ikappa,ieps_ass,9999)
+
+		#Set up figure and d3 plot 
+		fig = Figure()
+		fig.set_facecolor('white')
+		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+		axis.set_xlabel('Volume Fraction, \u03a6')
+		axis.set_ylabel('Temperature, T')
+		axis.set_title('SAFT LLEPhase Diagram')
+		canvas = FigureCanvas(fig)
+
+		print "LDJLSJDLJSLJDLKJSDJ", m
+
+		#Set up demo
+		eta = 0.05
+		T = 0.2
+		guess = [eta,T]
+
+		#Generate Critical Point
+		critvals = simpleA.findCrit(guess,dens_num,compound)
+		Tc = critvals[1]
+		Nc = critvals[0]
+
+		#Generate Spinodal 
+		Tvals, spin = simpleA.findSpin(Tc,Nc,dens_num,compound)
+		spinline = axis.plot(spin,Tvals,'r',lw=2,label = "Spinodal")
+
+		#Generate Binodal
+		Tvals, bin = simpleA.findBinodal(dens_num,Tc,Nc,compound)
+		binline = axis.plot(bin,Tvals,'b',lw=2, label = "Binodal") 
+
+		axis.legend()
+		plugins.connect(fig, plugins.MousePosition())
+
+		id1 = "fig01"
+		json01 = json.dumps(mpld3.fig_to_dict(fig))
+
+		#Attempt to make dictionary of plots
+		list_of_plots = list()
+		plot_dict= dict()
+		plot_dict['id'] = "fig01"
+		plot_dict['json'] = json01
+		list_of_plots.append(plot_dict)
+
+		#Generate table
+		zipped = zip(Tvals,spin,bin)
+			
+		#Critical point form
+		critphi = critvals
+
+		return render_template("exampleplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
 
 @app.route('/howto.html')
 def howto():
@@ -279,6 +350,7 @@ def slctplot():
 @app.route('/plot', methods=['GET','POST'])	
 def plot():
 	
+	#floryplot
 	if request.method == 'POST':
 		na = float(request.form['NFA'])
 		nb = float(request.form['NFB'])
@@ -313,6 +385,7 @@ def plot():
 			else:
 				crit_phi = (-nb + sqrt(na*nb) )/(na-nb)
 			nav = 2./crit_chi
+			nav = 1.0
 			global flipper
 
 			"""Flipper"""
@@ -337,7 +410,21 @@ def plot():
 			if flipper == 1:
 				x = 1 - x
 
+
 			phi,y2 =  NR(na,nb,nav,crit_chi,flipper)
+
+			"""Incorporate Chi Value for demo"""
+			#Convert list to np array
+			y2 = asarray(y2)
+			spinodal= asarray(spinodal)
+
+			#Evaluate w/ epsilon
+			a1 = -8.2e-4
+			b1 = .74
+
+			#y2 = b1/(y2-a1)
+			#spinodal = b1/(spinodal-a1)
+
 			spinline = axis.plot(x,spinodal,'r',lw=2,label="Spinodal") 
 			binline = axis.plot(phi,y2,'b',lw=2,label="Binodal")
 			axis.legend()
