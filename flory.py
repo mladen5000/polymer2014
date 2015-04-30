@@ -94,7 +94,7 @@ def saftplot():
 		Tvals =Tvals.tolist()
 		bin =bin.tolist()
 
-		while len(bin) > 100:
+		while len(bin) > 200:
 			del bin[::2]
 			del Tvals[::2]
 			print len(bin),len(Tvals)
