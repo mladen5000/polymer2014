@@ -32,4 +32,27 @@
 			</tr>
 	  </tbody>
 	</table>
+
+	<div class = "large-12 columns">
+		<h2> Data Table </h2>
+	<table>
+	  <thead>
+		<tr>
+		  <th width="100">Volume Fraction</th>
+		  <th width="150">Spinodal</th>
+		  <th width="150">Binodal</th>
+		</tr>
+	  </thead>
+	  <tbody>
+		{% for row in zipped %}
+			<tr>
+				<td> {{ row[0] }} </td>
+				<td> {{ row[1] }} </td>
+				<td> {{ row[2] }} </td>
+			</tr>
+		{% endfor %}
+	  </tbody>
+	</table>
+	{% endblock %}
+</div>
 	{% endblock %}
