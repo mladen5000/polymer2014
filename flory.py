@@ -98,13 +98,13 @@ def saftplot():
 		list_of_plots.append(plot_dict)
 		
 		#Generate table
-		zipped = zip(Tvals,spin,bin)
+		zipped2 = zip(Tvals,spin,bin)
 			
 		#Critical point form
-		critphi = critvals
+		critphi2 = critvals
 		value = 5
 
-		return render_template("exampleplots2.html",zipped=zipped,critphi=critphi,value=value)
+		return render_template("exampleplots2.html",zipped2=zipped2,critphi2=critphi2,value=value)
 
 @app.route('/howto.html')
 def howto():
