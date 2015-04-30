@@ -75,26 +75,21 @@ def saftplot():
 		critvals = simpleA.findCrit(guess,dens_num,compound)
 		Tc = critvals[1]
 		Nc = critvals[0]
-		print Tc, Nc
 
 		#Generate Spinodal 
 		Tvals, spin = simpleA.findSpin(Tc,Nc,dens_num,compound)
-		print "Spinodal good"
 		spinline = axis.plot(spin,Tvals,'r',lw=2,label = "Spinodal")
 
 		#Generate Binodal
 		Tvals, bin = simpleA.findBinodal(dens_num,Tc,Nc,compound)
-		print "binodal good"
 		binline = axis.plot(bin,Tvals,'b',lw=2, label = "Binodal") 
 
 		axis.legend()
 		plugins.connect(fig, plugins.MousePosition())
-		print "axislegendpluginsconnect"
 
 		id1 = "fig01"
 		json01 = json.dumps(mpld3.fig_to_dict(fig))
 
-		print "plotdiciotnary"
 		#Attempt to make dictionary of plots
 		list_of_plots = list()
 		plot_dict= dict()
@@ -102,18 +97,14 @@ def saftplot():
 		plot_dict['json'] = json01
 		list_of_plots.append(plot_dict)
 		
-		print "table"
 		#Generate table
 		zipped = zip(Tvals,spin,bin)
-		print "zipped"
-		print zipped
 			
 		#Critical point form
 		critphi = critvals
-		print "critphi"
-		print critphi
 
-		return render_template("exampleplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
+		return render_template("howto.html")
+		#return render_template("exampleplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
 
 @app.route('/howto.html')
 def howto():
