@@ -14,10 +14,10 @@
 	<div class="row">
 		<h2> Plots </h2>
 
-			<div id="{{ plot_dict['id'] }}" class = "large-8 large-centered columns"></div>
+			<div id="{{ pdid }}" class = "large-8 large-centered columns"></div>
 
 		<script type="text/javascript">
-				mpld3.draw_figure("{{ plot_dict['id'] }}", {{ plot_dict['json']|safe }});
+				mpld3.draw_figure("{{ pdid }}", {{ pdjson|safe }});
 		</script>
 		</div>
 	</div>

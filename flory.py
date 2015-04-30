@@ -93,7 +93,9 @@ def saftplot():
 		#Attempt to make dictionary of plots
 		plot_dict= dict()
 		plot_dict['id'] = "fig01"
+		pdid = "fig01"
 		plot_dict['json'] = json01
+		pdjson = json01
 		
 		#Generate table
 		zipped2 = zip(Tvals,spin,bin)
@@ -101,7 +103,7 @@ def saftplot():
 		#Critical point form
 		critphi2 = critvals
 
-		return render_template("exampleplots2.html",zipped2=zipped2,critphi2=critphi2,plot_dict=plot_dict)
+		return render_template("exampleplots2.html",zipped2=zipped2,critphi2=critphi2,pdid=pdid,pdjson=pdjson)
 
 @app.route('/howto.html')
 def howto():
