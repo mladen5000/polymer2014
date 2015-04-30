@@ -70,6 +70,7 @@ def saftplot():
 
 		#Generate Spinodal 
 		Tvals, spin = simpleA.findSpin(Tc,Nc,dens_num,compound)
+		"""
 		Tvals =Tvals.tolist()
 		spin =spin.tolist()
 
@@ -77,6 +78,7 @@ def saftplot():
 			del spin[::2]
 			del Tvals[::2]
 			print len(spin),len(Tvals)
+		"""
 
 
 		#Set up figure and d3 plot 
@@ -93,6 +95,7 @@ def saftplot():
 
 		#Generate Binodal
 		Tvals, bin = simpleA.findBinodal(dens_num,Tc,Nc,compound)
+		"""
 		Tvals =Tvals.tolist()
 		bin =bin.tolist()
 
@@ -100,6 +103,7 @@ def saftplot():
 			del bin[::2]
 			del Tvals[::2]
 			print len(bin),len(Tvals)
+		"""
 
 		#Plot Binodal
 		binline = axis.plot(bin,Tvals,'b',lw=2, label = "Binodal") 
