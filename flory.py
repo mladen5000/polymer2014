@@ -107,7 +107,7 @@ def saftplot():
 
 @app.route('/howto.html')
 def howto():
-	return render_template("fbexample.html")
+	return render_template("howto.html")
 
 @app.route('/flory.html',methods=['POST','GET'])
 def flory():
