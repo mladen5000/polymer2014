@@ -103,8 +103,7 @@ def saftplot():
 		#Critical point form
 		critphi = critvals
 
-		return render_template("howto.html")
-		#return render_template("exampleplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
+		return render_template("exampleplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
 
 @app.route('/howto.html')
 def howto():
