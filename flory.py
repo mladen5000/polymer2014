@@ -78,6 +78,7 @@ def saftplot():
 			del Tvals[::2]
 			print len(spin),len(Tvals)
 
+
 		#Set up figure and d3 plot 
 		fig = Figure()
 		fig.set_facecolor('white')
@@ -86,11 +87,12 @@ def saftplot():
 		axis.set_ylabel('Temperature, T')
 		axis.set_title('SAFT LLEPhase Diagram')
 		canvas = FigureCanvas(fig)
+
+		#Plot spinodal
 		spinline = axis.plot(spin,Tvals,'r',lw=2,label = "Spinodal")
 
 		#Generate Binodal
 		Tvals, bin = simpleA.findBinodal(dens_num,Tc,Nc,compound)
-
 		Tvals =Tvals.tolist()
 		bin =bin.tolist()
 
@@ -99,10 +101,11 @@ def saftplot():
 			del Tvals[::2]
 			print len(bin),len(Tvals)
 
+		#Plot Binodal
 		binline = axis.plot(bin,Tvals,'b',lw=2, label = "Binodal") 
 
 		axis.legend()
-		plugins.connect(fig, plugins.MousePosition())
+		#plugins.connect(fig, plugins.MousePosition())
 
 		id1 = "fig01"
 		json01 = json.dumps(mpld3.fig_to_dict(fig))
