@@ -55,14 +55,6 @@ def saftplot():
 		#Put these into a single class
 		compound = simpleA.Compound(sigma,epsilon,m,num_assocs,ikappa,ieps_ass,9999)
 
-		#Set up figure and d3 plot 
-		fig = Figure()
-		fig.set_facecolor('white')
-		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		axis.set_xlabel('Volume Fraction, \u03a6')
-		axis.set_ylabel('Temperature, T')
-		axis.set_title('SAFT LLEPhase Diagram')
-		canvas = FigureCanvas(fig)
 
 
 		#Set up demo
@@ -86,6 +78,14 @@ def saftplot():
 			del Tvals[::2]
 			print len(spin),len(Tvals)
 
+		#Set up figure and d3 plot 
+		fig = Figure()
+		fig.set_facecolor('white')
+		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+		axis.set_xlabel('Eta')
+		axis.set_ylabel('Temperature, T')
+		axis.set_title('SAFT LLEPhase Diagram')
+		canvas = FigureCanvas(fig)
 		spinline = axis.plot(spin,Tvals,'r',lw=2,label = "Spinodal")
 
 		#Generate Binodal
@@ -126,7 +126,7 @@ def saftplot():
 		critphi2 = critvals
 
 
-		return render_template("exampleplots2.html",zipped2=zipped2,critphi2=critphi2,pdid=pdid,pdjson=pdjson)
+		return render_template("exampleplots2.html",pdid=pdid,pdjson=pdjson,zipped2=zipped2,critphi2=critphi2)
 
 @app.route('/howto.html')
 def howto():
