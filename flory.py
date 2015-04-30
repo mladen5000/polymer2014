@@ -105,9 +105,13 @@ def saftplot():
 		print "table"
 		#Generate table
 		zipped = zip(Tvals,spin,bin)
+		print "zipped"
+		print zipped
 			
 		#Critical point form
 		critphi = critvals
+		print "critphi"
+		print critphi
 
 		return render_template("exampleplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
 
