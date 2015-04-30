@@ -64,7 +64,6 @@ def saftplot():
 		axis.set_title('SAFT LLEPhase Diagram')
 		canvas = FigureCanvas(fig)
 
-		print "LDJLSJDLJSLJDLKJSDJ", m
 
 		#Set up demo
 		eta = 0.05
@@ -72,9 +71,11 @@ def saftplot():
 		guess = [eta,T]
 
 		#Generate Critical Point
+		print "about to run"
 		critvals = simpleA.findCrit(guess,dens_num,compound)
 		Tc = critvals[1]
 		Nc = critvals[0]
+		print Tc, Nc
 
 		#Generate Spinodal 
 		Tvals, spin = simpleA.findSpin(Tc,Nc,dens_num,compound)
