@@ -9,17 +9,9 @@
 		<h1> Results </h1>
 	</div>
 
+	
 	<div class="row">
-		<h2> Plots </h2>
-		{% for plot in list_of_plots %}
-			<div id="{{ plot['id'] }}" class = "large-8 large-centered columns"></div>
-		{% endfor %}
-		<script type="text/javascript">
-			{% for plot in list_of_plots %}
-				mpld3.draw_figure("{{ plot['id'] }}", {{ plot['json']|safe }});
-			{% endfor %}
-		</script>
-		</div>
+		<h2> {{ value }}</h2>
 	</div>
 
 	<br>
