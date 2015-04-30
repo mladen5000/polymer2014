@@ -91,11 +91,11 @@ def saftplot():
 		json01 = json.dumps(mpld3.fig_to_dict(fig))
 
 		#Attempt to make dictionary of plots
-		list_of_plots = list()
+		list_of_plots2 = list()
 		plot_dict= dict()
 		plot_dict['id'] = "fig01"
 		plot_dict['json'] = json01
-		list_of_plots.append(plot_dict)
+		list_of_plots2.append(plot_dict)
 		
 		#Generate table
 		zipped2 = zip(Tvals,spin,bin)
@@ -104,7 +104,7 @@ def saftplot():
 		critphi2 = critvals
 		value = 5
 
-		return render_template("exampleplots2.html",zipped2=zipped2,critphi2=critphi2,value=value)
+		return render_template("exampleplots2.html",zipped2=zipped2,critphi2=critphi2,list_of_plots2=list_of_plots2)
 
 @app.route('/howto.html')
 def howto():
