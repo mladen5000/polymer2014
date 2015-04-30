@@ -104,7 +104,7 @@ def saftplot():
 		critphi = critvals
 		value = 5
 
-		return render_template("exampleplots2.html",value=value)
+		return render_template("exampleplots2.html",critphi=critphi,value=value)
 
 @app.route('/howto.html')
 def howto():
