@@ -78,10 +78,27 @@ def saftplot():
 
 		#Generate Spinodal 
 		Tvals, spin = simpleA.findSpin(Tc,Nc,dens_num,compound)
+		Tvals =Tvals.tolist()
+		spin =spin.tolist()
+
+		while len(spin) > 100:
+			del spin[::2]
+			del Tvals[::2]
+			print len(spin),len(Tvals)
+
 		spinline = axis.plot(spin,Tvals,'r',lw=2,label = "Spinodal")
 
 		#Generate Binodal
 		Tvals, bin = simpleA.findBinodal(dens_num,Tc,Nc,compound)
+
+		Tvals =Tvals.tolist()
+		bin =bin.tolist()
+
+		while len(bin) > 100:
+			del bin[::2]
+			del Tvals[::2]
+			print len(bin),len(Tvals)
+
 		binline = axis.plot(bin,Tvals,'b',lw=2, label = "Binodal") 
 
 		axis.legend()
@@ -97,11 +114,17 @@ def saftplot():
 		plot_dict['json'] = json01
 		pdjson = json01
 		
+
 		#Generate table
 		zipped2 = zip(Tvals,spin,bin)
 			
+		while len(zipped2) > 20:
+			del zipped2[::2]
+			print len(zipped2)
+
 		#Critical point form
 		critphi2 = critvals
+
 
 		return render_template("exampleplots2.html",zipped2=zipped2,critphi2=critphi2,pdid=pdid,pdjson=pdjson)
 
@@ -559,7 +582,6 @@ def sfplot():
 
 			while len(zipped) > 20:
 				del zipped[::2]
-				print zipped
 
 			return render_template("sfplot.html",id=id,json01=json01,zipped=zipped)
 
