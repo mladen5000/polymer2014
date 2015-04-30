@@ -13,13 +13,11 @@
 
 	<div class="row">
 		<h2> Plots </h2>
-		{% for plot in list_of_plots2 %}
-			<div id="{{ plot['id'] }}" class = "large-8 large-centered columns"></div>
-		{% endfor %}
+
+			<div id="{{ plot_dict['id'] }}" class = "large-8 large-centered columns"></div>
+
 		<script type="text/javascript">
-			{% for plot in list_of_plots2 %}
-				mpld3.draw_figure("{{ plot['id'] }}", {{ plot['json']|safe }});
-			{% endfor %}
+				mpld3.draw_figure("{{ plot_dict['id'] }}", {{ plot_dict['json']|safe }});
 		</script>
 		</div>
 	</div>

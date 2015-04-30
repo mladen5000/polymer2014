@@ -91,20 +91,17 @@ def saftplot():
 		json01 = json.dumps(mpld3.fig_to_dict(fig))
 
 		#Attempt to make dictionary of plots
-		list_of_plots2 = list()
 		plot_dict= dict()
 		plot_dict['id'] = "fig01"
 		plot_dict['json'] = json01
-		list_of_plots2.append(plot_dict)
 		
 		#Generate table
 		zipped2 = zip(Tvals,spin,bin)
 			
 		#Critical point form
 		critphi2 = critvals
-		value = 5
 
-		return render_template("exampleplots2.html",zipped2=zipped2,critphi2=critphi2,list_of_plots2=list_of_plots2)
+		return render_template("exampleplots2.html",zipped2=zipped2,critphi2=critphi2,plot_dict=plot_dict)
 
 @app.route('/howto.html')
 def howto():
@@ -161,10 +158,6 @@ def vornplot():
 			list_of_plots.append(plot_dict)
 			
 
-			#return render_template("exampleplots.html",id=id,json01=json01)
-			#return mpld3.show(fig)
-
-		#elif request.form['vornbutton'] == 'Generate Phase!':
 			"""Set up the plot"""
 			fig = Figure()
 			fig.set_facecolor('white')
