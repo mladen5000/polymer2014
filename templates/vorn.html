@@ -9,21 +9,27 @@
 		<h1> Voorn-Overbeek Graph Generator </h1>
 	</div>
 
-	<div class = "introduction">
 		<div class="row">
 		<h2> About </h2>
 		</div>
+
+
+<div class = "introduction">
+	<div align="center" class="row">
+
+<!-- Para1 --!>
+		<h4> Voorn-Overbeek </h4>
 		<div class = "row">
-		<p>
-The primary computational tool for prediction of structural, thermodynamic, and dynamic properties of functional polymers and block polymers must rely on a coarse-grained modeling approach capable of describing the structure and dynamics of soft matter, including block polymers during solvent mediated assembly, both in the bulk and in films
- 
-The tools included here, in order of increasing complexity and sophistication, are:</p>
-		<ul>
-				<li>Flory Huggins polymer mixture phase behavior</li>
-				<li>Vorn-Overbeek polyelectrolyte mixture phase behavior</li>
-				<li>Generalized-Flory Lattice Cluster Theory for structure polymer phase behavior and glass transition temperature</li>
-		</ul>
-	
+		<p>The Voorn-Overbeek model aims to describe complex coacervation behavior, which occurs when polyelectrolyte systems phase separate into a polymer-rich phase and a dilute, supernatant phase. This model therefore is more suited towards charged polymer systems. The current version of the VO Phase Generator assumes equal concentrations of the polyanion and polycation. Similarly, the current version of the system assumes a salt-free system. Given these assumptions, the current version of the phase generator only requires the total number of monomers, N, to generate the phase diagram. The output phase diagram is plotted as a function of the charge density, sigma. The plot generates both a spinodal curve (red) and a binodal (blue) as a function of the volume fraction of the volume fraction of the 1st species.
+</p>
+</div>
+</div>
+
+<hr>
+<!-- Para2 --!>
+	<div class = "row">
+		<h4> Using this App </h4>
+			<p> The following code generates the free energy diagram as a function of volume fraction, including separate entropic and enthalpic contributions. In addition, a phase diagram predicting the LLE for the system is generated using a numerical root-finding algorithm to determine the binodal, while the spinodal is determined analytically. The critical values are also included, and representative values from the LLE equilibrium plot are displayed at the bottom of the page. In order to generate results, all 3 parameters: degree of polymerization for both species and a sigma value, are necessary. </p>
 </p>
 		</div>
 	<form autocomplete="on" action="/vornplot" method="post" data-abide>

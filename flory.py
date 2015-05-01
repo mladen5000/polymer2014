@@ -222,7 +222,7 @@ def vornplot():
 			#Critical point form
 			critphi = vCriticalpoint(sigma,alpha,N)
 
-			return render_template("exampleplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
+			return render_template("vexampleplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
 
 @app.route('/slct.html',methods=['POST','GET'])
 def slct():

@@ -12,20 +12,33 @@
 	</div>
 	<div class = "introduction">
 		<div class="row">
-		<h2> About </h2>
+			<h2> About </h2>
 		</div>
-		<div class = "row">
-		<p>
-The primary computational tool for prediction of structural, thermodynamic, and dynamic properties of functional polymers and block polymers must rely on a coarse-grained modeling approach capable of describing the structure and dynamics of soft matter, including block polymers during solvent mediated assembly, both in the bulk and in films.
- 
-The tools included here, in order of increasing complexity and sophistication, are:</p>
-		<ul>
-				<li>Flory Huggins polymer mixture phase behavior</li>
-				<li>Vorn-Overbeek polyelectrolyte mixture phase behavior</li>
-				<li>Generalized-Flory Lattice Cluster Theory for structure polymer phase behavior and glass transition temperature</li>
-		</ul>
-	
-</p>
+
+<div class = "introduction">
+	<div align="center" class="row">
+
+<!-- Para1 --!>
+		<h4>Lattice Cluster Theory</h4>
+	</div>
+	<div class = "row">
+		<p> Lattice Cluster Theory is based on an extended lattice model where united atom groups, rather than entire monomers, occupy a lattice site.<sup>1</sup> Because of this, lattice cluster theory takes into account short-range correlations that arise from packing constraints and different monomer-monomer interactions.<sup>2</sup> Using a set of counting indices, LCT treats various monomer structures into the thermodynamic description of polymer systems. 
+		</p> 
+		<p> The inherent model of LCT treats each component as fully flexible, and through the semiflexibility option in the LCT app, we are able to introduce chain stiffness into the model. Each component requires a bending energy, Eb, to calculate the extent of stiffness.
+
+<hr>
+<!-- Para3 --!>
+	<div class="row">
+		<h4> Using this App</h4>
+			<p> The following code generates the free energy diagram as a function of volume fraction, including separate entropic and enthalpic contributions. In addition, a phase diagram predicting the LLE for the system is generated using a numerical root-finding algorithm to determine the binodal, while the spinodal is determined analytically. The critical values are also included, and representative values from the LLE equilibrium plot are displayed at the bottom of the page. In order to generate results, all 3 parameters: degree of polymerization for both species and a chi value, are necessary. </p>
+			<p> For structures containing variable subchain lengths (those containing 'k' or 'm'), an additional input box is required to input the amount of units added to the subchain. In the pictures presented with k, the structure shown is as the number of hollow united atom groups presented. 
+			</p>
+			<p> To generate a semiflexible plot, simply check the 'Semiflexible' box and enter bending energies for *both* components. If desired, chain stiffness can be ignored from the input box by setting the bending energy, Eb, to 0.
+			</p>
+	</div>
+
+
+	</div>
 		</div>
 	</div>
 	<br>
@@ -377,4 +390,10 @@ The tools included here, in order of increasing complexity and sophistication, a
 					$('#mval2').hide('slow');
 						    });
 		</script>
+
+<div class="row">
+<hr>
+<p>1. Freed KF, Dudowicz J (1995) Trends Polym Sci 3:248</p>
+<p>2. Freed KF, Dudowicz J (2005) Adv Polym Sci  183: 63–126 </p>
+</div>
 {% endblock %}

@@ -9,22 +9,33 @@
 		<h1> Flory-Huggins Graph Generator </h1>
 	</div>
 
+		<div class="row">
+			<h2> About </h2>
+		</div>
 <div class = "introduction">
-	<div class="row">
-		<h2> About </h2>
+	<div align="center" class="row">
+
+<!-- Para1 --!>
+		<h4> Flory-Huggins Solution Theory</h4>
 	</div>
 	<div class = "row">
-	<p>
-The primary computational tool for prediction of structural, thermodynamic, and dynamic properties of functional polymers and block polymers must rely on a coarse-grained modeling approach capable of describing the structure and dynamics of soft matter, including block polymers during solvent mediated assembly, both in the bulk and in films.
- 
-The tools included here, in order of increasing complexity and sophistication, are:</p>
-		<ul>
-				<li>Flory Huggins polymer mixture phase behavior</li>
-				<li>Vorn-Overbeek polyelectrolyte mixture phase behavior</li>
-				<li>Generalized-Flory Lattice Cluster Theory for structure polymer phase behavior and glass transition temperature</li>
-		</ul>
-	
-</p>
+		<p> Flory-Huggins solution theory offers a simple but powerful mathematical model of the thermodynamics of polymer blends. This model expounds on regular solution theory, by taking into account the dissimilarities between lengths of polymer chains. FH theory is derived by a simple lattice model, constraining each monomer onto a distinct lattice site, and similarly for solvent molecules.<sup>1,2 </sup> Using a mean-field and random mixing approximation, Flory-Huggins theory simplifies the possible configurations available and provides an expression for entropy and enthalpy of mixing.
+		<p> 
+
+<!-- Para2 --!>
+	<div align="center" class="row">
+		<h4> Limitations of Flory-Huggins</h4>
+			<p> Flory himself noted the limitations of this theory<sup>1</sup>. Primarily, this is due to lack of a sufficient mathematical treatment of the individual composition of each polymer, as well as requirement of a strict lattice system. Similarly, FH theory does not account for a change of volume upon mixing, and the chi parameter is assumed to be independent of composition.
+	</div>
+
+<hr>
+<!-- Para3 --!>
+	<div class="row">
+		<h4> Using this App</h4>
+			<p> The following code generates the free energy diagram as a function of volume fraction, including separate entropic and enthalpic contributions. In addition, a phase diagram predicting the LLE for the system is generated using a numerical root-finding algorithm to determine the binodal, while the spinodal is determined analytically. The critical values are also included, and representative values from the LLE equilibrium plot are displayed at the bottom of the page. In order to generate results, all 3 parameters: degree of polymerization for both species and a chi value, are necessary. </p>
+	</div>
+
+
 	</div>
 </div>
 	{% if error %}
@@ -65,8 +76,12 @@ The tools included here, in order of increasing complexity and sophistication, a
 					</div>
 			</div>
 		</form>
-	<div>
-
+<div class="row">
+<hr>
+<p>1. Flory, P.J., "Thermodynamics of high polymer solutions" The Journal of Chemical Physics 10, 51 (1942); doi: 10.1063/1.1723621</p>
+   
+<p>2. "Huggins, M.L., "Solutions of Long Chain Compounds" The Journal of Chemical Physics 9, 440 (1941); doi: 10.1063/1.1750930</p>
+</div>
 
 {% endblock %}
 
