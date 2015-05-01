@@ -107,7 +107,6 @@ def saftplot():
 		binline = axis.plot(bin,Tvals,'b',lw=2, label = "Binodal") 
 
 		axis.legend()
-		#plugins.connect(fig, plugins.MousePosition())
 
 		id1 = "fig01"
 		json01 = json.dumps(mpld3.fig_to_dict(fig))
