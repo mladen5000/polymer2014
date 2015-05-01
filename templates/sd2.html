@@ -29,6 +29,9 @@
 <p> The following is a live calculation for the Liquid-Liquid Equilibrium of a model component with 3 association sites.
 	</div>
 </div>
+	{% if error %}
+		<p class=error><strong>Error:</strong> {{ error }}
+	{% endif %}
 	<form data-abide action="/saftplot" method="post">
 		<div class="row">
 
