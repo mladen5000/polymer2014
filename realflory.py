@@ -70,6 +70,7 @@ def saftplot():
 
 		#Generate Spinodal 
 		Tvals, spin = simpleA.findSpin(Tc,Nc,dens_num,compound)
+
 		Tvals =Tvals.tolist()
 		spin =spin.tolist()
 
@@ -93,6 +94,7 @@ def saftplot():
 
 		#Generate Binodal
 		Tvals, bin = simpleA.findBinodal(dens_num,Tc,Nc,compound)
+
 		Tvals =Tvals.tolist()
 		bin =bin.tolist()
 
@@ -105,7 +107,6 @@ def saftplot():
 		binline = axis.plot(bin,Tvals,'b',lw=2, label = "Binodal") 
 
 		axis.legend()
-		#plugins.connect(fig, plugins.MousePosition())
 
 		id1 = "fig01"
 		json01 = json.dumps(mpld3.fig_to_dict(fig))
@@ -218,7 +219,7 @@ def vornplot():
 			#Critical point form
 			critphi = vCriticalpoint(sigma,alpha,N)
 
-			return render_template("exampleplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
+			return render_template("vexampleplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
 
 @app.route('/slct.html',methods=['POST','GET'])
 def slct():
