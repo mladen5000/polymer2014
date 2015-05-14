@@ -21,13 +21,16 @@ import json
 def SLCTfree(r1,r2,z,p1,p2,na,nb,eps):
 		"""This is a function that generates the enthalpy,
 		entropy, and free energy curve and returns them"""
-		z = 6.0
+
+		z = 6.0 #Coordination number
+
+		#Initialize
 		phivals = arange(0.0,1.0,0.001)
-		i=0
 		enthalpy = zeros(( len(phivals) ))
 		entropy = zeros(( len(phivals) ))
 		f = zeros(( len(phivals) ))
 
+		i=0
 		for phi in phivals:
 			chiterm = (r1-r2)**2 / z**2 + eps*( (z-2)/2.0 - (1.0/z)*(p1*(1-phi) + p2*phi))
 			enthalpy[i] = phi*(1-phi)*chiterm
@@ -35,9 +38,6 @@ def SLCTfree(r1,r2,z,p1,p2,na,nb,eps):
 			f[i] = entropy[i] + enthalpy[i]
 			i += 1
 		return phivals, enthalpy, entropy, f
-
-
-
 
 
 def SLCT_crit(r1,r2,z,p1,p2,na,nb,eps):
@@ -50,19 +50,20 @@ def SLCT_crit(r1,r2,z,p1,p2,na,nb,eps):
 		k = nb*1.0/na
 		coeff = [2*a*c, 2*c*(k-1)/(m*k), (b*(k-1) - c*(4*k - 1))/(m*k) - 2*a*c , 2*(c - b)/m , b/m]
 
+
 		phi_c_temp =  roots(coeff)
 
 
-		"Make sure that you pick the root that is real, positive and bounded by 0 and 1"
+		#Make sure that you pick the root that is real, positive and bounded by 0 and 1
 		for critval in phi_c_temp:
 			if critval > 0 and critval < 1 and critval.imag == 0:
 				phi_c = critval.real
 
-		"Calculate the critical temperature"
+		#Calculate the critical temperature
 		Tc = 2*(b + c*phi_c)/(1.0/(m*phi_c) + 1.0/(m*k*(1-phi_c)) - 2*a)
-		Tc = Tc*eps #matches
+		Tc = Tc*eps #eps/kb was taken out of b and c, so putting it back in now
+		print "CRIT PHI",phi_c
 		return phi_c, Tc
-
 
 
 def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper):
@@ -73,12 +74,14 @@ def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper):
 		c = (3.0/z)*(p1 - p2) #Technically c / (eps/kt) 
 		f = (.5*(1./(na*phi) + 1./(nb-nb*phi)))
 		spin1 = (f - a) / (b + c*phi)
-		#Invert it so not versus chi anymore
+
+		#Currently returns the function
 
 		if flipper == 1:
 				phi = 1 - phi
 
 		return phi,spin1
+
 
 def SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb):
 		"""This is a function that gives the 2 functions which need to simultaneously be solved for roots,
@@ -148,12 +151,27 @@ def SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb):
 			]])
 
 
-"""insert df2/dphi'' and df2/db here """
+def SLCT_semiflex_params(T_semi,flex):
+	z = 6.0 #2d system coordination number
+
+	#Pull out semiflexibility data
+	a0 = flex[0]
+	a1 = flex[1]
+	gamma111 = flex[2]
+	gamma21 = flex[3]
+	gamma3  = flex[4]
+	Eb = flex[5]
+
+	g =  z / (z - 1 + exp(Eb/T_semi))
+	r = a0 + a1*g
+	p = gamma111 + gamma21*(g) + gamma3*(g**2)
+	return r,p
 
 
-def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps):
+def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
+
 
 		#Generates the critical point,
 		#this provides the vertex of the plot, also provides a good guess
@@ -164,7 +182,7 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps):
 
 		#Initialize boring stuff
 		guess = [0,0]
-		new_guess = [0.88,2] 
+		new_guess = [0.88,2] #Guess parameters are as follows: [Phi_a in phase 2 (phia'') , epsilon/kbT]
 		iter = 0
 		length = len(phi1vals)
 		y2 = zeros((length,1))
@@ -176,11 +194,15 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps):
 		for phi in phi1vals:
 			iter = 0
 			damp = 0.5
+			
 			while iter < max_iter :
 
 				iter += 1
 				index = phi1vals.index(phi)
 				guess = new_guess
+				T_semi = eps/new_guess[1] #have to evaluate temp
+				r1,p1 = SLCT_semiflex_params(T_semi,flex1)
+				r2,p2 = SLCT_semiflex_params(T_semi,flex2)
 				#Calculate analytical jacobian, and inverse
 				jacobian = SLCT_jac(guess,phi,r1,r2,z,p1,p2,na,nb)
 				invjac = inv(jacobian)
@@ -198,16 +220,67 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps):
 			x1 = 1 - x1
 			x2 = 1 - x2
 
+
+		n = size(x1) + 1
+#		x1 = reshape(append(x1,phi_c),(n,1))
 		#This is mostly to make the plot, plottable, I'd leave this be
 		x1=x1.tolist()
+
 		x2=x2.tolist()
-		y2=y2.tolist()
 		x2 = x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
+
+#		Tc = eps/Tc #Rest of data currently in form of eps/kT, plot for temperature post-processed in flory.py, so this one is done now.
+
+		#Add critical Temperature
+#		y2 = reshape(append(y2,Tc),(n,1))
+		y2=y2.tolist()
 		y2i = y2[::-1]
+#		y2i.pop(0)
+
+
 		phi = x1 + x2
 		y2 = y2 + y2i
 
 		return (phi,y2)
+
+
+def SLCT_flexspin(flex1,flex2):
+	z = 6.0
+	#Parameters for A
+	a0_a = flex1[0]
+	a1_a = flex1[1]
+	g111_a = flex1[2]
+	g21_a = flex1[3]
+	g3_a = flex1[4]
+	Eb_a = flex1[5]
+
+	#Parameters for B
+	a0_b = flex2[0]
+	a1_b = flex2[1]
+	g111_b = flex2[2]
+	g21_b = flex2[3]
+	g3_b = flex2[4]
+	Eb_b = flex2[5]
+
+	#Dependent on T
+	#A terms
+	g_a = z /  (z - 1 + exp(Eb_a/T))
+	r1 = a0 + a1*g_a
+	p1 = g111 + g21*g_a + g3*g_a**2
+
+	#B terms
+	g_b = z /  (z - 1 + exp(Eb_b/T))
+	r1 = a0 + a1*g_b
+	p2 = g11 + g21*g_b + g3*g_b**2
+	
+	a = (r1 - r2)**2 / z**2
+	b =((z-2)/2 + (1.0/z)*(-2*p1 + p2)) #Technically this is b/(eps/kt) which is factored out
+	c = (3.0/z)*(p1 - p2) #Technically c / (eps/kt) 
+	f = (.5*(1./(na*phi) + 1./(nb-nb*phi)))
+
+	#Calculate the residual
+	res = T - (f - a) / (b + c*phi)
+
 
 def SLCT_semiflex(poly,k,m,Eb_a):
 		z = 6.0
@@ -374,11 +447,11 @@ def SLCT_semiflex(poly,k,m,Eb_a):
 		#Evaluate semiflexibility constants
 		p_a = gamma111 + gamma21*g_a + gamma3*g_a**2
 		r_a = alpha0 + alpha1*g_a
+		flexlist = [alpha0,alpha1,gamma111,gamma21,gamma3]
 
 		print "THE POLYMER IS",poly
-		return r_a, p_a
+		return r_a, p_a, flexlist
 		
-
 
 def SLCT_constants(polya,polyb,k1,k2,m1,m2):
 		if polya == "PA":

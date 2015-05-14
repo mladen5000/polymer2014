@@ -15,7 +15,7 @@ class Compound:
 			self.xcomp = xcomp
 
 class Mix:
-	"""mix"""
+	"""Mixture"""
 	def __init__(self,c1,c2,kij):
 			self.sigma = [c1.sigma,c2.sigma]
 			self.epsilon = [c1.epsilon, c2.epsilon]

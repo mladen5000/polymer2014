@@ -270,9 +270,13 @@ def slctplot():
 		""" Parameters for specific polymers"""
 		if eba == 0 and ebb == 0:
 			r1, p1, r2, p2 = SLCT_constants(polya,polyb,k1,k2,m1,m2)
+			flex1 = 0
+			flex2 = 0
 		else:
-			r1, p1 = SLCT_semiflex(polya,k1,m1,eba)
-			r2, p2 =SLCT_semiflex(polyb,k2,m2,ebb)
+			r1, p1,flex1 = SLCT_semiflex(polya,k1,m1,eba)
+			r2, p2,flex2 =SLCT_semiflex(polyb,k2,m2,ebb)
+			flex1.append(eba)
+			flex2.append(ebb)
 
 		global flipper
 
@@ -318,7 +322,7 @@ def slctplot():
 			axis.set_title('SLCT Phase Diagram')
 
 			"""Run Optimization"""
-			phi, y2 = SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps)
+			phi, y2 = SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2)
 			spinx,spiny = SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper)
 
 			"""Incorporate Epsilon"""
@@ -331,6 +335,10 @@ def slctplot():
 			spiny = eps/spiny
 
 
+			if flipper == 1:
+				print "we gotta unflip!"
+				na, nb, r1, r2, p1, p2 =  flip(na,nb,r1,r2,p1,p2)
+				print r1, r2, z, p1, p2, na, nb
 
 			"""Plot"""
 			spinline = axis.plot(spinx,spiny,'r',lw=2,label="Spinodal") 
@@ -355,15 +363,20 @@ def slctplot():
 			zipped = zip(spinx,spiny,y2)
 
 			#Critical point
+			print "NA NB BEFORE SLCT CRIT", na, nb
 			critphi = SLCT_crit(r1,r2,z,p1,p2,na,nb,eps)
+			print "NA, NB AFTER SLCT CRIT ",na,nb
 			critphi = list(critphi)
 
+
+			"""
 			if nb > na:
 				#logic behind this, if nb>na, then already flipped
 				critphi[0] = 1.0 - critphi[0]
 				print critphi[0]
+			"""
 
-			print critphi
+			print "FLORY.py",critphi
 
 			#return mpld3.fig_to_html(fig,template_type='simple')
 			return render_template("slctplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
@@ -478,8 +491,6 @@ def plot():
 def flip(a1,a2,b1,b2,c1,c2):
 		""" Switch a1 with a2, b1 with b2, c1 with c2"""
 		return a2,a1,b2,b1,c2,c1
-
-
 
 
 def vcrit():

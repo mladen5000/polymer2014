@@ -18,10 +18,17 @@ import json
 """ Flory Huggins"""
 
 def fun(x,na,nb,phi1):
-	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
+	"""These are the functions necessary to solve the binodal:
+	F1 is the criteria that the chemical potentials are equal, whereas F2 is the definition of the derivative w.r.t. phi
+	F1 = f'(phi_1a) - f'(phi_2a);
+	F2 = (b-a) * f'(phi_1a) - [ f(phi_2a) - f(phi_1a) ]
+	"""
 
+	#Convert to floats
 	na = 1.0*na
 	nb = 1.0*nb
+
+	#Actual expression of F1, and F2 are housed in this array, this is more for formatting reasons
 	return array([ 
 
 			log(phi1) - log(x[0]) + x[1]*x[0]*(1-x[0])*na
@@ -35,14 +42,15 @@ def fun(x,na,nb,phi1):
 			])	
 
 
-
-
 def jac(x,na,nb,phi1):
-	"df1/dphi2, df1/dchi; df2/dphi2, df2/dchi"
+	""" This the expression for the jacobian, given by the following:
+	[[df1/dphi2, df1/dchi]
+	[df2/dphi2, df2/dchi] ]
+	"""
+	#Convert to floats
 	na = 1.0*na
 	nb = 1.0*nb
 
-	"Make me better looking somehow"
 	return array([
 			[1 + x[1]*na - na/nb + x[1]*na*(1-x[0]) - 1.0/x[0] - x[1]*na*x[0],
 			na*(1-phi1) - na*(1-phi1)*phi1 - na*(1-x[0]) + na*(1-x[0])*(x[0])],
@@ -54,21 +62,28 @@ def NR(na,nb,nav,crit_chi,flipper):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
 
+		#Establish the critical point analytically
 		if na != nb:
 			crit_phi = (-nb + sqrt(na*nb))/(na-nb)
 		else:
 			crit_phi = .5  	
 
+		#Set up the array of phi_a in phase 1
 		phi1vals = arange(.001,crit_phi-.001,.01)
 		phi1vals = phi1vals.tolist()
+
+		#Establish initial guess
 		guess = [0,0]
 		new_guess = [0.5,3]
 		iter = 0
 
-		x1 = zeros((len(phi1vals),1))
-		x2 = zeros((len(phi1vals),1))
-		y2 = zeros((len(phi1vals),1))
+		#Generate Arrays
+		x1 = zeros((len(phi1vals),1)) # Final array to hold phi_a in phase 1
+		x2 = zeros((len(phi1vals),1)) # Final array to hold phi_a in phase 2
+		y2 = zeros((len(phi1vals),1)) # Final array to hold chi
+
 		max_iter = 2000
+		damp = 0.1 #Damping constant to help the solver 
 
 		#Loop to find the roots using Multivariate Newton-Rhapson
 		for phi in phi1vals:
@@ -77,10 +92,12 @@ def NR(na,nb,nav,crit_chi,flipper):
 				iter += 1
 				index = phi1vals.index(phi)
 				guess = new_guess
-				jacobian = jac(guess,na,nb,phi)
-				invjac = inv(jacobian)
-				f1 = fun(guess,na,nb,phi)
-				new_guess = guess - .1*dot(invjac,f1)
+				jacobian = jac(guess,na,nb,phi) #Evaluate the jacobian
+				invjac = inv(jacobian) #Inverse jacobian
+				f1 = fun(guess,na,nb,phi) #Calculate the function 
+				new_guess = guess - damp*dot(invjac,f1) 
+
+				#Tolerance criterion
 				if abs(new_guess[0] - guess[0]) < 1e-8 and abs(new_guess[1]-guess[1]) < 1e-8: 
 					x1[index] = phi
 					x2[index] = new_guess[0]
@@ -88,6 +105,7 @@ def NR(na,nb,nav,crit_chi,flipper):
 					break
 
 		# Flips the function back
+		#Numerical trick if na>nb
 		if flipper ==1:
 			x1 = 1 - x1
 			x2 = 1 - x2
@@ -102,7 +120,6 @@ def NR(na,nb,nav,crit_chi,flipper):
 
 		#Adds crit chi to the end of y2
 		y2 = reshape(append(y2,crit_chi),(n,1))
-		#y2 = nav*y2
 		y2=y2.tolist()
 		y2i = y2[::-1]
 		y2i.pop(0)
@@ -113,5 +130,3 @@ def NR(na,nb,nav,crit_chi,flipper):
 
 
 		return (phi,y2)
-		#####################PLOT#######################
-
