@@ -1,20 +1,8 @@
 #!/usr/bin/env python
 
-import random
-import flory
 from math import *
-from numpy import *
+import numpy as np
 from numpy.linalg import inv
-import matplotlib.pyplot as plt
-import StringIO
-import mpld3
-from mpld3 import plugins
-from SLCT import *
-
-from flask import Flask, request, make_response, render_template
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-import json
 
 """ Simple Lattice Cluster """
 
@@ -25,16 +13,17 @@ def SLCTfree(r1,r2,z,p1,p2,na,nb,eps):
 		z = 6.0 #Coordination number
 
 		#Initialize
-		phivals = arange(0.0,1.0,0.001)
-		enthalpy = zeros(( len(phivals) ))
-		entropy = zeros(( len(phivals) ))
-		f = zeros(( len(phivals) ))
+		phivals = np.arange(0.0,1.0,0.001)
+		enthalpy = np.zeros(( len(phivals) ))
+		entropy = np.zeros(( len(phivals) ))
+		f = np.zeros(( len(phivals) ))
 
 		i=0
 		for phi in phivals:
 			chiterm = (r1-r2)**2 / z**2 + eps*( (z-2)/2.0 - (1.0/z)*(p1*(1-phi) + p2*phi))
 			enthalpy[i] = phi*(1-phi)*chiterm
-			entropy[i] = (phi/na)*log(phi) + ((1-phi)/nb)*log(1-phi) 
+			entropy[i] = (phi/na)*np.log(phi) + ((1-phi)/nb)*np.log(1-phi) 
+			print entropy[i]
 			f[i] = entropy[i] + enthalpy[i]
 			i += 1
 		return phivals, enthalpy, entropy, f
@@ -51,7 +40,7 @@ def SLCT_crit(r1,r2,z,p1,p2,na,nb,eps):
 		coeff = [2*a*c, 2*c*(k-1)/(m*k), (b*(k-1) - c*(4*k - 1))/(m*k) - 2*a*c , 2*(c - b)/m , b/m]
 
 
-		phi_c_temp =  roots(coeff)
+		phi_c_temp =  np.roots(coeff)
 
 
 		#Make sure that you pick the root that is real, positive and bounded by 0 and 1
@@ -68,7 +57,7 @@ def SLCT_crit(r1,r2,z,p1,p2,na,nb,eps):
 
 def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper):
 		"""This is a function that calculates the Spinodal curve, this is not numerical"""
-		phi = arange(0.01,.99,0.001)
+		phi = np.arange(0.01,.99,0.001)
 		a = (r1 - r2)**2 / z**2
 		b =((z-2)/2 + (1.0/z)*(-2*p1 + p2)) #Technically this is b/(eps/kt) which is factored out
 		c = (3.0/z)*(p1 - p2) #Technically c / (eps/kt) 
@@ -84,15 +73,15 @@ def SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper):
 
 
 def SLCT_fun(x,phi1,r1,r2,z,p1,p2,na,nb):
-		"""This is a function that gives the 2 functions which need to simultaneously be solved for roots,
-		This is called in the numerical solver, returns an array of the 2 functions evaluated, [f1,f2]"""
+		"""This is a function that gives the 2 functions which need to simultaneously be solved for np.roots,
+		This is called in the numerical solver, returns an np.array of the 2 functions evaluated, [f1,f2]"""
 		a = (r1 - r2)**2 / z**2
 
 		#Convert to float
 		m1 = na*1.0
 		m2 = nb*1.0
 		
-		return array([
+		return np.array([
 				a*m1*(1-phi1) - m1*(1-phi1)/m2 - phi1 - a*m1*(1-phi1)*phi1 - a*m1*(1-x[0]) 
 				+ m1*(1-x[0])/m2 + x[0] + a*m1*(1-x[0])*x[0] - m1*(1-phi1)*x[1]
 				+ m1*(1-phi1)*phi1*x[1] + m1*(1-x[0])*x[1] - m1*(1-x[0])*x[0]*x[1]
@@ -121,7 +110,7 @@ def SLCT_jac(x,phi1,r1,r2,z,p1,p2,na,nb):
 	m1 = na*1.0
 	m2 = nb*1.0
 	
-	return array([[
+	return np.array([[
 			1 + a*m1 - m1/m2 + a*m1*(1-x[0]) - 1.0/x[0] - a*m1*x[0] - m1*x[1] - m1*(1-x[0])*x[1] + m1*x[0]*x[1] 
 			- 2*m1*p1*(1-x[0])*x[1]/z + 2*m1*p2*(1-x[0])*x[1]/z - 2*m1*p1*(1-x[0])*(1-x[0])*x[1]/z 
 			- 2*m1*p2*x[0]*x[1]/z + 4*m1*p1*(1-x[0])*x[0]*x[1]/z - 4*m1*p2*(1-x[0])*x[0]*x[1]/z 
@@ -177,7 +166,7 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2):
 		#this provides the vertex of the plot, also provides a good guess
 		phi_c, Tc = SLCT_crit(r1,r2,z,p1,p2,na,nb,eps) #Critical Point
 	
-		phi1vals = arange(.01,phi_c,.009)#Set up values from 0.01 to the critical phi(abscissa)
+		phi1vals = np.arange(.01,phi_c,.009)#Set up values from 0.01 to the critical phi(abscissa)
 		phi1vals = phi1vals.tolist() #Convert to a list
 
 		#Initialize boring stuff
@@ -185,12 +174,12 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2):
 		new_guess = [0.88,2] #Guess parameters are as follows: [Phi_a in phase 2 (phia'') , epsilon/kbT]
 		iter = 0
 		length = len(phi1vals)
-		y2 = zeros((length,1))
-		x2 = zeros((length,1))
-		x1 = zeros((length,1))
+		y2 = np.zeros((length,1))
+		x2 = np.zeros((length,1))
+		x1 = np.zeros((length,1))
 
 		max_iter = 5000 #Max number of iterations
-		#Loop to find the roots using Multivariate Newton-Rhapson
+		#Loop to find the np.roots using Multivariate Newton-Rhapson
 		for phi in phi1vals:
 			iter = 0
 			damp = 0.5
@@ -209,20 +198,20 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2):
 
 				#Set of functions f1[0],f1[1] to satisfy
 				f1 = SLCT_fun(guess,phi,r1,r2,z,p1,p2,na,nb)
-				new_guess = guess - damp*dot(invjac,f1)
+				new_guess = guess - damp*np.dot(invjac,f1)
 				if abs(new_guess[0] - guess[0]) < 1e-6 and abs(new_guess[1]-guess[1]) < 1e-6: 
 					x1[index] = phi
 					x2[index] = new_guess[0]
 					y2[index] = new_guess[1]
 					break
-		#Convert Numpy arrays (x1,x2,y2) to a list
+		#Convert Numpy np.arrays (x1,x2,y2) to a list
 		if flipper ==1:
 			x1 = 1 - x1
 			x2 = 1 - x2
 
 
-		n = size(x1) + 1
-#		x1 = reshape(append(x1,phi_c),(n,1))
+		n = np.size(x1) + 1
+#		x1 = np.reshape(np.append(x1,phi_c),(n,1))
 		#This is mostly to make the plot, plottable, I'd leave this be
 		x1=x1.tolist()
 
@@ -232,7 +221,7 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2):
 #		Tc = eps/Tc #Rest of data currently in form of eps/kT, plot for temperature post-processed in flory.py, so this one is done now.
 
 		#Add critical Temperature
-#		y2 = reshape(append(y2,Tc),(n,1))
+#		y2 = np.reshape(np.append(y2,Tc),(n,1))
 		y2=y2.tolist()
 		y2i = y2[::-1]
 #		y2i.pop(0)

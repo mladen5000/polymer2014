@@ -2,7 +2,7 @@
 
 #Import necessary modules
 from math import *
-from numpy import *
+import numpy as np
 from numpy.linalg import inv
 from scipy.optimize import root,fsolve,newton
 
@@ -24,7 +24,7 @@ def vCRIT(x,sigma,alpha,m):
 	f2 = 1.0/(m*phi) - (3*alpha*sigma**2)/(4.*sqrt(sigma*phi + psi)) + 1.0/(1-phi-psi)
 	f3 =  -1.0/(m*phi*phi) + 3*alpha*sigma**3/(8.*(sigma*phi + psi)**1.5) + 1.0/(1-phi-psi)**2
 
-	return array([f2,f3])
+	return np.array([f2,f3])
 
 def vspin(x,phi,sigma,alpha,m):
 	""" Function, fed into solver, in order to determine the spinodal curve."""
@@ -35,7 +35,7 @@ def vspin(x,phi,sigma,alpha,m):
 	#Second derivative of Free energy with respect to phi
 	f2 = 1.0/(m*phi) - (3*alpha*sigma**2)/(4.*sqrt(sigma*phi + psi)) + 1.0/(1-phi-psi)
 
-	return array([f2])
+	return np.array([f2])
 
 def vSpinodal(sigma,alpha,m):
 	"""The actual Spinodal generating function which calls vspin
@@ -46,14 +46,14 @@ def vSpinodal(sigma,alpha,m):
 	5. Feed back into flory function
 	"""
 	#Range of Phi
-	phivals = arange(1e-2,0.10,0.001)
+	phivals = np.arange(1e-2,0.10,0.001)
 
 	i=0
-	xvals = zeros((len(phivals)))
+	xvals = np.zeros((len(phivals)))
 	for phi in phivals:
 
 		#Guess Parameters
-		x0 = zeros((1))
+		x0 = np.zeros((1))
 
 		#Guess psi
 		x0.fill(0.01)
@@ -69,7 +69,7 @@ def vCriticalpoint(sigma,alpha,m):
 	"""Generates the Critical Value"""
 
 	#Guess Parameters, [phi,psi]
-	x0 = zeros((2))
+	x0 = np.zeros((2))
 
 	#Guess phi and psi, this is very picky
 	x0.fill(0.01)
@@ -106,11 +106,11 @@ def vjac(x,phi1,sigma,alpha,m):
 
 	df1dpsi = 1.0/(1 - phi1 - x[1]) - 1.0/(1 - x[0] - x[1]) - (3*alpha*sigma)/(4.*sqrt(x[1] + phi1*sigma)) + (3*alpha*sigma)/(4.*sqrt(x[1] + x[0]*sigma))
 
-	df2dphi = log(phi1/2.0)/m - log(x[0]/2.0)/(m*1.0) - log(1 - phi1 - x[1]) + log(1 - x[0] - x[1]) - (1.5)*alpha*sigma*(phi1*sigma + x[1])**.5 + (1.5)*alpha*sigma*(sigma*x[0] + x[1])**.5 
+	df2dphi = np.log(phi1/2.0)/m - log(x[0]/2.0)/(m*1.0) - log(1 - phi1 - x[1]) + log(1 - x[0] - x[1]) - (1.5)*alpha*sigma*(phi1*sigma + x[1])**.5 + (1.5)*alpha*sigma*(sigma*x[0] + x[1])**.5 
 
-	df2dpsi = -log(1 - phi1 - x[1]) + log(1 - x[0] - x[1]) - (1.5)*alpha*(phi1*sigma + x[1])**.5 + (1.5)*alpha*(sigma*x[0] + x[1])**.5 + (-phi1 + x[0])*(1.0/(1 - phi1 - x[1]) - (3*alpha*sigma)/(4*(phi1*sigma + x[1])**.5)) 
+	df2dpsi = -np.log(1 - phi1 - x[1]) + log(1 - x[0] - x[1]) - (1.5)*alpha*(phi1*sigma + x[1])**.5 + (1.5)*alpha*(sigma*x[0] + x[1])**.5 + (-phi1 + x[0])*(1.0/(1 - phi1 - x[1]) - (3*alpha*sigma)/(4*(phi1*sigma + x[1])**.5)) 
 
-	return array([ [df1dphi,df1dpsi],[df2dphi,df2dpsi] ])
+	return np.array([ [df1dphi,df1dpsi],[df2dphi,df2dpsi] ])
 
 
 def vfun(x,phi1,sigma,alpha,m):
@@ -122,27 +122,27 @@ def vfun(x,phi1,sigma,alpha,m):
 		+ 0.5*alpha*m*x[1]*(phi1*sigma + x[1])**0.5 
 		+ (1.5)*alpha*m*sigma*(sigma*x[0] + x[1])**.5 
 		- (0.5)*alpha*m*sigma*x[0]*(sigma*x[0] + x[1])**.5 
-		- (0.5)*alpha*m*x[1]*(sigma*x[0] + x[1])**.5 + log(phi1/2.0) 
-		- log(x[0]/2.0) + m*log(1 - phi1 - x[1]) - m*phi1*log(1 - phi1 - x[1]) 
-		- m*(1 - phi1 - x[1])*log(1 - phi1 - x[1]) - m*x[1]*log(1 - phi1 - x[1]) 
-		- m*log(1 - x[0] - x[1]) + m*x[0]*log(1 - x[0] - x[1]) 
-		+ m*(1 - x[0] - x[1])*log(1 - x[0] - x[1]) + m*x[1]*log(1 - x[0] - x[1])
+		- (0.5)*alpha*m*x[1]*(sigma*x[0] + x[1])**.5 + np.log(phi1/2.0) 
+		- np.log(x[0]/2.0) + m*log(1 - phi1 - x[1]) - m*phi1*log(1 - phi1 - x[1]) 
+		- m*(1 - phi1 - x[1])*np.log(1 - phi1 - x[1]) - m*x[1]*log(1 - phi1 - x[1]) 
+		- m*np.log(1 - x[0] - x[1]) + m*x[0]*log(1 - x[0] - x[1]) 
+		+ m*(1 - x[0] - x[1])*np.log(1 - x[0] - x[1]) + m*x[1]*log(1 - x[0] - x[1])
 
 	"""
-	return array([
+	return np.array([
 		   (-1.5)*alpha*sigma*sqrt(x[1] + phi1*sigma) 
 		+ (1.5)*alpha*sigma*sqrt(x[1] + x[0]*sigma) 
-		+ log(phi1/2.)/m - log(x[0]/2.)/m - log(1 - phi1 - x[1]) 
-		+ log(1 - x[0] - x[1]) 
+		+ np.log(phi1/2.)/m - log(x[0]/2.)/m - log(1 - phi1 - x[1]) 
+		+ np.log(1 - x[0] - x[1]) 
 
 		
 		,
 
   		(-alpha)*(x[1] + phi1*sigma)**1.5 + alpha*(x[1] + x[0]*sigma)**1.5 
-		+ (phi1*log(phi1/2))/m - (x[0]*log(x[0]/2))/m
+		+ (phi1*np.log(phi1/2))/m - (x[0]*log(x[0]/2))/m
 		+ (-phi1 + x[0]) * (-1 + 1.0/m - 1.5*alpha*sigma*(x[1] + phi1*sigma)**.5 
-		+ log(phi1/2)/m - log(1-phi1-x[1])) + (1-phi1-x[1])*log(1-phi1-x[1]) 
-		- (1-x[0]-x[1])*log(1.-x[0]-x[1])
+		+ np.log(phi1/2)/m - log(1-phi1-x[1])) + (1-phi1-x[1])*log(1-phi1-x[1]) 
+		- (1-x[0]-x[1])*np.log(1.-x[0]-x[1])
   ])
 	
 
@@ -151,17 +151,17 @@ def vNR(alpha,N,sigma):
 		# Set up parameters, initial guesses, formatting, initializing etc.
 
 		critphi = vCriticalpoint(sigma,alpha,N)
-		phi1vals = arange(1e-2,critphi[0],.002)
+		phi1vals = np.arange(1e-2,critphi[0],.002)
 		phi1vals = phi1vals.tolist()
 		guess = [0,0]
 		new_guess = [0.1,0.1] #phi2, psi
 		iter = 0
-		y2 = zeros((len(phi1vals),1))
-		x2 = zeros((len(phi1vals),1))
-		x1 = zeros((len(phi1vals),1))
+		y2 = np.zeros((len(phi1vals),1))
+		x2 = np.zeros((len(phi1vals),1))
+		x1 = np.zeros((len(phi1vals),1))
 		max_iter = 2000
 
-		#Loop to find the roots using Multivariate Newton-Rhapson
+		#Loop to find the np.roots using Multivariate Newton-Rhapson
 		for phi in phi1vals:
 			iter = 0
 			while iter < max_iter :
@@ -171,14 +171,14 @@ def vNR(alpha,N,sigma):
 				jacobian = vjac(guess,phi,sigma,alpha,N)
 				invjac = inv(jacobian)
 				f1 = vfun(guess,phi,sigma,alpha,N)
-				new_guess = guess - 0.1*dot(invjac,f1)
+				new_guess = guess - 0.1*np.dot(invjac,f1)
 				if abs(new_guess[0] - guess[0]) < 1e-5 and abs(new_guess[1]-guess[1]) < 1e-5: 
 					x1[index] = phi
 					x2[index] = new_guess[0]
 					y2[index] = new_guess[1]
 					break
 
-		#Convert Numpy arrays (x1,x2,y2) to a list
+		#Convert Numpy np.arrays (x1,x2,y2) to a list
 		x1=x1.tolist()
 		x2=x2.tolist()
 		x2=x2[::-1] #Has to reverse the order of x2, which was converted to a tuple in the previous line
@@ -200,22 +200,22 @@ def vfree(N,psi,sigma):
 	"""Calculates the free energy, enthalpy, entropy of VO"""
 	#Define
 	alpha = 3.655
-	phivals = arange(0.0,1.0-psi,0.001)
+	phivals = np.arange(0.0,1.0-psi,0.001)
 	if psi ==0:
 		psi = 0.000000000001
 	
 
 	#Initalize
-	enthalpy = zeros(( len(phivals) ))
-	entropy = zeros(( len(phivals) ))
-	f = zeros(( len(phivals) ))
+	enthalpy = np.zeros(( len(phivals) ))
+	entropy = np.zeros(( len(phivals) ))
+	f = np.zeros(( len(phivals) ))
 	
 	#Loop and calculate values
 	i=0
 	for phi in phivals:
 		enthalpy[i] = -alpha*(phi*sigma + psi)**1.5
-		entropy[i] = (phi/N)*log(phi/2.0) + psi*log(psi/2.0) + (1-phi-psi)*log(1-phi-psi) 
-		f[i] = (phi/N)*log(phi/2.0) + psi*log(psi/2.0) + (1-phi-psi)*log(1-phi-psi) - alpha*(phi*sigma + psi)**1.5
+		entropy[i] = (phi/N)*np.log(phi/2.0) + psi*log(psi/2.0) + (1-phi-psi)*log(1-phi-psi) 
+		f[i] = (phi/N)*np.log(phi/2.0) + psi*log(psi/2.0) + (1-phi-psi)*log(1-phi-psi) - alpha*(phi*sigma + psi)**1.5
 		i += 1
 
 	return phivals, enthalpy,entropy, f

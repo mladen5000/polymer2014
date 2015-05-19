@@ -3,6 +3,15 @@ import numpy as np
 from scipy.optimize import fsolve
 from math import *
 
+"""
+
+Mix.py is a file that designates 2 classes: Compound, and Mix
+These are just a good way to organize component parameters. 
+For future SAFT developement...
+
+
+"""
+
 class Compound:
 	"""Simple Compound"""
 	def __init__(self,sigma,epsilon,m,num_assocs,kappa,eps_ass,xcomp):

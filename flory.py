@@ -1,17 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
-import random
-from math import *
-from numpy import *
+#Numpy imports
 from numpy.linalg import inv
-import matplotlib.pyplot as plt
-import StringIO
-import mpld3
-from mpld3 import plugins
+from numpy import arange,asarray,zeros
 
 
+#These can't be put __init__ for some reason
 from SLCT import *
 from VO import *
 from FH import *
@@ -19,12 +14,7 @@ from structurefactor import structure_factor
 import simpleA
 
 
-from flask import Flask,flash, request, make_response, render_template
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
-
 app = Flask(__name__)
-app.secret_key = 'mladen'
 
 
 
@@ -63,7 +53,6 @@ def saftplot():
 		guess = [eta,T]
 
 		#Generate Critical Point
-		print "about to run"
 		critvals = simpleA.findCrit(guess,dens_num,compound)
 		Tc = critvals[1]
 		Nc = critvals[0]
@@ -76,7 +65,6 @@ def saftplot():
 		while len(spin) > 100:
 			del spin[::2]
 			del Tvals[::2]
-			print len(spin),len(Tvals)
 
 
 		#Set up figure and d3 plot 
@@ -99,7 +87,6 @@ def saftplot():
 		while len(bin) > 200:
 			del bin[::2]
 			del Tvals[::2]
-			print len(bin),len(Tvals)
 
 		#Plot Binodal
 		binline = axis.plot(bin,Tvals,'b',lw=2, label = "Binodal") 
@@ -123,7 +110,6 @@ def saftplot():
 			
 		while len(zipped2) > 20:
 			del zipped2[::2]
-			print len(zipped2)
 
 		#Critical point form
 		critphi2 = critvals
@@ -228,7 +214,6 @@ def slct():
 def structurefactor():
 	return render_template("radiusgyration.html")
 
-
 @app.route('/slctplot', methods=['GET','POST'])	
 def slctplot():
 	if request.method == 'POST':
@@ -327,8 +312,8 @@ def slctplot():
 
 			"""Incorporate Epsilon"""
 			#Convert list to np array
-			y2 = asarray(y2)
-			spiny= asarray(spiny)
+			y2 = np.asarray(y2)
+			spiny= np.asarray(spiny)
 
 			#Evaluate w/ epsilon
 			y2 = eps/y2
@@ -363,28 +348,15 @@ def slctplot():
 			zipped = zip(spinx,spiny,y2)
 
 			#Critical point
-			print "NA NB BEFORE SLCT CRIT", na, nb
 			critphi = SLCT_crit(r1,r2,z,p1,p2,na,nb,eps)
-			print "NA, NB AFTER SLCT CRIT ",na,nb
 			critphi = list(critphi)
 
-
-			"""
-			if nb > na:
-				#logic behind this, if nb>na, then already flipped
-				critphi[0] = 1.0 - critphi[0]
-				print critphi[0]
-			"""
-
-			print "FLORY.py",critphi
 
 			#return mpld3.fig_to_html(fig,template_type='simple')
 			return render_template("slctplots.html",critphi=critphi,list_of_plots=list_of_plots,zipped=zipped)
 
-	
 @app.route('/plot', methods=['GET','POST'])	
 def plot():
-	
 	#floryplot
 	if request.method == 'POST':
 		na = float(request.form['NFA'])
@@ -450,8 +422,8 @@ def plot():
 
 			"""Incorporate Chi Value for demo"""
 			#Convert list to np array
-			y2 = asarray(y2)
-			spinodal= asarray(spinodal)
+			y2 = np.asarray(y2)
+			spinodal= np.asarray(spinodal)
 
 			#Evaluate w/ epsilon
 			a1 = -8.2e-4
@@ -487,18 +459,15 @@ def plot():
 			
 			return render_template("exampleplots.html",critphi=critvals,list_of_plots=list_of_plots,zipped=zipped)
 
-
 def flip(a1,a2,b1,b2,c1,c2):
 		""" Switch a1 with a2, b1 with b2, c1 with c2"""
 		return a2,a1,b2,b1,c2,c1
-
 
 def vcrit():
 	firstderiv = (1 + log(phi))/N + (-1)*(1 + log(1-phi-psi)) - (3*sigma*alpha/2.)*(sigma*phi + psi)**(1./2.)
 	secondderiv = 1./(N*phi) + 1./(1-phi-psi) - (3*sigma*sigma*alpha/4.)*(sigma*phi + psi)**(-1./2.)
 	thirdderiv = -1./(N*phi*phi) + (1./(1-phi-psi))**2 + (3*alpha*(sigma**3)/8.)*(sigma*phi + psi)**(-3./2.)
 
-"Flory huggins formula"
 def flory_G(phi,na,nb,chi):
 	"""Plots free energy"""
 	enthalpy = chi*phi*(1-phi)
@@ -517,9 +486,9 @@ def generate_figure(na,nb,chi):
 		"""Run Optimization"""
 		"""Need to move these lines it's own function"""
 		phi = arange(0.0001,0.99,0.001)
-		h = zeros(( len(phi) ))
-		s = zeros(( len(phi) ))
-		g = zeros(( len(phi) ))
+		h = np.zeros(( len(phi) ))
+		s = np.zeros(( len(phi) ))
+		g = np.zeros(( len(phi) ))
 
 		i = 0
 		for current_phi in phi:

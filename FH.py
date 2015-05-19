@@ -2,8 +2,8 @@
 
 import random
 from math import *
-from numpy import *
 from numpy.linalg import inv
+import numpy as np
 import matplotlib.pyplot as plt
 import StringIO
 import mpld3
@@ -16,7 +16,6 @@ from matplotlib.figure import Figure
 import json
 
 """ Flory Huggins"""
-
 def fun(x,na,nb,phi1):
 	"""These are the functions necessary to solve the binodal:
 	F1 is the criteria that the chemical potentials are equal, whereas F2 is the definition of the derivative w.r.t. phi
@@ -29,7 +28,7 @@ def fun(x,na,nb,phi1):
 	nb = 1.0*nb
 
 	#Actual expression of F1, and F2 are housed in this array, this is more for formatting reasons
-	return array([ 
+	return np.array([ 
 
 			log(phi1) - log(x[0]) + x[1]*x[0]*(1-x[0])*na
 			- x[1]*phi1*(1-phi1)*na + x[0] - phi1 - x[1]*na*(1-x[0]) + x[1]*na*(1-phi1)
@@ -51,7 +50,7 @@ def jac(x,na,nb,phi1):
 	na = 1.0*na
 	nb = 1.0*nb
 
-	return array([
+	return np.array([
 			[1 + x[1]*na - na/nb + x[1]*na*(1-x[0]) - 1.0/x[0] - x[1]*na*x[0],
 			na*(1-phi1) - na*(1-phi1)*phi1 - na*(1-x[0]) + na*(1-x[0])*(x[0])],
 			[log(phi1)/na -log(x[0])/na - log(1-phi1)/nb + log(1-x[0])/nb
@@ -69,7 +68,7 @@ def NR(na,nb,nav,crit_chi,flipper):
 			crit_phi = .5  	
 
 		#Set up the array of phi_a in phase 1
-		phi1vals = arange(.001,crit_phi-.001,.01)
+		phi1vals = np.arange(.001,crit_phi-.001,.01)
 		phi1vals = phi1vals.tolist()
 
 		#Establish initial guess
@@ -78,9 +77,9 @@ def NR(na,nb,nav,crit_chi,flipper):
 		iter = 0
 
 		#Generate Arrays
-		x1 = zeros((len(phi1vals),1)) # Final array to hold phi_a in phase 1
-		x2 = zeros((len(phi1vals),1)) # Final array to hold phi_a in phase 2
-		y2 = zeros((len(phi1vals),1)) # Final array to hold chi
+		x1 = np.zeros((len(phi1vals),1)) # Final array to hold phi_a in phase 1
+		x2 = np.zeros((len(phi1vals),1)) # Final array to hold phi_a in phase 2
+		y2 = np.zeros((len(phi1vals),1)) # Final array to hold chi
 
 		max_iter = 2000
 		damp = 0.1 #Damping constant to help the solver 
@@ -95,7 +94,7 @@ def NR(na,nb,nav,crit_chi,flipper):
 				jacobian = jac(guess,na,nb,phi) #Evaluate the jacobian
 				invjac = inv(jacobian) #Inverse jacobian
 				f1 = fun(guess,na,nb,phi) #Calculate the function 
-				new_guess = guess - damp*dot(invjac,f1) 
+				new_guess = guess - damp*np.dot(invjac,f1) 
 
 				#Tolerance criterion
 				if abs(new_guess[0] - guess[0]) < 1e-8 and abs(new_guess[1]-guess[1]) < 1e-8: 
@@ -110,8 +109,8 @@ def NR(na,nb,nav,crit_chi,flipper):
 			x1 = 1 - x1
 			x2 = 1 - x2
 
-		n = size(x1) + 1
-		x1 = reshape(append(x1,crit_phi),(n,1))
+		n = np.size(x1) + 1
+		x1 = np.reshape(np.append(x1,crit_phi),(n,1))
 		x1=x1.tolist()
 		x2=x2.tolist()
 
@@ -119,7 +118,7 @@ def NR(na,nb,nav,crit_chi,flipper):
 		x2=x2[::-1] 
 
 		#Adds crit chi to the end of y2
-		y2 = reshape(append(y2,crit_chi),(n,1))
+		y2 = np.reshape(np.append(y2,crit_chi),(n,1))
 		y2=y2.tolist()
 		y2i = y2[::-1]
 		y2i.pop(0)

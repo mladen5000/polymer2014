@@ -208,6 +208,8 @@ def findBinodal(dens_num,Tc,Nc,compound):
 
 	
 
+"""
+#This is just code to run the function, not useful for site
 #Put in your guess parameters, for critical point
 eta = 0.05
 T = 0.2
@@ -216,29 +218,17 @@ guess = [eta,T]
 #The actual free energy
 simpleHelmholtz(eta,T,dens_num,compound)
 
-#The two derivatives
-print "the derivatives are",CritPointFunction(guess,dens_num,compound)
-
 #The critical point
 CritVals = findCrit(guess,dens_num,compound)
-print "DONE WITH CRIT"
 Tc = CritVals[1]
 Nc = CritVals[0]
-print "Crit Eta:", Nc
-print "Crit Temp:",Tc
 
 #Spinodal
 Tvals, spin = findSpin(Tc,Nc,dens_num,compound)
 
 a,b =findBinodal(dens_num,Tc,Nc,compound)
+"""
 
-#plt.plot(spin,Tvals)
-#plt.plot(b,a)
-#plt.show()
-
-
-
-print "Done!"
 
 
 
