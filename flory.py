@@ -306,9 +306,12 @@ def slctplot():
 			axis.set_ylabel('Temperature, K')
 			axis.set_title('SLCT Phase Diagram')
 
+			print flex1, flex2
 			"""Run Optimization"""
 			phi, y2 = SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2)
-			spinx,spiny = SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper)
+	#		spinx,spiny = SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper)
+			spinx,spiny = run_SLCT_flexspinodal(na,nb,flex1,flex2,eps,phi,flipper)
+			
 
 			"""Incorporate Epsilon"""
 			#Convert list to np array
@@ -317,7 +320,6 @@ def slctplot():
 
 			#Evaluate w/ epsilon
 			y2 = eps/y2
-			spiny = eps/spiny
 
 
 			if flipper == 1:

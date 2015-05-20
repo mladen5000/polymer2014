@@ -3,6 +3,7 @@
 from math import *
 import numpy as np
 from numpy.linalg import inv
+from scipy.optimize import fsolve
 
 """ Simple Lattice Cluster """
 
@@ -23,7 +24,6 @@ def SLCTfree(r1,r2,z,p1,p2,na,nb,eps):
 			chiterm = (r1-r2)**2 / z**2 + eps*( (z-2)/2.0 - (1.0/z)*(p1*(1-phi) + p2*phi))
 			enthalpy[i] = phi*(1-phi)*chiterm
 			entropy[i] = (phi/na)*np.log(phi) + ((1-phi)/nb)*np.log(1-phi) 
-			print entropy[i]
 			f[i] = entropy[i] + enthalpy[i]
 			i += 1
 		return phivals, enthalpy, entropy, f
@@ -151,7 +151,7 @@ def SLCT_semiflex_params(T_semi,flex):
 	gamma3  = flex[4]
 	Eb = flex[5]
 
-	g =  z / (z - 1 + exp(Eb/T_semi))
+	g =  z / (z - 1 + np.exp(Eb/T_semi))
 	r = a0 + a1*g
 	p = gamma111 + gamma21*(g) + gamma3*(g**2)
 	return r,p
@@ -233,6 +233,66 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2):
 		return (phi,y2)
 
 
+def run_SLCT_flexspinodal(na,nb,flex1,flex2,eps,phi,flipper):
+	i=0
+	phivals = np.arange(0.02,0.98,0.01)
+	tempforphi = np.zeros(( len(phivals) ))
+
+	for phi in phivals:
+		x0 = 385.0
+		tempforphi[i] = fsolve(SLCT_flexspin,x0,args=(na,nb,flex1,flex2,eps,phi) ,factor=0.001)
+		i = i+1
+
+	if flipper == 1:
+		phivals = 1 - phivals
+
+	return phivals, tempforphi
+
+def SLCT_flexspin(T,na,nb,flex1,flex2,eps,phi):
+	"""Auxillary function, which is called by solve, finds the value of the Spinodal at a fixed phi"""
+
+	z = 6.0
+
+	
+	#Parameters for A
+	a0_a = flex1[0]
+	a1_a = flex1[1]
+	g111_a = flex1[2]
+	g21_a = flex1[3]
+	g3_a = flex1[4]
+	Eb_a = flex1[5]
+
+	#Parameters for B
+	a0_b = flex2[0]
+	a1_b = flex2[1]
+	g111_b = flex2[2]
+	g21_b = flex2[3]
+	g3_b = flex2[4]
+	Eb_b = flex2[5]
+
+
+	#Dependent on T
+	#A terms
+	g_a = z /  (z - 1 + exp( Eb_a/T ) )
+	r1 = a0_a + a1_a*g_a
+	p1 = g111_a + g21_a*g_a + g3_a*(g_a**2)
+
+	#B terms
+	g_b = z /  (z - 1 + exp(Eb_b/T))
+	r2 = a0_b + a1_b*g_b
+	p2 = g111_b + g21_b*g_b + g3_b*g_b**2
+	
+	a = (r1 - r2)**2 / z**2
+	b =((z-2)/2 + (1.0/z)*(-2*p1 + p2)) #Technically this is b/(eps/kt) which is factored out
+	c = (3.0/z)*(p1 - p2) #Technically c / (eps/kt) 
+	f = (.5*(1./(na*phi) + 1./(nb-nb*phi)))
+
+	#Calculate the residual
+	rhs = (f - a) / (b+c*phi)
+	res = eps/T - (f - a) / (b + c*phi)
+	return res
+
+"""
 def SLCT_flexspin(flex1,flex2):
 	z = 6.0
 	#Parameters for A
@@ -253,12 +313,12 @@ def SLCT_flexspin(flex1,flex2):
 
 	#Dependent on T
 	#A terms
-	g_a = z /  (z - 1 + exp(Eb_a/T))
+	g_a = z /  (z - 1 + np.exp(Eb_a/T))
 	r1 = a0 + a1*g_a
 	p1 = g111 + g21*g_a + g3*g_a**2
 
 	#B terms
-	g_b = z /  (z - 1 + exp(Eb_b/T))
+	g_b = z /  (z - 1 + np.exp(Eb_b/T))
 	r1 = a0 + a1*g_b
 	p2 = g11 + g21*g_b + g3*g_b**2
 	
@@ -269,6 +329,7 @@ def SLCT_flexspin(flex1,flex2):
 
 	#Calculate the residual
 	res = T - (f - a) / (b + c*phi)
+"""
 
 
 def SLCT_semiflex(poly,k,m,Eb_a):
@@ -277,7 +338,7 @@ def SLCT_semiflex(poly,k,m,Eb_a):
 		#Need to fix this temp thing
 		T = 300
 
-		g_a =  z / ( z - 1 + exp(Eb_a/T) )
+		g_a =  z / ( z - 1 + np.exp(Eb_a/T) )
 
 		if poly == "PA":
 			#PE
