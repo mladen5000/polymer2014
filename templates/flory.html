@@ -35,14 +35,33 @@
 			<p> The following code generates the free energy diagram as a function of volume fraction, including separate entropic and enthalpic contributions. In addition, a phase diagram predicting the LLE for the system is generated using a numerical root-finding algorithm to determine the binodal, while the spinodal is determined analytically. The critical values are also included, and representative values from the LLE equilibrium plot are displayed at the bottom of the page. In order to generate results, all 3 parameters: degree of polymerization for both species and a chi value, are necessary. </p>
 	</div>
 
-
-	</div>
-</div>
 	{% if error %}
 		<p class=error><strong>Error:</strong> {{ error }}
 	{% endif %}
+<hr>
+	<h4> Select Chi Value</h4>
+
 	<form data-abide action="/plot" method="post">
+		
 		<div class="row">
+			<div class="large-6 columns">
+				<select name="dropdowna">
+					<option value="polystyrene">Polystyrene</option>
+					<option value="tetrahydrofuran">THF</option>
+					<option value="polyisoprene">Polyisoprene</option>
+				</select>
+			</div>
+
+			<div class="large-6 columns">
+				<select name="dropdownb">
+					<option value="polystyrene">Polystyrene</option>
+					<option value="tetrahydrofuran">THF</option>
+					<option value="polyisoprene">Polyisoprene</option>
+				</select>
+			</div>
+		</div>
+
+			<div class="row">
 	<fieldset>
 		<legend> Input Parameters </legend>
 

@@ -13,6 +13,9 @@ from FH import *
 from structurefactor import structure_factor
 import simpleA
 
+#For talking to SQL
+import json
+import urllib
 
 app = Flask(__name__)
 
@@ -253,15 +256,10 @@ def slctplot():
 		z = 6.0
 		
 		""" Parameters for specific polymers"""
-		if eba == 0 and ebb == 0:
-			r1, p1, r2, p2 = SLCT_constants(polya,polyb,k1,k2,m1,m2)
-			flex1 = 0
-			flex2 = 0
-		else:
-			r1, p1,flex1 = SLCT_semiflex(polya,k1,m1,eba)
-			r2, p2,flex2 =SLCT_semiflex(polyb,k2,m2,ebb)
-			flex1.append(eba)
-			flex2.append(ebb)
+		r1, p1,flex1 = SLCT_semiflex(polya,k1,m1,eba)
+		r2, p2,flex2 =SLCT_semiflex(polyb,k2,m2,ebb)
+		flex1.append(eba)
+		flex2.append(ebb)
 
 		global flipper
 
@@ -309,7 +307,7 @@ def slctplot():
 			print flex1, flex2
 			"""Run Optimization"""
 			phi, y2 = SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2)
-	#		spinx,spiny = SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper)
+		#	spinx,spiny = SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper)
 			spinx,spiny = run_SLCT_flexspinodal(na,nb,flex1,flex2,eps,phi,flipper)
 			
 
@@ -364,8 +362,27 @@ def plot():
 		na = float(request.form['NFA'])
 		nb = float(request.form['NFB'])
 
+		#Talk to SQL
+		#request the option selected from the dropdown
+		polya = request.form['dropdowna']
+		polyb = request.form['dropdownb']
+
+		#create url string to fetch data from site
+		webstr = "http://chidb.ci.uchicago.edu/basic_api.php?polymera="
+		#had to switch because values are symmetrical
+		str_polya = polyb
+		str_polyb = polya
+		site_url = webstr + polya + "&polymerb=" + polyb
+		print site_url
+
+		#open the site and load into json
+		response = urllib.urlopen(site_url)
+		jsondata = json.load(response)
+
+
 		if request.form['florybutton'] == 'Generate Profile!':
 			chi = float(request.form['chivalue'])
+			type = jsondata['0']['type']
 
 			fig = generate_figure(na,nb,chi)
 
@@ -414,7 +431,7 @@ def plot():
 			"""Run Optimization"""
 			x = arange(0.05,0.95,0.001)
 			spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
-			spinodal = spinodal/nav
+			#spinodal = spinodal/nav
 
 			if flipper == 1:
 				x = 1 - x
@@ -422,17 +439,19 @@ def plot():
 
 			phi,y2 =  NR(na,nb,nav,crit_chi,flipper)
 
-			"""Incorporate Chi Value for demo"""
 			#Convert list to np array
 			y2 = np.asarray(y2)
 			spinodal= np.asarray(spinodal)
 
-			#Evaluate w/ epsilon
-			a1 = -8.2e-4
-			b1 = .74
+			#Flip the plot w/ chi to be a function of temperature
+			if type == "Type 1":
+				chi = float(jsondata['chi'])
+				y2 = chi/y2
+				spinodal = chi/spinodal
 
-			#y2 = b1/(y2-a1)
-			#spinodal = b1/(spinodal-a1)
+			elif type == "Type 2":
+				y2 = float(jsondata['0']['chib']) / ( y2 - float(jsondata['0']['chia']))
+				spinodal = float(jsondata['0']['chib']) / (spinodal - float(jsondata['0']['chia']))
 
 			spinline = axis.plot(x,spinodal,'r',lw=2,label="Spinodal") 
 			binline = axis.plot(phi,y2,'b',lw=2,label="Binodal")

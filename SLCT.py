@@ -235,11 +235,14 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2):
 
 def run_SLCT_flexspinodal(na,nb,flex1,flex2,eps,phi,flipper):
 	i=0
-	phivals = np.arange(0.02,0.98,0.01)
+	phivals = np.arange(0.05,0.95,0.01)
 	tempforphi = np.zeros(( len(phivals) ))
 
 	for phi in phivals:
-		x0 = 385.0
+		if eps > 0:
+			x0 = 350.0
+		else:
+			x0 = -385.0
 		tempforphi[i] = fsolve(SLCT_flexspin,x0,args=(na,nb,flex1,flex2,eps,phi) ,factor=0.001)
 		i = i+1
 
@@ -290,46 +293,8 @@ def SLCT_flexspin(T,na,nb,flex1,flex2,eps,phi):
 	#Calculate the residual
 	rhs = (f - a) / (b+c*phi)
 	res = eps/T - (f - a) / (b + c*phi)
+	print res
 	return res
-
-"""
-def SLCT_flexspin(flex1,flex2):
-	z = 6.0
-	#Parameters for A
-	a0_a = flex1[0]
-	a1_a = flex1[1]
-	g111_a = flex1[2]
-	g21_a = flex1[3]
-	g3_a = flex1[4]
-	Eb_a = flex1[5]
-
-	#Parameters for B
-	a0_b = flex2[0]
-	a1_b = flex2[1]
-	g111_b = flex2[2]
-	g21_b = flex2[3]
-	g3_b = flex2[4]
-	Eb_b = flex2[5]
-
-	#Dependent on T
-	#A terms
-	g_a = z /  (z - 1 + np.exp(Eb_a/T))
-	r1 = a0 + a1*g_a
-	p1 = g111 + g21*g_a + g3*g_a**2
-
-	#B terms
-	g_b = z /  (z - 1 + np.exp(Eb_b/T))
-	r1 = a0 + a1*g_b
-	p2 = g11 + g21*g_b + g3*g_b**2
-	
-	a = (r1 - r2)**2 / z**2
-	b =((z-2)/2 + (1.0/z)*(-2*p1 + p2)) #Technically this is b/(eps/kt) which is factored out
-	c = (3.0/z)*(p1 - p2) #Technically c / (eps/kt) 
-	f = (.5*(1./(na*phi) + 1./(nb-nb*phi)))
-
-	#Calculate the residual
-	res = T - (f - a) / (b + c*phi)
-"""
 
 
 def SLCT_semiflex(poly,k,m,Eb_a):
@@ -375,15 +340,15 @@ def SLCT_semiflex(poly,k,m,Eb_a):
 			gamma21 = 1.0
 			gamma3 = 0.5
 			alpha0 = 1.0
-			alpha1 = 0.25
+			alpha1 = 0.75
 			
 		elif poly == "PF":
 			#uses k
 			gamma111 = 0.0
 			gamma21 = 4.0/(2.0+k)
 			gamma3 = k/(2.0+k)
-			alpha0 = 2 * ( 1.0/(2+k) )
-			alpha1 = 1.0 - 1.0/(2+k) 
+			alpha0 =  2.0/(2+k) 
+			alpha1 = (k+1)/(2+k) 
 
 		elif poly == "PG":
 			#uses k
@@ -407,7 +372,7 @@ def SLCT_semiflex(poly,k,m,Eb_a):
 			gamma21 = 6.0/(3.0+k)
 			gamma3 = (1.0+k)/(3.0+k)
 			alpha0 = 4.0/(3+k)
-			alpha1 = 1.0 - 3.0*(1.0/(3+k) )
+			alpha1 = (k+2)/(3+k)
 
 		elif poly == "PJ":
 			#uses k and m
@@ -415,7 +380,7 @@ def SLCT_semiflex(poly,k,m,Eb_a):
 			gamma21 = 8.0/(2 + m + k)
 			gamma3 = (m+k)/((1.0)*(2+m+k))
 			alpha0 = 4.0/(2+m+k)
-			alpha1 = 1 - 3.0/(2+m+k)
+			alpha1 = (1+m+k)/(2+m+k)
 
 		elif poly == "PK":
 			gamma111 = 0.4
@@ -425,16 +390,16 @@ def SLCT_semiflex(poly,k,m,Eb_a):
 			alpha1 = 0.6
 
 		elif poly == "PL":
-			gamma111 = 2.0/3.0
-			gamma21 = 2.0/3.0
-			gamma3 = 1.0/3.0
+			gamma111 = 4.0/6.0
+			gamma21 = 4.0/6.0
+			gamma3 = 2.0/6.0
 			alpha0 = 1.0
-			alpha1 = 0.33
+			alpha1 = 0.667
 
 		elif poly == "PM":
-			gamma111 = 1./3.
-			gamma21 = 1./3.
-			gamma3 = 0.5
+			gamma111 = 2./6.
+			gamma21 = 5./6.
+			gamma3 = 3./6.
 			alpha0 =2./3.
 			alpha1 =2./3.
 
@@ -447,21 +412,21 @@ def SLCT_semiflex(poly,k,m,Eb_a):
 
 		elif poly == "PO":
 			gamma111 = 2./7.
-			gamma21 = 1.0
+			gamma21 = 8./7.
 			gamma3 = 4./7.
 			alpha0 = 6./7.
-			alpha1 = 3./7.
+			alpha1 = 5./7.
 
 		elif poly == "PP":
-			gamma111 = 0.5
-			gamma21 = 0.375
-			gamma3 = 0.375
+			gamma111 = 4./8
+			gamma21 = 5./8.
+			gamma3 = 3./8.
 			alpha0 = 0.75
 			alpha1 = 0.625
 
 		elif poly == "PQ":
 			gamma111 = 8./9.
-			gamma21 = 7./9.
+			gamma21 = 8./9.
 			gamma3 = 3./9.
 			alpha0 = 10./9.
 			alpha1 = 2./9.
@@ -485,14 +450,14 @@ def SLCT_semiflex(poly,k,m,Eb_a):
 			gamma21 = .75
 			gamma3 = .25
 			alpha0 = 1.0
-			alpha1 = 0.375
+			alpha1 = 0.625
 
 		elif poly == "PU":
 			gamma111 = 4./7.
-			gamma21 = 4./7.
+			gamma21 = 6./7.
 			gamma3 = 3./7.
 			alpha0 = 6./7.
-			alpha1 = 3./7.
+			alpha1 = 5./7.
 
 		#Evaluate semiflexibility constants
 		p_a = gamma111 + gamma21*g_a + gamma3*g_a**2
