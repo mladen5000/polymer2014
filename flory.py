@@ -425,7 +425,7 @@ def plot():
 			fig.set_facecolor('white')
 			axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
 			axis.set_xlabel('Volume Fraction, \u03a6')
-			axis.set_ylabel('Chi Parameter, \u03c7')
+			axis.set_ylabel('Temperature, K')
 			axis.set_title('Flory-Huggins Phase Diagram')
 
 			"""Run Optimization"""
@@ -444,14 +444,19 @@ def plot():
 			spinodal= np.asarray(spinodal)
 
 			#Flip the plot w/ chi to be a function of temperature
+			temp_unit = jsondata['0']['temperature_unit']
+
 			if type == "Type 1":
-				chi = float(jsondata['chi'])
+				chi = float(jsondata['0']['chi'])
+
 				y2 = chi/y2
 				spinodal = chi/spinodal
+				crit_chi = chi/crit_chi
 
 			elif type == "Type 2":
 				y2 = float(jsondata['0']['chib']) / ( y2 - float(jsondata['0']['chia']))
 				spinodal = float(jsondata['0']['chib']) / (spinodal - float(jsondata['0']['chia']))
+				crit_chi= float(jsondata['0']['chib']) / (crit_chi- float(jsondata['0']['chia']))
 
 			spinline = axis.plot(x,spinodal,'r',lw=2,label="Spinodal") 
 			binline = axis.plot(phi,y2,'b',lw=2,label="Binodal")
@@ -477,6 +482,7 @@ def plot():
 
 			#Critical point
 			critvals = [crit_phi,crit_chi]
+
 			
 			return render_template("exampleplots.html",critphi=critvals,list_of_plots=list_of_plots,zipped=zipped)
 
