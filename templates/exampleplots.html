@@ -2,9 +2,13 @@
 
 {% block head %}
 	{{ super() }}
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="static/app.css" />
+    <script src="bower_components/modernizr/modernizr.js"></script>
 {% endblock %}
 
 {% block content %}
+
 	<div id = "Header" style="text-align: left;">
 		<h1> Results </h1>
 	</div>
@@ -13,32 +17,77 @@
 	<div class="row">
 		<h2> From the Database... </h2>
 
-		<div class = "large-8 centered">
-			<p> Chi value here </p>
-		</div>
 
 	</div>
 
+           <div class="row">
+  <div class="medium-6 columns end">
+    <div class="card">
+      <div class="content">
+		  <span class="title">Chi Value between {{polya}} and {{polyb}} Measured at {{jsondata['0']['temperature']}} {{jsondata['0']['temperature_unit']}}</span>
+		<hr>
+		<a href="http://www.codecogs.com/eqnedit.php?latex=\dpi{300}&space;\huge&space;\chi" target="_blank"><img src="http://latex.codecogs.com/gif.latex?\dpi{400}&space;\huge&space;\chi= {{ jsondata['0']['chi']}} " title="\huge \chi" /></a>
+      </div>
+	  <!--
+	  <hr>
+	  <p> Component A: <p>
+	  <p> Component B: <p>
+	  <p> Method Used: <p>
+	  <p> Temperature: <p>
+	  --!>
+		  <div class="action">
+			  <a href=' {{jsondata['0']['paper_link']}} '>Source</a>
+		  </div>
+    </div>
+  </div>
+  <div class="medium-4 columns end">
+    <div class="card">
+      <div class="content">
+        <span class="title">Details</span>
+	  <hr>
+	  <p><b> Component A:</b> {{ polya }} <p>
+	  <hr>
+	  <p><b> Component B:</b> {{ polyb }}<p>
+	  <hr>
+	  <p><b> Method Used:</b> Diblock Melt<p>
+	  <hr>
+	  <p><b> Notes:</b> {{jsondata['0']['notes']}}<p>
+	  <hr>
+	  <p><b> Method Used:</b> No JSON data for method<p>
+	  <hr>
+	  <p><b> Temperature:</b> {{jsondata['0']['temperature']}} {{jsondata['0']['temperature_unit']}}  <p>
+  </div>
+    </div>
+  </div>
+  </div>
+<br>
 
 	<div class="row">
 		<h2> Plots </h2>
 		{% for plot in list_of_plots %}
+			<div class= "card">
 			<div id="{{ plot['id'] }}" class = "large-8 large-centered columns"></div>
+			</div>
+			<br>
+			<br>
 		{% endfor %}
 		<script type="text/javascript">
 			{% for plot in list_of_plots %}
 				mpld3.draw_figure("{{ plot['id'] }}", {{ plot['json']|safe }});
 			{% endfor %}
 		</script>
-		</div>
+	</div>
 	</div>
 
 	<br>
 	<br>
 
-	<h2> Critical Point </h2>
+	<div class = "row">
+		<h2> Critical Point </h2>
 
-	<div class = "large-12 columns">
+		<div class = "card">
+			<br>
+		<div class = "large-12 columns">
 	<table>
 	  <thead>
 		<tr>
@@ -53,10 +102,14 @@
 			</tr>
 	  </tbody>
 	</table>
+</div>
+</div>
 
 
 	<div class = "large-12 columns">
 		<h2> Data Table </h2>
+		<div class = "card">
+			<br>
 	<table>
 	  <thead>
 		<tr>
@@ -76,4 +129,5 @@
 	  </tbody>
 	</table>
 	{% endblock %}
+</div>
 </div>

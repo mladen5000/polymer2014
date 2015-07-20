@@ -276,12 +276,15 @@ def SLCT_flexspin(T,na,nb,flex1,flex2,eps,phi):
 
 	#Dependent on T
 	#A terms
+	print "temp,",T
 	g_a = z /  (z - 1 + exp( Eb_a/T ) )
+	print "GA",g_a
 	r1 = a0_a + a1_a*g_a
 	p1 = g111_a + g21_a*g_a + g3_a*(g_a**2)
 
 	#B terms
 	g_b = z /  (z - 1 + exp(Eb_b/T))
+	print "Gb",g_b
 	r2 = a0_b + a1_b*g_b
 	p2 = g111_b + g21_b*g_b + g3_b*g_b**2
 	
@@ -302,6 +305,7 @@ def SLCT_semiflex(poly,k,m,Eb_a):
 
 		#Need to fix this temp thing
 		T = 300
+		print "If you see this message you should check out why --mladen"
 
 		g_a =  z / ( z - 1 + np.exp(Eb_a/T) )
 

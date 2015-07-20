@@ -370,8 +370,6 @@ def plot():
 		#create url string to fetch data from site
 		webstr = "http://chidb.ci.uchicago.edu/basic_api.php?polymera="
 		#had to switch because values are symmetrical
-		str_polya = polyb
-		str_polyb = polya
 		site_url = webstr + polya + "&polymerb=" + polyb
 		print site_url
 
@@ -484,7 +482,7 @@ def plot():
 			critvals = [crit_phi,crit_chi]
 
 			
-			return render_template("exampleplots.html",critphi=critvals,list_of_plots=list_of_plots,zipped=zipped)
+			return render_template("exampleplots.html",polya=polya,polyb=polyb,jsondata=jsondata,critphi=critvals,list_of_plots=list_of_plots,zipped=zipped)
 
 def flip(a1,a2,b1,b2,c1,c2):
 		""" Switch a1 with a2, b1 with b2, c1 with c2"""
