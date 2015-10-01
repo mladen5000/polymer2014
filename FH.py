@@ -33,7 +33,7 @@ def fun(x,na,nb,phi1):
 			log(phi1) - log(x[0]) + x[1]*x[0]*(1-x[0])*na
 			- x[1]*phi1*(1-phi1)*na + x[0] - phi1 - x[1]*na*(1-x[0]) + x[1]*na*(1-phi1)
 			+ (na/nb)*(1-x[0]) - (na/nb)*(1-phi1),
-			
+
 			(x[0] - phi1)*(1./na - 1./nb + x[1] - 2*x[1]*phi1
 			- log(1-phi1)/nb + log(phi1)/na) - ((x[0]/na)*log(x[0])
 			+ ((1-x[0])/nb)*log(1-x[0]) + x[1]*x[0]*(1-x[0]))

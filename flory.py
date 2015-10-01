@@ -361,6 +361,7 @@ def plot():
 	if request.method == 'POST':
 		na = float(request.form['NFA'])
 		nb = float(request.form['NFB'])
+		v0 = float(request.form['v0'])
 
 		#Talk to SQL
 		#request the option selected from the dropdown
@@ -380,6 +381,7 @@ def plot():
 
 		if request.form['florybutton'] == 'Generate Profile!':
 			chi = float(request.form['chivalue'])
+			chi = chi/v0
 			type = jsondata['0']['type']
 
 			fig = generate_figure(na,nb,chi)
@@ -447,9 +449,10 @@ def plot():
 			if type == "Type 1":
 				chi = float(jsondata['0']['chi'])
 
-				y2 = chi/y2
-				spinodal = chi/spinodal
-				crit_chi = chi/crit_chi
+			
+				y2 = (chi/v0)/y2
+				spinodal = (chi/v0)/spinodal
+				crit_chi = (chi/v0)/crit_chi
 
 			elif type == "Type 2":
 				y2 = float(jsondata['0']['chib']) / ( y2 - float(jsondata['0']['chia']))
@@ -483,6 +486,11 @@ def plot():
 
 			
 			return render_template("exampleplots.html",polya=polya,polyb=polyb,jsondata=jsondata,critphi=critvals,list_of_plots=list_of_plots,zipped=zipped)
+
+
+
+
+
 
 def flip(a1,a2,b1,b2,c1,c2):
 		""" Switch a1 with a2, b1 with b2, c1 with c2"""

@@ -305,7 +305,6 @@ def SLCT_semiflex(poly,k,m,Eb_a):
 
 		#Need to fix this temp thing
 		T = 300
-		print "If you see this message you should check out why --mladen"
 
 		g_a =  z / ( z - 1 + np.exp(Eb_a/T) )
 
