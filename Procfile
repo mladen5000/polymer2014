@@ -1,3 +1,3 @@
-web: gunicorn flory:app --log-file=-
-worker: python -u run-worker.py
+web: gunicorn flory:app --log-file=- --daemon 
+sh heroku.sh
 
