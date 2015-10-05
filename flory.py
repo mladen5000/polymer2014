@@ -24,6 +24,9 @@ from rq import Queue
 from rq.job import Job
 from worker import conn
 
+#Used for scft
+import subprocess
+
 
 #Initialize
 app = Flask(__name__)
