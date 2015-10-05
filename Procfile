@@ -1,3 +1,2 @@
-web: gunicorn flory:app --log-file=- --daemon 
-sh heroku.sh
+web: sh heroku.sh
 
