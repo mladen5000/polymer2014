@@ -1,0 +1,15 @@
+#CC = g++ -I /pong/usr0/d/dpike/scft/code/real/fftw-3.1.1/include
+CC = g++
+CCOPTS = -g
+#LINK = g++ -L /pong/usr0/d/dpike/scft/code/real/fftw-3.1.1/lib
+#LINK = g++ -L /Users/mladenrasic/Downloads/fftw-3.3.4
+LINK = g++
+
+rscft: rscft.o main.o
+	$(LINK) rscft.o main.o -lfftw3 -lm -o rscft
+clean:
+	-rm rscft.o main.o rscft
+rscft.o: rscft.cc rscft.h
+	$(CC) $(CCOPTS) -c rscft.cc
+main.o: main.cc rscft.h
+	$(CC) $(CCOPTS) -c main.cc
