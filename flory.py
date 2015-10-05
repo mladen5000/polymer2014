@@ -29,6 +29,12 @@ from worker import conn
 app = Flask(__name__)
 q = Queue(connection=conn)
 
+def SCFT_execute():
+	""" Make/Build the file onto heroku, and run the job"""
+	print "FOUND IT"
+	subprocess.call(['make','-f','SCFT_real/Makefile'])
+	output = subprocess.call(['./rscft','37','3','6','3','3','outfile1','outfile2','infile','1.78'])
+	return output
 
 
 
@@ -518,7 +524,6 @@ def get_results(job_key):
 
 
 
-
 def flip(a1,a2,b1,b2,c1,c2):
 		""" Switch a1 with a2, b1 with b2, c1 with c2"""
 		return a2,a1,b2,b1,c2,c1
@@ -583,6 +588,8 @@ def generate_SLCTfigure(NFA,NFB,polya,polyb,k1,k2,m1,m2,eps):
 		legend = axis.legend()
 		return fig
 
+
+
 @app.route('/sfplot', methods=['GET','POST'])	
 def sfplot():
 	if request.method == 'POST':
@@ -628,6 +635,12 @@ def sfplot():
 
 			return render_template("sfplot.html",id=id,json01=json01,zipped=zipped)
 
+@app.route('/scft')
+def scft():
+	job1 = q.enqueue_call(
+			func=SCFT_execute, args=( ), result_ttl=5000, timeout=9999
+			)
+	return job1.get_id()
 
 na = 1
 nb = 1
