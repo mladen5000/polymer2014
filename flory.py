@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from flask import jsonify
+
 #Numpy imports
 from numpy.linalg import inv
 from numpy import arange,asarray,zeros
@@ -17,7 +19,15 @@ import simpleA
 import json
 import urllib
 
+#Task queueing, redis
+from rq import Queue
+from rq.job import Job
+from worker import conn
+
+
+#Initialize
 app = Flask(__name__)
+q = Queue(connection=conn)
 
 
 
@@ -127,6 +137,10 @@ def howto():
 @app.route('/flory.html',methods=['POST','GET'])
 def flory():
 	return render_template("flory.html")
+
+@app.route('/apps.html')
+def apps():
+	return render_template("apps.html")
 
 @app.route('/vorn.html',methods=['POST','GET'])
 def vorn():
@@ -438,6 +452,11 @@ def plot():
 
 
 			phi,y2 =  NR(na,nb,nav,crit_chi,flipper)
+			#The line above and below do the same thing, one will replace the other soon.
+			job = q.enqueue_call(
+				func=NR, args=(na,nb,nav,crit_chi,flipper), result_ttl=5000)
+
+			print job.get_id()
 
 			#Convert list to np array
 			y2 = np.asarray(y2)
@@ -487,7 +506,15 @@ def plot():
 			
 			return render_template("exampleplots.html",polya=polya,polyb=polyb,jsondata=jsondata,critphi=critvals,list_of_plots=list_of_plots,zipped=zipped)
 
+@app.route("/results/<job_key>", methods=['GET'])
+def get_results(job_key):
+	#workerfloryplot
+    job = Job.fetch(job_key, connection=conn)
 
+    if job.is_finished:
+        return jsonify(job.result), 200
+    else:
+        return "Nay!", 202
 
 
 
