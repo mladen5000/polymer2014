@@ -26,18 +26,13 @@ from worker import conn
 
 #Used for scft
 import subprocess
+#from scft import SCFT_execute
 
 
 #Initialize
 app = Flask(__name__)
 q = Queue(connection=conn)
 
-def SCFT_execute():
-	""" Make/Build the file onto heroku, and run the job"""
-	print "FOUND IT"
-	subprocess.call(['make','-f','SCFT_real/Makefile'])
-	output = subprocess.call(['./rscft','37','3','6','3','3','outfile1','outfile2','infile','1.78'])
-	return output
 
 
 
@@ -637,13 +632,14 @@ def sfplot():
 				del zipped[::2]
 
 			return render_template("sfplot.html",id=id,json01=json01,zipped=zipped)
-
+"""
 @app.route('/scft')
 def scft():
 	job1 = q.enqueue_call(
 			func=SCFT_execute, args=( ), result_ttl=5000, timeout=9999
 			)
 	return job1.get_id()
+"""
 
 na = 1
 nb = 1
