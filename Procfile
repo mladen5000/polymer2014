@@ -1,3 +1,3 @@
-web: gunicorn flory:app --daemon
+web:sh heroku.sh
 
 
