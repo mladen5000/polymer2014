@@ -10,6 +10,6 @@ rscft: rscft.o main.o
 clean:
 	-rm rscft.o main.o rscft
 rscft.o: rscft.cc rscft.h
-	$(CC) $(CCOPTS) -c rscft.cc
+	$(CC) $(CCOPTS) -c SCFT_real/rscft.cc
 main.o: main.cc rscft.h
-	$(CC) $(CCOPTS) -c main.cc
+	$(CC) $(CCOPTS) -c SCFT_real/main.cc
