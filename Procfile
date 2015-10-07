@@ -1,2 +1,3 @@
-web: gunicorn flory:app
+web: gunicorn flory:app --daemon
+
 
