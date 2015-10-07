@@ -34,6 +34,7 @@ from scft import *
 #Initialize
 app = Flask(__name__)
 q = Queue(connection=conn)
+app.config['REDIS_URL'] = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 
 RQDashboard(app,'/rq')
 
