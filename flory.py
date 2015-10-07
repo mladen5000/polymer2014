@@ -24,7 +24,7 @@ from rq.job import Job
 from worker import conn
 
 #Used for scft
-import subprocess
+#import subprocess
 #from scft import *
 
 
@@ -528,6 +528,7 @@ def plot():
 			
 			return render_template("exampleplots.html",polya=polya,polyb=polyb,jsondata=jsondata,critphi=critvals,list_of_plots=list_of_plots,zipped=zipped)
 
+"""
 @app.route("/results/<job_key>", methods=['GET'])
 def fget_results(job_key):
 	#workerfloryplot
@@ -537,6 +538,7 @@ def fget_results(job_key):
         return jsonify(job.result), 200
     else:
         return "Nay!", 202
+"""
 
 
 
