@@ -1,3 +1,3 @@
 web: gunicorn flory:app
-web: python flory.py
+python flory.py
 
