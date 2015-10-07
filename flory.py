@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import jsonify
 
 #Numpy imports
 from numpy.linalg import inv
@@ -26,7 +25,7 @@ from worker import conn
 
 #Used for scft
 import subprocess
-#from scft import SCFT_execute
+from scft import *
 
 
 #Initialize
@@ -36,10 +35,27 @@ q = Queue(connection=conn)
 
 
 
+
 @app.route('/')
 @app.route('/index')
 def index():
     return render_template("index.html")
+
+@app.route('/hello')
+def hello():
+	job = q.enqueue_call(
+		func=hello_world, args=(), result_ttl=5000,timeout=999999
+	)
+	# return created job id
+	return job.get_id()
+
+@app.route('/rs/<job_key>',methods=['GET'])
+def get_results(job_key):
+	print job_key
+	job = Job.fetch(job_key,connection=conn)
+
+	if job.is_finished:
+		return job.result
 
 @app.route('/saftdemo.html',methods=['POST','GET'])
 def saftdemo():
@@ -511,7 +527,7 @@ def plot():
 			return render_template("exampleplots.html",polya=polya,polyb=polyb,jsondata=jsondata,critphi=critvals,list_of_plots=list_of_plots,zipped=zipped)
 
 @app.route("/results/<job_key>", methods=['GET'])
-def get_results(job_key):
+def fget_results(job_key):
 	#workerfloryplot
     job = Job.fetch(job_key, connection=conn)
 
@@ -632,14 +648,8 @@ def sfplot():
 				del zipped[::2]
 
 			return render_template("sfplot.html",id=id,json01=json01,zipped=zipped)
-"""
-@app.route('/scft')
-def scft():
-	job1 = q.enqueue_call(
-			func=SCFT_execute, args=( ), result_ttl=5000, timeout=9999
-			)
-	return job1.get_id()
-"""
+
+
 
 na = 1
 nb = 1

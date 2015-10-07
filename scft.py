@@ -1,8 +1,14 @@
+#!/usr/bin/env python
 import subprocess
 
-def SCFT_execute():
-	""" Make/Build the file onto heroku, and run the job"""
-	print "FOUND IT"
-	subprocess.call(['make','-f','SCFT_real/Makefile'])
-	output = subprocess.call(['./rscft','37','3','6','3','3','outfile1','outfile2','infile','1.78'])
+def hello_world():
+	#open a file to write, execute the C code and stdout it
+	#subprocess.call(['make','-f','SCFT_real/local_make'])
+	"""
+	with open('out-file.txt', 'w') as f:
+	    subprocess.call(['./SCFT_real/rscft','37','1.78','1.78','1.78','0','outfile1','outfile2','infile','1.78'], stdout=f)
+	f = open('out-file.txt','r')
+	"""
+	#output = subprocess.check_output(['./SCFT_real/rscft','37','3','6','3','3','outfile1','outfile2','infile','1.78'])
+	output = subprocess.check_output('ls')
 	return output
