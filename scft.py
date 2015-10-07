@@ -10,5 +10,6 @@ def hello_world():
 	f = open('out-file.txt','r')
 	"""
 	#output = subprocess.check_output(['./SCFT_real/rscft','37','3','6','3','3','outfile1','outfile2','infile','1.78'])
+	#subprocess.call(['rm','SCFT_real/rscft','SCFT_real/rscft.o', 'SCFT_real/main.o'])
 	output = subprocess.check_output('ls')
 	return output
