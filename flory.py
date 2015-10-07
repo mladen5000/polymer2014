@@ -55,6 +55,8 @@ def get_results(job_key):
 
 	if job.is_finished:
 		return job.result
+	else:
+		return "Nay!"
 
 
 @app.route('/saftdemo.html',methods=['POST','GET'])

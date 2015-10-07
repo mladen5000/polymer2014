@@ -6,10 +6,10 @@ CCOPTS = -g
 LINK = g++ -L /app/vendor/vips/lib
 
 rscft: rscft.o main.o
-	$(LINK) rscft.o main.o -lfftw3 -lm -o rscft
+	$(LINK) SCFT_real/rscft.o SCFT_real/main.o -lfftw3 -lm -o rscft
 clean:
-	-rm rscft.o main.o rscft
+	-rm SCFT_real/rscft.o SCFT_real/main.o SCFT_real/rscft
 rscft.o: rscft.cc rscft.h
-	$(CC) $(CCOPTS) -c rscft.cc
+	$(CC) $(CCOPTS) -c SCFT_real/rscft.cc
 main.o: main.cc rscft.h
-	$(CC) $(CCOPTS) -c main.cc
+	$(CC) $(CCOPTS) -c SCFT_real/main.cc
