@@ -1,2 +1,2 @@
-web: sh heroku.sh
+web: gunicorn flory:app
 

@@ -14,7 +14,7 @@ from FH import *
 from structurefactor import structure_factor
 import simpleA
 
-#For talking to SQL
+#For talking to chiSQL
 import json
 import urllib
 

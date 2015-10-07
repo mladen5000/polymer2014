@@ -1,3 +1,3 @@
 #!/bin/bash
-gunicorn flory:app --daemon
+gunicorn flory:app
 python worker.py
