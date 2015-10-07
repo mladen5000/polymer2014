@@ -1,3 +1,4 @@
-web: sh heroku.sh
+web: gunicorn flory:app
+worker: python worker.py
 
 
