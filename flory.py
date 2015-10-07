@@ -24,8 +24,8 @@ from rq.job import Job
 from worker import conn
 
 #Used for scft
-#import subprocess
-#from scft import *
+import subprocess
+from scft import *
 
 
 #Initialize
@@ -40,7 +40,6 @@ q = Queue(connection=conn)
 @app.route('/index')
 def index():
     return render_template("index.html")
-"""
 @app.route('/hello')
 def hello():
 	job = q.enqueue_call(
@@ -57,7 +56,6 @@ def get_results(job_key):
 	if job.is_finished:
 		return job.result
 
-"""
 
 @app.route('/saftdemo.html',methods=['POST','GET'])
 def saftdemo():
@@ -528,7 +526,6 @@ def plot():
 			
 			return render_template("exampleplots.html",polya=polya,polyb=polyb,jsondata=jsondata,critphi=critvals,list_of_plots=list_of_plots,zipped=zipped)
 
-"""
 @app.route("/results/<job_key>", methods=['GET'])
 def fget_results(job_key):
 	#workerfloryplot
@@ -538,7 +535,6 @@ def fget_results(job_key):
         return jsonify(job.result), 200
     else:
         return "Nay!", 202
-"""
 
 
 
