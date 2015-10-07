@@ -22,16 +22,20 @@ import urllib
 from rq import Queue
 from rq.job import Job
 from worker import conn
+from rq_dashboard import RQDashboard
+
 
 #Used for scft
 import subprocess
 from scft import *
 
 
+
 #Initialize
 app = Flask(__name__)
 q = Queue(connection=conn)
 
+RQDashboard(app,'/rq')
 
 
 
