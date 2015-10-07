@@ -25,7 +25,7 @@ from worker import conn
 
 #Used for scft
 import subprocess
-from scft import *
+#from scft import *
 
 
 #Initialize
@@ -40,7 +40,7 @@ q = Queue(connection=conn)
 @app.route('/index')
 def index():
     return render_template("index.html")
-
+"""
 @app.route('/hello')
 def hello():
 	job = q.enqueue_call(
@@ -56,6 +56,8 @@ def get_results(job_key):
 
 	if job.is_finished:
 		return job.result
+
+"""
 
 @app.route('/saftdemo.html',methods=['POST','GET'])
 def saftdemo():
