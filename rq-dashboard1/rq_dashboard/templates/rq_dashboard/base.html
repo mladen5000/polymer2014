@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0">
+  <title>RQ dashboard</title>
+
+  {# Le styles -#}
+  <link rel="stylesheet" href="{{ url_for('rq_dashboard.static', filename='css/foundation.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('rq_dashboard.static', filename='css/bootstrap.min.css') }}"> 
+	<nav class="top-bar" data-topbar data-options="is_hover:true"> 
+		<ul class="title-area"> 
+			<li class="name"> 
+				<h1> <a href="/"> Materials Genome Project </a> </h1> 
+			</li> <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone --> 
+			<li class="toggle-topbar menu-icon"> 
+				<a href="#"> <span>Polymers</span></a>
+			</li> 
+		</ul> 
+		<section class="top-bar-section"> <!-- Right Nav Section --> 
+			<ul class="right"> 
+				<li class="active">
+					<a href="#">Applications</a>
+				</li> 
+				<li class="has-dropdown"> 
+					<a href="#">Popular Apps</a> 
+						<ul class="dropdown"> 
+							<li><a href="../howto.html">How-To</a>
+							</li>
+							<li><a href="../flory.html">Flory-Huggins</a>
+							</li> 
+							<li><a href="../vorn.html">Voorn-Overbeek</a> 
+							</li> 	
+							<li><a href="../slct.html">SLCT</a> 
+							</li> 	
+							<li><a href="../structurefactor.html">Structure Factor</a> 
+							</li> 	
+							<li><a href="../saftdemo.html">SAFT</a> 
+							</li> 	
+						</ul> 
+				</li> 
+			</ul> <!-- Left Nav Section --> 
+			<ul class="left"> 
+				<li>
+					<a href="/howto.html">About</a>
+				</li> 
+			</ul> 
+		</section> 
+	</nav>
+</head>
+
+<body>
+
+<div class="container">
+    {% block content %}{% endblock %}
+
+</div>
+
+{#- JavaScripts are loaded at the end -#}
+
+{#- Custom JS -#}
+
+<script src="{{ url_for('rq_dashboard.static', filename='js/jquery.min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('rq_dashboard.static', filename='js/foundation.min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('rq_dashboard.static', filename='js/underscore-min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('rq_dashboard.static', filename='js/sugar-1.2.1.min.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('rq_dashboard.static', filename='js/bootstrap-tooltip.js') }}" type="text/javascript"></script>
+<script type="text/javascript">
+	 {% block inline_js %}{% endblock %} 
+</script>
+<script src="{{ url_for('rq_dashboard.static', filename='js/fdoc.js') }}" type="text/javascript"></script>
+</body>
+</html>
