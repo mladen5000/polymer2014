@@ -129,7 +129,7 @@ var api = {
 
             $tbody.empty();
 
-            if (workers.length > 0) {
+            if (workers.length > 0 && workers.length < 5) {
                 $.each(workers, function(i, worker) {
                     if (worker.state === 'busy') {
                         worker.state = 'play';
@@ -208,8 +208,6 @@ var api = {
                 html += template({d: job}, {variable: 'd'});
             });
             $tbody[0].innerHTML = html;
-        } else if (jobs.length > 4) {
-		   break;	
 		} else {
             $tbody.append(noJobsHtml);
         }
