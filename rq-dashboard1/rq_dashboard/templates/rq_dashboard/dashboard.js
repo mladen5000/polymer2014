@@ -208,7 +208,9 @@ var api = {
                 html += template({d: job}, {variable: 'd'});
             });
             $tbody[0].innerHTML = html;
-        } else {
+        } else if (jobs.length > 4) {
+		   break;	
+		} else {
             $tbody.append(noJobsHtml);
         }
 
