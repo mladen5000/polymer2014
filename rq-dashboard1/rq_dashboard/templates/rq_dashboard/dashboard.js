@@ -206,8 +206,10 @@ var api = {
         var html = '';
 
         $tbody.empty();
+		$tbody.append(noJobsHtml);
 
-        if (jobs.length > 5) {
+		/*
+        if (jobs.length > 0) {
             $.each(jobs, function(i, job) {
                 job.created_at = toRelative(Date.create(job.created_at));
                 if (job.ended_at !== undefined) {
@@ -219,6 +221,7 @@ var api = {
 		} else {
             $tbody.append(noJobsHtml);
         }
+		*/
 
         $ul.empty();
 
