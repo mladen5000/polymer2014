@@ -1,4 +1,4 @@
 web: gunicorn flory:app
-worker: python -u worker.py
+worker: python worker.py
 
 
