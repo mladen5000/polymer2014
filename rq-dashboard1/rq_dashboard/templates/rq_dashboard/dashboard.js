@@ -109,7 +109,6 @@ var api = {
     });
 })($);
 
-
 //
 // WORKERS
 //
@@ -129,16 +128,21 @@ var api = {
 
             $tbody.empty();
 
-            if (workers.length > 0 && workers.length < 5) {
+            if (workers.length > 0) {
                 $.each(workers, function(i, worker) {
+					//console.log by mladen
+					console.log(i)
                     if (worker.state === 'busy') {
                         worker.state = 'play';
                     } else {
                         worker.state = 'pause';
                     }
                     html += template({d: worker}, {variable: 'd'});
+					//return statement by mladen
+					return ( i > 3 );
                 });
                 $tbody.append(html);
+
             } else {
                 $tbody.append(noWorkersHtml);
             }
