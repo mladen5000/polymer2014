@@ -4,14 +4,16 @@ import os
 
 def hello_world():
 
-	#These 3 lines are for remote
-	"""
-	os.chdir('/app/SCFT_real')
-	subprocess.call(['make'])
-	output = subprocess.call(['./rscft','37','3','6','3','3','outfile1','outfile2','infile','1.78'])
-	"""
+	redis_url = os.getenv('REDISTOGO_URL','redis://localhost:6379')
+	if redis_url == 'redis://localhost:6379':
+		# This line is for local only
+		output = subprocess.call(['./LOCAL_rscft','37','3','6','3','3','outfile1','outfile2','infile','1.78'])
+	
+	else:
+		#These 3 lines are for remote
+		os.chdir('/app/SCFT_real')
+		subprocess.call(['make'])
+		output = subprocess.call(['./rscft','37','3','6','3','3','outfile1','outfile2','infile','1.78'])
 
-	# This line is for local only
-	output = subprocess.call(['./LOCAL_rscft','37','3','6','3','3','outfile1','outfile2','infile','1.78'])
 
 	return output
