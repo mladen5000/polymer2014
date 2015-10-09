@@ -137,9 +137,11 @@ var api = {
                     } else {
                         worker.state = 'pause';
                     }
+
+					if (i > 3){
+						return false;
+					}
                     html += template({d: worker}, {variable: 'd'});
-					//return statement by mladen
-					return ( i > 3 );
                 });
                 $tbody.append(html);
 
