@@ -29,7 +29,7 @@ rq_dashboard/static/js/foundation.min.js
 rq_dashboard/static/js/jquery.min.js
 rq_dashboard/static/js/sugar-1.2.1.min.js
 rq_dashboard/static/js/underscore-min.js
-rq_dashboard/templates/testbase.html
+rq_dashboard/templates/rq_dashboard/.dashboard.html.swp
 rq_dashboard/templates/rq_dashboard/.dashboard.js.swp
 rq_dashboard/templates/rq_dashboard/base.html
 rq_dashboard/templates/rq_dashboard/dashboard.html

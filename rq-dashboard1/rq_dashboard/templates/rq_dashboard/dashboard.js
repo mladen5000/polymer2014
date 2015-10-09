@@ -138,6 +138,8 @@ var api = {
                         worker.state = 'pause';
                     }
 
+
+					//this line limits number of workers displayed
 					if (i > 3){
 						return false;
 					}
