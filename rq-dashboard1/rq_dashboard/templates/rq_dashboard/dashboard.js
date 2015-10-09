@@ -206,9 +206,7 @@ var api = {
         var html = '';
 
         $tbody.empty();
-		$tbody.append(noJobsHtml);
 
-		/*
         if (jobs.length > 0) {
             $.each(jobs, function(i, job) {
                 job.created_at = toRelative(Date.create(job.created_at));
@@ -221,7 +219,6 @@ var api = {
 		} else {
             $tbody.append(noJobsHtml);
         }
-		*/
 
         $ul.empty();
 
