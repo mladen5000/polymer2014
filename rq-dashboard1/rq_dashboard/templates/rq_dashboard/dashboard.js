@@ -28,6 +28,7 @@ var api = {
         });
     },
 
+	//mladen is tinkering here
     getJobs: function(queue_name, page, cb) {
         $.getJSON(url_for_jobs(queue_name, page), function(data) {
 			console.log('data')
