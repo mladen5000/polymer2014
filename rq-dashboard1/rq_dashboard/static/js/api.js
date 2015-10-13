@@ -10,6 +10,8 @@ define(['jquery'], function($) {
     var getJobs = function(queue_name, cb) {
         $.getJSON('/jobs/' + encodeURIComponent(queue_name), function(data) { // TODO: Fix static URL
             var jobs = data.jobs;
+			console.log(jobs)
+			console.log(jobs.length)
             cb(jobs);
         });
     };

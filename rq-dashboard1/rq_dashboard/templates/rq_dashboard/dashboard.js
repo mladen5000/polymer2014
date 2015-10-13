@@ -207,7 +207,7 @@ var api = {
 
         $tbody.empty();
 
-        if (jobs.length > 0 || jobs.length == "undefined") {
+        if (jobs.length > 0 ) {
             $.each(jobs, function(i, job) {
                 job.created_at = toRelative(Date.create(job.created_at));
                 if (job.ended_at !== undefined) {
