@@ -9,6 +9,8 @@ var url_for = function(name, param) {
 
 var url_for_jobs = function(param, page) {
     var url = {{ rq_url_prefix|tojson|safe }} + '/jobs/' + encodeURIComponent(param) + '/' + page + '.json';
+	console.log("url");
+	console.log(url);
     return url;
 };
 
@@ -28,6 +30,12 @@ var api = {
 
     getJobs: function(queue_name, page, cb) {
         $.getJSON(url_for_jobs(queue_name, page), function(data) {
+			console.log("queue_name")
+			console.log(queue_name)
+			console.log("page")
+			console.log(page)
+			console.log("data.jobs")
+			console.log(data.jobs)
             var jobs = data.jobs;
             var pagination = data.pagination;
             cb(jobs, pagination);
