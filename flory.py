@@ -35,10 +35,9 @@ from scft import *
 app = Flask(__name__)
 q = Queue(connection=conn)
 app.config['REDIS_URL'] = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
+app.config['RQ_POLL_INTERVAL'] = 10000
 app.config['DEBUG'] = True
-
 RQDashboard(app,'/rq')
-app.config['REDIS_URL'] = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 
 
 
