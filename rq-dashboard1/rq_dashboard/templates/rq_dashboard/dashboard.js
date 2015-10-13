@@ -30,10 +30,8 @@ var api = {
 
     getJobs: function(queue_name, page, cb) {
         $.getJSON(url_for_jobs(queue_name, page), function(data) {
-			console.log("queue_name")
-			console.log(queue_name)
-			console.log("page")
-			console.log(page)
+			console.log('data')
+			console.log(data)
 			console.log("data.jobs")
 			console.log(data.jobs)
             var jobs = data.jobs;
