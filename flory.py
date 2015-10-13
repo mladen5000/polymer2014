@@ -38,6 +38,7 @@ app.config['REDIS_URL'] = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 app.config['DEBUG'] = True
 
 RQDashboard(app,'/rq')
+app.config['REDIS_URL'] = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 
 
 
