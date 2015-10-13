@@ -35,6 +35,8 @@ def setup_rq_connection():
         print "config managed to get redis_url"
         current_app.redis_conn = from_url(current_app.config.get('REDIS_URL'))
     else:
+        print current_app.config.get('REDIS_URL')
+        print "config managed hit else redis_url"
         current_app.redis_conn = Redis(host=current_app.config.get('REDIS_HOST', 'localhost'),
                        port=current_app.config.get('REDIS_PORT', 6379),
                        password=current_app.config.get('REDIS_PASSWORD', None),
@@ -218,5 +220,5 @@ def list_workers():
 
 @dashboard.context_processor
 def inject_interval():
-    interval = current_app.config.get('RQ_POLL_INTERVAL', 2500)
+    interval = current_app.config.get('RQ_POLL_INTERVAL', 25000)
     return dict(poll_interval=interval)
