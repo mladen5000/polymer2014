@@ -16,4 +16,5 @@ mpld3
 scipy
 redis==2.10.3
 rq==0.3.4
--e ./rq-dashboard1
+rq-dashboard==0.3.4
+#-e ./rq-dashboard1
