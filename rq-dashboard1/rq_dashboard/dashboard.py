@@ -57,9 +57,7 @@ def jsonify(f):
             result_dict = f(*args, **kwargs)
         except Exception as e:
             result_dict = dict(status='mladenerror')
-            print str(e)
             if current_app.config['DEBUG']:
-                print e
                 result_dict['reason'] = str(e)
                 from traceback import format_exc
                 result_dict['exc_info'] = format_exc()
