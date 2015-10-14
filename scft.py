@@ -2,8 +2,6 @@
 import subprocess
 import os
 
-import requests
-
 def hello_world():
 
 	redis_url = os.getenv('REDISTOGO_URL','redis://localhost:6379')
