@@ -33,11 +33,12 @@ from scft import *
 
 #Initialize
 app = Flask(__name__)
+#redis queue, conn is the name of the redis connection as defined on worker
 q = Queue(connection=conn)
 app.config['REDIS_URL'] = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 app.config['RQ_POLL_INTERVAL'] = 30000
 app.config['DEBUG'] = True
-RQDashboard(app,'/rq')
+RQDashboard(app)
 
 
 
@@ -48,9 +49,10 @@ def index():
     return render_template("index.html")
 @app.route('/hello')
 def hello():
-	job = q.enqueue_call(
-		func=hello_world, args=(), result_ttl=5000,timeout=999999
-	)
+	job = q.enqueue(hello_world222)
+	#job = q.enqueue_call(
+	#	func=hello_world, args=(), result_ttl=5000,timeout=99
+	#)
 	# return created job id
 	return job.get_id()
 
@@ -58,8 +60,10 @@ def hello():
 def get_results(job_key):
 	print job_key
 	job = Job.fetch(job_key,connection=conn)
+	print job.result
 
 	if job.is_finished:
+		print 'yay'
 		return job.result
 	else:
 		return "Nay!"

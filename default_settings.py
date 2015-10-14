@@ -8,7 +8,7 @@ and then overridden as required.
 
 """
 #: If set the REDIS_URL takes precedence over REDIS_HOST, REDIS_PORT, etc
-REDIS_URL = redis://redistogo:d302ccb0f75a68e30cead681470e6588@cowfish.redistogo.com:9273/
+REDIS_URL =
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
