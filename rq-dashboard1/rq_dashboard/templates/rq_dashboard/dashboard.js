@@ -1,5 +1,7 @@
 var url_for = function(name, param) {
     var url = {{ rq_url_prefix|tojson|safe }};
+	console.log("var url:");
+	console.log(url);
     if (name == 'queues') { url += '/queues.json'; }
     else if (name == 'workers') { url += '/workers.json'; }
     else if (name == 'cancel_job') { url += '/job/' + encodeURIComponent(param) + '/cancel'; }
@@ -31,6 +33,12 @@ var api = {
 	//mladen is tinkering here
     getJobs: function(queue_name, page, cb) {
         $.getJSON(url_for_jobs(queue_name, page), function(data) {
+			console.log('queue_name:');
+			console.log(queue_name)
+			console.log('page')
+			console.log(page)
+			console.log('cb')
+			console.log(cb)
 			console.log('data')
 			console.log(data)
 			console.log("data.jobs")
@@ -187,10 +195,16 @@ var api = {
 (function($) {
     var $raw_tpl = $('script[name=job-row]').html();
     var template = _.template($raw_tpl);
+	console.log('template:');
+	console.log(template);
     var $raw_tpl_page = $('script[name=page-link]').html();
     var template_page = _.template($raw_tpl_page);
+	console.log('template_page:');
+	console.log(template_page);
     var $ul = $('div#page-selection ul');
     var noJobsHtml = $('script[name=no-jobs-row]').html();
+	console.log('noJobsHtml:');
+	console.log(noJobsHtml);
     var $raw_tpl_prev_page = $('script[name=previous-page-link]').html();
     var template_prev_page = _.template($raw_tpl_prev_page);
     var $raw_tpl_next_page = $('script[name=next-page-link]').html();
