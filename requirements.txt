@@ -17,3 +17,4 @@ scipy
 redis==2.10.3
 rq==0.5.5
 -e ./rq-dashboard1
+Flask-DebugToolbar==0.10.0

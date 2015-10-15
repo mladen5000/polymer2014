@@ -25,9 +25,14 @@ from worker import conn
 from rq_dashboard import RQDashboard
 
 
-#Used for scft
+#Used for Self Consistent Field Theory
 import subprocess
 from scft import *
+
+#Used to Debug
+from flask_debugtoolbar import DebugToolbarExtension
+
+
 
 
 
@@ -36,9 +41,13 @@ app = Flask(__name__)
 #redis queue, conn is the name of the redis connection as defined on worker
 q = Queue(connection=conn)
 app.config['REDIS_URL'] = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
-app.config['RQ_POLL_INTERVAL'] = 3000
+app.config['RQ_POLL_INTERVAL'] = 0.5
 app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = 'use a better key'
+
 RQDashboard(app,'/rq')
+toolbar = DebugToolbarExtension(app)
+
 
 
 
@@ -47,13 +56,23 @@ RQDashboard(app,'/rq')
 @app.route('/index')
 def index():
     return render_template("index.html")
-@app.route('/hello')
-def hello():
-	job = q.enqueue_call(
-		func=hello_world, args=(), result_ttl=5000,timeout=99
-	)
-	# return created job id
-	return job.get_id()
+
+@app.route('/scft_enqueue',methods=['GET','POST'])
+def scft_enqueue():
+	if request.method == 'POST':
+		if request.form['enqueuebutton'] == 'Submit':
+			print 'queueing!'
+			job = q.enqueue_call(
+				func=hello_world, args=(), result_ttl=5000,timeout=9999
+			)
+			return render_template("scft_enqueue.html")
+		else:
+			print 0
+
+	else:
+		print 'NOT POST'
+		return render_template("scft_enqueue.html")
+
 
 @app.route('/rs/<job_key>',methods=['GET'])
 def get_results(job_key):
@@ -670,7 +689,7 @@ N = 100
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
 
 
 

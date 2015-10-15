@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+ 
+{% block head %}
+	{{ super() }}
+{% endblock %}
+
+{% block content %}
+	<div id = "Header" style="text-align: center;">
+		<h1> Self Consistent Field Theory Job Submission</h1>
+	</div>
+
+<div class = "introduction">
+	<div class="row">
+		<h2> Self Consistent Field Theory</h2>
+	</div>
+	<div class = "row">
+	<p>
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	</p>
+	<p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
+ 
+	</div>
+</div>
+	<form autocomplete="on" data-abide action="/scft_enqueue" method="post">
+
+			<div class="row">
+					<div align="center">
+						<input class = "button" type="submit" name="enqueuebutton" value="Submit" />
+						<!--<input class = "button" type="submit" name="enqueuebutton" value="Submit" onclick="this.disabled=true; this.value='Job Queued!';" />
+						--!>
+					</div>
+			</div>
+
+		</form>
+					<div align="center">
+						<a href="/rq" class="large button">Go Check the Queue!</a>
+					</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<hr>
+
+{% endblock %}
+

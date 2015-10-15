@@ -107,7 +107,7 @@ def pagination_window(total_items, cur_page, per_page=5, window_size=10):
     return result
 
 
-@dashboard.route('/', defaults={'queue_name': None, 'page': '1'})
+@dashboard.route('/', defaults={'queue_name': None, 'page': '1'}, methods= ['GET','POST'])
 @dashboard.route('/<queue_name>', defaults={'page': '1'})
 @dashboard.route('/<queue_name>/<page>')
 def overview(queue_name, page):
