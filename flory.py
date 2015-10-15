@@ -41,7 +41,7 @@ app = Flask(__name__)
 #redis queue, conn is the name of the redis connection as defined on worker
 q = Queue(connection=conn)
 app.config['REDIS_URL'] = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
-app.config['RQ_POLL_INTERVAL'] = 0.5
+app.config['RQ_POLL_INTERVAL'] = 5
 app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'use a better key'
 
