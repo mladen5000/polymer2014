@@ -13,3 +13,19 @@ from matplotlib.figure import Figure
 import json
 import subprocess
 
+#Used for Self Consistent Field Theory
+import subprocess
+from scft import *
+
+#Used to Debug
+from flask_debugtoolbar import DebugToolbarExtension
+
+#Task queueing, redis
+from rq import Queue
+from rq.job import Job
+from worker import conn
+from rq_dashboard import RQDashboard
+
+#For talking to chiSQL
+import json
+import urllib

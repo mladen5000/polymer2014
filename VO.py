@@ -5,6 +5,10 @@ from math import *
 import numpy as np
 from numpy.linalg import inv
 from scipy.optimize import root,fsolve,newton
+import matplotlib.pyplot as plt
+import json
+import mpld3
+from mpld3 import plugins
 
 """
 THIS IS THE MODULE FOR VOORN-OVERBEEK FILES
@@ -221,4 +225,65 @@ def vfree(N,psi,sigma):
 	return phivals, enthalpy,entropy, f
 
 
+def vPlot(alpha,sigma,psi,N):
+	fig = plt.figure()
+	fig.set_facecolor('white')
+	axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+	axis.set_xlabel('Volume Fraction, \u03a6')
+	axis.set_ylabel('Free Energy ')
+	axis.set_title('Voorn-Overbeek  Diagram')
+	phi,h,s,g = vfree(N,psi,sigma)
+
+	
+	hline = axis.plot(phi,h,'r',lw=1,alpha = 0.5,label='Enthalpy')
+	sline = axis.plot(phi,s,'b',lw=1,alpha = 0.5,label='Entropy')
+	gline = axis.plot(phi,g,'g',lw=3,label="Free Energy")
+	legend = axis.legend()
+
+	"""Add d3 stuff"""
+	plugins.connect(fig, plugins.MousePosition())
+
+	id = "fig01"
+	json01 = json.dumps(mpld3.fig_to_dict(fig))
+
+	list_of_plots = list()
+	#Attempt to make dictionary of plots
+	plot_dict= dict()
+	plot_dict['id'] = "fig01"
+	plot_dict['json'] = json01
+	list_of_plots.append(plot_dict)
+	
+
+	"""Set up the plot"""
+	fig = plt.figure()
+	fig.set_facecolor('white')
+	axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+	axis.set_xlabel('Volume Fraction, \u03a6')
+	axis.set_ylabel('Salt Concentration, \u03a8')
+	axis.set_title('Voorn-Overbeek Phase Diagram')
+
+	"""Move Spinodal Elsewhere"""
+	phi,y2 =  vNR(alpha,N,sigma)
+	x, spinodal = vSpinodal(sigma,alpha,N)
+	spinline = axis.plot(x,spinodal,'r',lw=2,label = "Spinodal")
+	binline = axis.plot(phi,y2,'b',lw=2, label = "Binodal") 
+	axis.legend()
+	plugins.connect(fig, plugins.MousePosition())
+
+	id2 = "fig02"
+	json02 = json.dumps(mpld3.fig_to_dict(fig))
+
+	#Attempt to make dictionary of plots
+	plot_dict= dict()
+	plot_dict['id'] = "fig02"
+	plot_dict['json'] = json02
+	list_of_plots.append(plot_dict)
+
+	#Generate table
+	zipped = zip(x,spinodal,y2)
+	
+	#Critical point form
+	critphi = vCriticalpoint(sigma,alpha,N)
+
+	return critphi, list_of_plots,zipped
 
