@@ -186,10 +186,12 @@ def fPlot(polya,polyb,na,nb,v0,jsondata):
 
 	phi,y2 =  NR(na,nb,nav,crit_chi,flipper)
 	#The line above and below do the same thing, one will replace the other soon.
+	"""
 	job = q.enqueue_call(
 		func=NR, args=(na,nb,nav,crit_chi,flipper), result_ttl=5000)
 
 	print job.get_id()
+	"""
 
 	#Convert list to np array
 	y2 = np.asarray(y2)
