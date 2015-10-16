@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 
 from math import *
+from flask import request
 import numpy as np
 from numpy.linalg import inv
 from scipy.optimize import fsolve
+from general_route_functions import generate_SLCTfigure
+import json
+import matplotlib.pyplot as plt
+import mpld3
+from mpld3 import plugins
 
 """ Simple Lattice Cluster """
 
@@ -604,3 +610,118 @@ def SLCT_constants(polya,polyb,k1,k2,m1,m2):
 				p2 = 16.0/9.0
 
 		return r1,p1,r2,p2
+
+def sPlot(polya,polyb,na,nb):
+	if request.form['eba'] == "":
+		eba = 0
+		ebb = 0
+	else:
+		eba = float(request.form['eba'])
+		ebb = float(request.form['ebb'])
+
+	#Deal with k and m values for now
+	if  polya =='PF' or polya == 'PG' or polya == 'PH' or polya == 'PI' or polya == 'PJ':
+		k1 = float(request.form['k1'])
+		m1 = float(request.form['m1'])
+	else:
+		k1 = 0
+		m1 = 0
+
+	if  polyb =='PF' or polyb == 'PG' or polyb == 'PH' or polyb == 'PI' or polyb == 'PJ':
+		k2 = float(request.form['k2'])
+		m2 = float(request.form['m2'])
+	else:
+		k2 = 0
+		m2 = 0
+
+	z = 6.0
+	
+	""" Parameters for specific polymers"""
+	r1, p1,flex1 = SLCT_semiflex(polya,k1,m1,eba)
+	r2, p2,flex2 =SLCT_semiflex(polyb,k2,m2,ebb)
+	flex1.append(eba)
+	flex2.append(ebb)
+
+	global flipper
+
+	"""Nice trick to fix asymmetry issue"""
+	if na > nb:
+			print "we gotta flip!"
+			flipper = 1
+			na, nb, r1, r2, p1, p2 =  flip(na,nb,r1,r2,p1,p2)
+			print r1, r2, z, p1, p2, na, nb
+	else:
+			flipper = 0
+
+	"""Set up the plot"""
+	if request.form['slctbutton'] == 'Generate Profile!':
+		eps = float(request.form['eps'])
+
+		fig = generate_SLCTfigure(na,nb,polya,polyb,k1,k2,m1,m2,eps)
+
+		plugins.connect(fig, plugins.MousePosition())
+		id = "fig01"
+		json01 = json.dumps(mpld3.fig_to_dict(fig))
+		list_of_plots = list()
+
+		#Attempt to make dictionary of plots
+		plot_dict = dict()
+		plot_dict['id'] = "fig01"
+		plot_dict['json'] = json01
+		list_of_plots.append(plot_dict)
+
+
+		fig = plt.figure()
+		fig.set_facecolor('white')
+		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
+		axis.set_xlabel('Volume Fraction, \u03a6')
+		#axis.set_ylabel('Interaction Strength, \u03b5/kbT')
+		axis.set_ylabel('Temperature, K')
+		axis.set_title('SLCT Phase Diagram')
+
+		print flex1, flex2
+		"""Run Optimization"""
+		phi, y2 = SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2)
+	#	spinx,spiny = SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper)
+		spinx,spiny = run_SLCT_flexspinodal(na,nb,flex1,flex2,eps,phi,flipper)
+		
+
+		"""Incorporate Epsilon"""
+		#Convert list to np array
+		y2 = np.asarray(y2)
+		spiny= np.asarray(spiny)
+
+		#Evaluate w/ epsilon
+		y2 = eps/y2
+
+
+		if flipper == 1:
+			print "we gotta unflip!"
+			na, nb, r1, r2, p1, p2 =  flip(na,nb,r1,r2,p1,p2)
+			print r1, r2, z, p1, p2, na, nb
+
+		"""Plot"""
+		spinline = axis.plot(spinx,spiny,'r',lw=2,label="Spinodal") 
+		binline = axis.plot(phi,y2,'b',lw=2,label="Binodal")
+		axis.legend()
+
+		"""Add d3 stuff"""
+		plugins.connect(fig, plugins.MousePosition())
+		id2 = "fig02"
+		json02 = json.dumps(mpld3.fig_to_dict(fig))
+
+		#Attempt to make dictionary of plots
+		plot_dict = dict()
+		plot_dict['id'] = "fig02"
+		plot_dict['json'] = json02
+		list_of_plots.append(plot_dict)
+
+		#Generate table
+		zipped = zip(spinx,spiny,y2)
+
+		#Critical point
+		critphi = SLCT_crit(r1,r2,z,p1,p2,na,nb,eps)
+		critphi = list(critphi)
+
+		return critphi, list_of_plots, zipped
+
