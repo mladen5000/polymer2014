@@ -12,7 +12,6 @@ from SLCT import *
 
 import json
 from general_route_functions import generate_figure
-from flory import q
 from flask import request
 
 """ Flory Huggins"""
