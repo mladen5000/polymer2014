@@ -16,5 +16,5 @@ mpld3
 scipy
 redis==2.10.3
 rq==0.5.5
--e /Users/mladenrasic/Desktop/Polymer/test/rq-dashboard
+-e /Users/mladenrasic/Desktop/Polymer/test/rq-dashboard/
 Flask-DebugToolbar==0.10.0
