@@ -44,7 +44,7 @@ app = Flask(__name__)
 q = Queue(connection=conn)
 app.config['REDIS_URL'] = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 app.config['RQ_POLL_INTERVAL'] = 5
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False
 app.config['SECRET_KEY'] = 'use a better key'
 
 RQDashboard(app,'/rq')
