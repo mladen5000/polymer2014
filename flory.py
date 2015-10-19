@@ -9,32 +9,28 @@ from numpy.linalg import inv
 from numpy import arange,asarray,zeros
 
 #Modules
-import SLCT
-import VO
-from FH import *
-from structurefactor import structure_factor
-import simpleA
+import models.SLCT 
+import models.VO
+from models.FH import *
+from models.structurefactor import structure_factor
+import models.simpleA
+from scft import *
+from models.general_route_functions import *
+import models.saftdemocode
 
 #Task queueing, redis
 from rq import Queue
 from rq.job import Job
 from worker import conn
 from rq_dashboard import RQDashboard
+import subprocess
 
 #For talking to chiSQL
 import json
 import urllib
 
-#Used for Self Consistent Field Theory
-import subprocess
-from scft import *
-
 #Used to Debug
 from flask_debugtoolbar import DebugToolbarExtension
-import saftdemocode
-
-#Extra
-from general_route_functions import *
 
 
 
