@@ -14,7 +14,7 @@ import models.VO
 from models.FH import *
 from models.structurefactor import structure_factor
 import models.simpleA
-from scft import *
+from models.scft import *
 from models.general_route_functions import *
 import models.saftdemocode
 
