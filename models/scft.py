@@ -14,7 +14,7 @@ def hello_world():
 	else:
 
 		#These 3 lines are for remote
-		os.chdir('/app/SCFT_real')
+		os.chdir('/app/models/SCFT_real')
 		subprocess.call(['make'])
 		output = subprocess.call(['./rscft','37','3','6','3','3','outfile1','outfile2','infile','1.78'])
 
