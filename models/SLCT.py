@@ -3,13 +3,9 @@
 from math import *
 from flask import request
 import numpy as np
-from numpy.linalg import inv
 from scipy.optimize import fsolve
-from general_route_functions import generate_SLCTfigure
-import json
-import matplotlib.pyplot as plt
-import mpld3
-from mpld3 import plugins
+from plotter import *
+
 
 """ Simple Lattice Cluster """
 
@@ -57,7 +53,6 @@ def SLCT_crit(r1,r2,z,p1,p2,na,nb,eps):
 		#Calculate the critical temperature
 		Tc = 2*(b + c*phi_c)/(1.0/(m*phi_c) + 1.0/(m*k*(1-phi_c)) - 2*a)
 		Tc = Tc*eps #eps/kb was taken out of b and c, so putting it back in now
-		print "CRIT PHI",phi_c
 		return phi_c, Tc
 
 
@@ -162,7 +157,6 @@ def SLCT_semiflex_params(T_semi,flex):
 	p = gamma111 + gamma21*(g) + gamma3*(g**2)
 	return r,p
 
-
 def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2):
 		" Newton Raphson solver for the binary mixture"
 		# Set up parameters, initial guesses, formatting, initializing etc.
@@ -200,7 +194,7 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2):
 				r2,p2 = SLCT_semiflex_params(T_semi,flex2)
 				#Calculate analytical jacobian, and inverse
 				jacobian = SLCT_jac(guess,phi,r1,r2,z,p1,p2,na,nb)
-				invjac = inv(jacobian)
+				invjac = np.linalg.inv(jacobian)
 
 				#Set of functions f1[0],f1[1] to satisfy
 				f1 = SLCT_fun(guess,phi,r1,r2,z,p1,p2,na,nb)
@@ -239,9 +233,8 @@ def SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2):
 		return (phi,y2)
 
 
-def run_SLCT_flexspinodal(na,nb,flex1,flex2,eps,phi,flipper):
+def run_SLCT_flexspinodal(na,nb,flex1,flex2,eps,phi,flipper,phivals):
 	i=0
-	phivals = np.arange(0.05,0.95,0.01)
 	tempforphi = np.zeros(( len(phivals) ))
 
 	for phi in phivals:
@@ -259,6 +252,7 @@ def run_SLCT_flexspinodal(na,nb,flex1,flex2,eps,phi,flipper):
 
 def SLCT_flexspin(T,na,nb,flex1,flex2,eps,phi):
 	"""Auxillary function, which is called by solve, finds the value of the Spinodal at a fixed phi"""
+	phi = np.asarray(phi)
 
 	z = 6.0
 
@@ -282,15 +276,12 @@ def SLCT_flexspin(T,na,nb,flex1,flex2,eps,phi):
 
 	#Dependent on T
 	#A terms
-	print "temp,",T
 	g_a = z /  (z - 1 + exp( Eb_a/T ) )
-	print "GA",g_a
 	r1 = a0_a + a1_a*g_a
 	p1 = g111_a + g21_a*g_a + g3_a*(g_a**2)
 
 	#B terms
 	g_b = z /  (z - 1 + exp(Eb_b/T))
-	print "Gb",g_b
 	r2 = a0_b + a1_b*g_b
 	p2 = g111_b + g21_b*g_b + g3_b*g_b**2
 	
@@ -302,7 +293,6 @@ def SLCT_flexspin(T,na,nb,flex1,flex2,eps,phi):
 	#Calculate the residual
 	rhs = (f - a) / (b+c*phi)
 	res = eps/T - (f - a) / (b + c*phi)
-	print res
 	return res
 
 
@@ -473,7 +463,6 @@ def SLCT_semiflex(poly,k,m,Eb_a):
 		r_a = alpha0 + alpha1*g_a
 		flexlist = [alpha0,alpha1,gamma111,gamma21,gamma3]
 
-		print "THE POLYMER IS",poly
 		return r_a, p_a, flexlist
 		
 
@@ -653,71 +642,48 @@ def sPlot(polya,polyb,na,nb):
 	else:
 			flipper = 0
 
-	"""Set up the plot"""
 	if request.form['slctbutton'] == 'Generate Profile!':
 		eps = float(request.form['eps'])
 
-		fig = generate_SLCTfigure(na,nb,polya,polyb,k1,k2,m1,m2,eps)
-
-		plugins.connect(fig, plugins.MousePosition())
-		id = "fig01"
-		json01 = json.dumps(mpld3.fig_to_dict(fig))
-		list_of_plots = list()
-
-		#Attempt to make dictionary of plots
-		plot_dict = dict()
-		plot_dict['id'] = "fig01"
-		plot_dict['json'] = json01
-		list_of_plots.append(plot_dict)
+		#Free Energy
+		z = 6.0
+		r1, p1, r2, p2 = SLCT_constants(polya,polyb,k1,k2,m1,m2)
+		xlabel = 'Volume Fraction, \u03a6'
+		ylabel = 'Free Energy'
+		title = 'SLCT Free Energy Diagram'
+		phi,h,s,g = SLCTfree(r1,r2,z,p1,p2,na,nb,eps)
+		FEplot = freeEnergyPlot(xlabel,ylabel,title,phi,h,s,g)
 
 
-		fig = plt.figure()
-		fig.set_facecolor('white')
-		axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-		axis.set_xlabel('Volume Fraction, \u03a6')
-		#axis.set_ylabel('Interaction Strength, \u03b5/kbT')
-		axis.set_ylabel('Temperature, K')
-		axis.set_title('SLCT Phase Diagram')
 
 		print flex1, flex2
-		"""Run Optimization"""
-		phi, y2 = SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2)
-	#	spinx,spiny = SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper)
-		spinx,spiny = run_SLCT_flexspinodal(na,nb,flex1,flex2,eps,phi,flipper)
-		
-
-		"""Incorporate Epsilon"""
+		#spinx,spinodal = SLCT_Spinodal(r1,r2,z,p1,p2,na,nb,flipper)
+		phi, binodal = SLCT_NR(r1,r2,z,p1,p2,na,nb,flipper,eps,flex1,flex2)
+		spinx,spinodal = run_SLCT_flexspinodal(na,nb,flex1,flex2,eps,phi,flipper,phi)
 		#Convert list to np array
-		y2 = np.asarray(y2)
-		spiny= np.asarray(spiny)
-
+		binodal = np.asarray(binodal)
+		spinodal= np.asarray(spinodal)
 		#Evaluate w/ epsilon
-		y2 = eps/y2
-
-
+		binodal = eps/binodal
 		if flipper == 1:
 			print "we gotta unflip!"
 			na, nb, r1, r2, p1, p2 =  flip(na,nb,r1,r2,p1,p2)
 			print r1, r2, z, p1, p2, na, nb
 
-		"""Plot"""
-		spinline = axis.plot(spinx,spiny,'r',lw=2,label="Spinodal") 
-		binline = axis.plot(phi,y2,'b',lw=2,label="Binodal")
-		axis.legend()
-
-		"""Add d3 stuff"""
-		plugins.connect(fig, plugins.MousePosition())
-		id2 = "fig02"
-		json02 = json.dumps(mpld3.fig_to_dict(fig))
-
-		#Attempt to make dictionary of plots
-		plot_dict = dict()
-		plot_dict['id'] = "fig02"
-		plot_dict['json'] = json02
-		list_of_plots.append(plot_dict)
+		#Phase Plot
+		xlabel='Volume Fraction, \u03a6'
+		ylabel= 'Temperature, K'
+		#ylabel='Interaction Strength, \u03b5/kbT'
+		title= 'SLCT Phase Diagram'
+		SLCTplot = phasePlot(xlabel,ylabel,title,phi,spinodal,binodal)
+		
+		#LIST OF DICTIONARIES
+		list_of_plots = list()
+		list_of_plots.append(FEplot.plot_dict)
+		list_of_plots.append(SLCTplot.plot_dict)
 
 		#Generate table
-		zipped = zip(spinx,spiny,y2)
+		zipped = zip(phi,spinodal,binodal)
 
 		#Critical point
 		critphi = SLCT_crit(r1,r2,z,p1,p2,na,nb,eps)

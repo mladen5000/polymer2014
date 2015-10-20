@@ -5,7 +5,6 @@ from mpld3 import plugins
 
 class generalPlot:
 	""" Class to construct Phase Diagrams """
-
 	def __init__(self,xlabel,ylabel,title):
 		"Initialize the Plot object"
 		self.xlabel = xlabel
@@ -43,7 +42,6 @@ class freeEnergyPlot(generalPlot):
 		self.plot_dict['json'] = self.jsonval
 
 class phasePlot(generalPlot):
-
 	def __init__(self,xlabel,ylabel,title,phi,spinodal,binodal):
 		generalPlot.__init__(self,xlabel,ylabel,title)
 		self.phi = phi
@@ -59,17 +57,4 @@ class phasePlot(generalPlot):
 		self.plot_dict = dict()
 		self.plot_dict['id'] = self.keyval
 		self.plot_dict['json'] = self.jsonval
-
-	
-
-		
-	
-
-x = 'lol'
-y = 'lol'
-t = 'lol'
-phi = 1
-spi = 1
-bi = 2
-myplot = phasePlot(x,y,t,phi,spi,bi)
 
