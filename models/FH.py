@@ -1,17 +1,8 @@
 #!/usr/bin/env python
-
-import random
 from math import *
-from numpy.linalg import inv
 import numpy as np
-import matplotlib.pyplot as plt
-import StringIO
-import mpld3
-from mpld3 import plugins
-from SLCT import *
-
-import json
-from general_route_functions import generate_figure
+from general_route_functions import flip
+from plotter import *
 from flask import request
 
 """ Flory Huggins"""
@@ -39,7 +30,6 @@ def fun(x,na,nb,phi1):
 			+ ((phi1/na)*log(phi1) + ((1-phi1)/nb)*log(1-phi1) + x[1]*(phi1)*(1-phi1))
 			])	
 
-
 def jac(x,na,nb,phi1):
 	""" This the expression for the jacobian, given by the following:
 	[[df1/dphi2, df1/dchi]
@@ -54,7 +44,6 @@ def jac(x,na,nb,phi1):
 			na*(1-phi1) - na*(1-phi1)*phi1 - na*(1-x[0]) + na*(1-x[0])*(x[0])],
 			[log(phi1)/na -log(x[0])/na - log(1-phi1)/nb + log(1-x[0])/nb
 			- 2*x[1]*phi1 + 2*x[1]*x[0], (x[0] - phi1)**2]])
-
 
 def NR(na,nb,nav,crit_chi,flipper):
 		" Newton Raphson solver for the binary mixture"
@@ -78,7 +67,7 @@ def NR(na,nb,nav,crit_chi,flipper):
 		#Generate Arrays
 		x1 = np.zeros((len(phi1vals),1)) # Final array to hold phi_a in phase 1
 		x2 = np.zeros((len(phi1vals),1)) # Final array to hold phi_a in phase 2
-		y2 = np.zeros((len(phi1vals),1)) # Final array to hold chi
+		binodal = np.zeros((len(phi1vals),1)) # Final array to hold chi
 
 		max_iter = 2000
 		damp = 0.1 #Damping constant to help the solver 
@@ -91,7 +80,7 @@ def NR(na,nb,nav,crit_chi,flipper):
 				index = phi1vals.index(phi)
 				guess = new_guess
 				jacobian = jac(guess,na,nb,phi) #Evaluate the jacobian
-				invjac = inv(jacobian) #Inverse jacobian
+				invjac = np.linalg.inv(jacobian) #Inverse jacobian
 				f1 = fun(guess,na,nb,phi) #Calculate the function 
 				new_guess = guess - damp*np.dot(invjac,f1) 
 
@@ -99,7 +88,7 @@ def NR(na,nb,nav,crit_chi,flipper):
 				if abs(new_guess[0] - guess[0]) < 1e-8 and abs(new_guess[1]-guess[1]) < 1e-8: 
 					x1[index] = phi
 					x2[index] = new_guess[0]
-					y2[index] = new_guess[1]
+					binodal[index] = new_guess[1]
 					break
 
 		# Flips the function back
@@ -116,42 +105,32 @@ def NR(na,nb,nav,crit_chi,flipper):
 		#Has to reverse the order of x2, which was converted to a tuple in the previous line
 		x2=x2[::-1] 
 
-		#Adds crit chi to the end of y2
-		y2 = np.reshape(np.append(y2,crit_chi),(n,1))
-		y2=y2.tolist()
-		y2i = y2[::-1]
-		y2i.pop(0)
+		#Adds crit chi to the end of binodal
+		binodal = np.reshape(np.append(binodal,crit_chi),(n,1))
+		binodal= binodal.tolist()
+		binodali = binodal[::-1]
+		binodali.pop(0)
 
 		#Concatenate the lists together
 		phi = x1 + x2
-		y2 = y2 + y2i
+		binodal = binodal + binodali
 
 
-		return (phi,y2)
+		phi = np.asarray(phi)
+		return phi,binodal
+
+def flory_G(phi,na,nb,chi):
+	"""Plots free energy"""
+	enthalpy = chi*phi*(1-phi)
+	entropy = phi/na * log(phi) + (1.-phi)/nb * log(1-phi) 
+	f = phi/na * log(phi) + (1.-phi)/nb * log(1-phi) + chi*phi*(1-phi)
+	return enthalpy,entropy,f
 
 def fPlot(polya,polyb,na,nb,v0,jsondata):
 	chi = float(request.form['chivalue'])
 	chi = chi/v0
 	type = jsondata['0']['type']
-
-	fig = generate_figure(na,nb,chi)
-
-	"""Add d3 stuff"""
-	plugins.connect(fig, plugins.MousePosition())
-
-	#Make the plot html/javascript friendly
-	id = "fig01"
-	json01 = json.dumps(mpld3.fig_to_dict(fig))
-
-	list_of_plots = list()
-	#Make a dictionary of plots
-	plot_dict = dict()
-	plot_dict['id'] = "fig01"
-	plot_dict['json'] = json01
-	list_of_plots.append(plot_dict)
-
-
-	"""Spinodal"""
+	#Spinodal
 	crit_chi = .5*((1/(na**.5) + 1/(nb**.5))**2)
 	if na == nb:
 		crit_phi = 0.5
@@ -160,41 +139,21 @@ def fPlot(polya,polyb,na,nb,v0,jsondata):
 	nav = 2./crit_chi
 	nav = 1.0
 	global flipper
-
-	"""Flipper"""
+	#Flipper
 	if na > nb:
 			flipper = 1
 			na, nb, w,x,y,z=  flip(na,nb,1,1,1,1)
 	else:
 			flipper = 0
-	"""Set up the plot"""
-	fig = plt.figure()
-	fig.set_facecolor('white')
-	axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-	axis.set_xlabel('Volume Fraction, \u03a6')
-	axis.set_ylabel('Temperature, K')
-	axis.set_title('Flory-Huggins Phase Diagram')
-
-	"""Run Optimization"""
-	x = np.arange(0.05,0.95,0.001)
-	spinodal = nav*(.5*(1./(na*x) + 1./(nb-nb*x)))
-	#spinodal = spinodal/nav
-
 	if flipper == 1:
 		x = 1 - x
 
 
-	phi,y2 =  NR(na,nb,nav,crit_chi,flipper)
-	#The line above and below do the same thing, one will replace the other soon.
-	"""
-	job = q.enqueue_call(
-		func=NR, args=(na,nb,nav,crit_chi,flipper), result_ttl=5000)
-
-	print job.get_id()
-	"""
+	phi1, binodal =  NR(na,nb,nav,crit_chi,flipper)
+	spinodal = nav*(.5*(1./(na*phi1) + 1./(nb-nb*phi1)))
 
 	#Convert list to np array
-	y2 = np.asarray(y2)
+	binodal = np.asarray(binodal)
 	spinodal= np.asarray(spinodal)
 
 	#Flip the plot w/ chi to be a function of temperature
@@ -204,35 +163,50 @@ def fPlot(polya,polyb,na,nb,v0,jsondata):
 		chi = float(jsondata['0']['chi'])
 
 	
-		y2 = (chi/v0)/y2
+		binodal = (chi/v0)/binodal
 		spinodal = (chi/v0)/spinodal
 		crit_chi = (chi/v0)/crit_chi
 
 	elif type == "Type 2":
-		y2 = float(jsondata['0']['chib']) / ( y2 - float(jsondata['0']['chia']))
+		binodal = float(jsondata['0']['chib']) / ( binodal - float(jsondata['0']['chia']))
 		spinodal = float(jsondata['0']['chib']) / (spinodal - float(jsondata['0']['chia']))
 		crit_chi= float(jsondata['0']['chib']) / (crit_chi- float(jsondata['0']['chia']))
 
-	spinline = axis.plot(x,spinodal,'r',lw=2,label="Spinodal") 
-	binline = axis.plot(phi,y2,'b',lw=2,label="Binodal")
-	axis.legend()
+	###Phase Plot
+	xlabel = 'Volume Fraction, \u03a6'
+	ylabel = 'Temperature, K'
+	title = 'Flory-Huggins Phase Diagram'
+	FHplot = phasePlot(xlabel,ylabel,title,phi1,spinodal,binodal)
 
-	"""Add d3 stuff"""
-	plugins.connect(fig, plugins.MousePosition())
 
-	id2 = "fig02"
-	json02 = json.dumps(mpld3.fig_to_dict(fig))
+	####Free Energy
+	phi = np.arange(0.0001,0.99,0.001)
+	h = np.zeros(( len(phi) ))
+	s = np.zeros(( len(phi) ))
+	g = np.zeros(( len(phi) ))
+	i = 0
+	for current_phi in phi:
+		h[i],s[i],g[i] = flory_G(current_phi,na,nb,chi)
+		i += 1
 
-	#Attempt to make dictionary of plots
-	plot_dict= dict()
-	plot_dict['id'] = "fig02"
-	plot_dict['json'] = json02
-	list_of_plots.append(plot_dict)
+	xlabel = "Volume Fraction, \u03a6"
+	ylabel = "Free Energy"
+	title = "Flory-Huggins Free Energy Diagram"
+	FEplot = freeEnergyPlot(xlabel,ylabel,title,phi,h,s,g)
+
+	###########################################
+
+	#LIST OF DICTIONARIES
+	list_of_plots = list()                                        
+	list_of_plots.append(FEplot.plot_dict)
+	list_of_plots.append(FHplot.plot_dict)
+
 
 	#Generate table
-	zipped = zip(x,spinodal,y2)
+	zipped = zip(phi1,spinodal,binodal)
 
 	#Critical point
 	critvals = [crit_phi,crit_chi]
 
 	return jsondata,critvals,list_of_plots,zipped
+

@@ -10,7 +10,7 @@ from numpy import arange,asarray,zeros
 
 #Modules
 import models.SLCT 
-import models.VO
+import models.VO as VO
 from models.FH import *
 from models.structurefactor import structure_factor
 import models.simpleA
@@ -40,7 +40,7 @@ app = Flask(__name__)
 q = Queue(connection=conn)
 app.config['REDIS_URL'] = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 app.config['RQ_POLL_INTERVAL'] = 5
-app.config['DEBUG'] = False
+app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'use a better key'
 
 RQDashboard(app,'/rq')

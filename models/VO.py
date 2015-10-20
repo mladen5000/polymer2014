@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import json
 import mpld3
 from mpld3 import plugins
+from plotter import phasePlot,freeEnergyPlot
 
 """
 THIS IS THE MODULE FOR VOORN-OVERBEEK FILES
@@ -41,7 +42,7 @@ def vspin(x,phi,sigma,alpha,m):
 
 	return np.array([f2])
 
-def vSpinodal(sigma,alpha,m):
+def vSpinodal(sigma,alpha,m,phivals):
 	"""The actual Spinodal generating function which calls vspin
 	1. Feed some initial values into the function
 	2. Call the function
@@ -50,7 +51,8 @@ def vSpinodal(sigma,alpha,m):
 	5. Feed back into flory function
 	"""
 	#Range of Phi
-	phivals = np.arange(1e-2,0.10,0.001)
+	phivals = np.asarray(phivals)
+	#phivals = np.arange(1e-2,0.10,0.001)
 
 	i=0
 	xvals = np.zeros((len(phivals)))
@@ -67,8 +69,6 @@ def vSpinodal(sigma,alpha,m):
 		i += 1
 	return phivals,xvals
 
-
-
 def vCriticalpoint(sigma,alpha,m):
 	"""Generates the Critical Value"""
 
@@ -82,7 +82,6 @@ def vCriticalpoint(sigma,alpha,m):
 	x = fsolve(vCRIT, x0, args = (sigma, alpha, m))
 
 	return x
-
 
 def vjac(x,phi1,sigma,alpha,m):
 	"df1/dphi2, df1/dchi; df2/dphi2, df2/dchi"
@@ -116,7 +115,6 @@ def vjac(x,phi1,sigma,alpha,m):
 
 	return np.array([ [df1dphi,df1dpsi],[df2dphi,df2dpsi] ])
 
-
 def vfun(x,phi1,sigma,alpha,m):
 	"F1 = f'(phi_1a) - f'(phi_2a); F2 = (b-a)*f'(phi_1a) -[ f(phi_2a) - f(phi_1a) ]"
 	"""
@@ -149,7 +147,6 @@ def vfun(x,phi1,sigma,alpha,m):
 		- (1-x[0]-x[1])*np.log(1.-x[0]-x[1])
   ])
 	
-
 def vNR(alpha,N,sigma):
 		""" Newton Raphson solver for the binary mixture"""
 		# Set up parameters, initial guesses, formatting, initializing etc.
@@ -224,66 +221,32 @@ def vfree(N,psi,sigma):
 
 	return phivals, enthalpy,entropy, f
 
-
 def vPlot(alpha,sigma,psi,N):
-	fig = plt.figure()
-	fig.set_facecolor('white')
-	axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-	axis.set_xlabel('Volume Fraction, \u03a6')
-	axis.set_ylabel('Free Energy ')
-	axis.set_title('Voorn-Overbeek  Diagram')
+	xlabel=	'Volume Fraction, \u03a6'
+	ylabel= 'Free Energy'
+	title= 'Voorn-Overbeek  Diagram'
 	phi,h,s,g = vfree(N,psi,sigma)
+	FEplot = freeEnergyPlot(xlabel,ylabel,title,phi,h,s,g)
 
 	
-	hline = axis.plot(phi,h,'r',lw=1,alpha = 0.5,label='Enthalpy')
-	sline = axis.plot(phi,s,'b',lw=1,alpha = 0.5,label='Entropy')
-	gline = axis.plot(phi,g,'g',lw=3,label="Free Energy")
-	legend = axis.legend()
+	##PHASE DIAGRAM
+	xlab= 'Volume Fraction, \u03a6'
+	ylab= 'Salt Concentration, \u03a8'
+	title= 'Voorn-Overbeek Phase Diagram'
+	phi,binodal =  vNR(alpha,N,sigma)
+	x, spinodal = vSpinodal(sigma,alpha,N,phi)
+	VOplot = phasePlot(xlab,ylab,title,phi,spinodal,binodal)
 
-	"""Add d3 stuff"""
-	plugins.connect(fig, plugins.MousePosition())
-
-	id = "fig01"
-	json01 = json.dumps(mpld3.fig_to_dict(fig))
-
+	#LIST OF DICTIONARIES
 	list_of_plots = list()
-	#Attempt to make dictionary of plots
-	plot_dict= dict()
-	plot_dict['id'] = "fig01"
-	plot_dict['json'] = json01
-	list_of_plots.append(plot_dict)
+	list_of_plots.append(FEplot.plot_dict)
+	list_of_plots.append(VOplot.plot_dict)
+
+	#Generate table of values for phase diagram
+	zipped = zip(phi,spinodal,binodal)
 	
-
-	"""Set up the plot"""
-	fig = plt.figure()
-	fig.set_facecolor('white')
-	axis = fig.add_subplot(1, 1, 1,axisbg='#f5f5f5')
-	axis.set_xlabel('Volume Fraction, \u03a6')
-	axis.set_ylabel('Salt Concentration, \u03a8')
-	axis.set_title('Voorn-Overbeek Phase Diagram')
-
-	"""Move Spinodal Elsewhere"""
-	phi,y2 =  vNR(alpha,N,sigma)
-	x, spinodal = vSpinodal(sigma,alpha,N)
-	spinline = axis.plot(x,spinodal,'r',lw=2,label = "Spinodal")
-	binline = axis.plot(phi,y2,'b',lw=2, label = "Binodal") 
-	axis.legend()
-	plugins.connect(fig, plugins.MousePosition())
-
-	id2 = "fig02"
-	json02 = json.dumps(mpld3.fig_to_dict(fig))
-
-	#Attempt to make dictionary of plots
-	plot_dict= dict()
-	plot_dict['id'] = "fig02"
-	plot_dict['json'] = json02
-	list_of_plots.append(plot_dict)
-
-	#Generate table
-	zipped = zip(x,spinodal,y2)
-	
-	#Critical point form
+	#Generate table of values for critical point
 	critphi = vCriticalpoint(sigma,alpha,N)
 
-	return critphi, list_of_plots,zipped
+	return critphi, list_of_plots , zipped
 
