@@ -32,8 +32,6 @@ import urllib
 #Used to Debug
 from flask_debugtoolbar import DebugToolbarExtension
 
-
-
 #Initialize
 app = Flask(__name__)
 #redis queue, conn is the name of the redis connection as defined on worker

@@ -5,55 +5,55 @@
 {% endblock %}
 
 {% block content %}
-<div id="Header">
+
+<section>
+	<div id="Header">
 		<div id= "Heading">
 			<div class="row">
 				<div class="large-4 columns">
-					<h1 id="Mat"> Materials </h1>
+					<h1 id="Mat">Materials</h1>
 				</div>
 				<div class="large-4 columns">
-					<h1 id="Gen"> Genome </h1>
+					<h1 id="Gen">Genome</h1>
 				</div>
 				<div class="large-4 columns">
-					<h1 id="Pro"> Project </h1>
+					<h1 id="Pro">Project </h1>
 				</div>
 			</div>
 		</div>	
-		<div id = "tagline">
-                        <div class = "row">
-                                <p> Presented by the Institute of Molecular Engineering At the University of Chicago </p>
-                        </div>
-                </div>
-
-		<div class = "image">
-			<div class = "row">
-			<img src="static/drawing.png"/>
-			</div>
-		</div>
-
-	</div>
-	<div class="layer">
-	<p> </p>
+		<table style="border:none;background-color: #42647F;"><tr><td style="text-align:center"><img src="static/drawing.png" style="height:100px" alt="image not found"/></td></tr></table>
 	</div>
         <div class="introduction">
 		<div class = "row">
 			<div class = "about">
 				<h2> The Project </h2>
 				<p> The Center for Hierarchical Materials Design (CHIMAD) represents a Chicago-based consortium of the University of Chicago, Northwestern University, Northwestern-Argonne Institute for Science and Engineering (NASIE) that is a partnership between Argonne National Laboratory and Northwestern, and the Computational Institute that is a partnership between the University of Chicago and Argonne.  It serves together with NIST as a national resource for the verified codes and curated databases that will enable proliferation of a materials-by-design strategy throughout US industrial partners.  Numerous materials “use cases” of industrial relevance drive purposeful method and tool development, while aiding transfer to industry of both the new principles of computational materials design. Demonstrating a broad methodology for multicomponent, multiphase materials spanning metals and polymers for structural and multifunctional applications. </p> 
-			<h2 style="text-align:left; padding-bottom: 0px; padding-top: 25px;"> Polymer Applications </h2>
 			</div>
-			<ul class="stack button-group">
+		</div>
+	</div>	
+	<table style="border:none">
+		<tr>
+			<td style="text-align:center">
+				<h2 style="text-align:center; padding-bottom: 0px; padding-top: 25px;"> Search the Database </h2>
+				<form action="/polymer" method="post">
+				<dl>
+				<dt> Polymer Name
+				<dd><input type="text" name="poly">
+				<dd><input class="button" type="submit" value="Search">
+				</dl>
+				</form>
+			</td>
+			<td>
+				<h2 style="text-align:left; padding-bottom: 0px; padding-top: 25px;"> Polymer Applications </h2>
+				<ul class="stack button-group">
 					  <li><a href="flory.html" class="button">Flory-Huggins Phase Diagram</a></li>
-					    <li><a href="vorn.html" class="button">Voorn-Overbeek Phase Diagram</a></li>
-					    <li><a href="slct.html" class="button">SLCT Phase Diagram</a></li>
-					    <li><a href="structurefactor.html" class="button">Random Phase Approximation Structure Factor</a></li>
+					  <li><a href="vorn.html" class="button">Voorn-Overbeek Phase Diagram</a></li>
+					  <li><a href="slct.html" class="button">SLCT Phase Diagram</a></li>
+					  <li><a href="structurefactor.html" class="button">Random Phase Approximation Structure Factor</a></li>
 						
-			</ul>
-
-			<br>
-			<br>
-			<br>
-			<br>
-			<br>
+				</ul>
+			</td>
+		</tr>
+	</table>
 {% endblock %}
 
