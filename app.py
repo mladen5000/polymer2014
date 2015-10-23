@@ -57,6 +57,7 @@ def index():
 def polymer():
 	if request.method == 'POST':
 		poly = request.form.get('poly')
+
 	htmlpath = "/polymer.html?poly="+poly
 	#return redirect(htmlpath)
 	return render_template("polymer.html")
@@ -116,7 +117,7 @@ def scft_enqueue():
 		if request.form['enqueuebutton'] == 'Submit':
 			print 'queueing!'
 			job = q.enqueue_call(
-				func=hello_world, args=(), result_ttl=5000,timeout=9999
+				func=wait1min,args=(), result_ttl=5000,timeout=9999
 			)
 			return render_template("scft_enqueue.html")
 		else:

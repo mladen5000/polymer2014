@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+    <title>get demo</title>
+      <style>
+          span {
+          color: red;
+            }
+                          </style>
+                            <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+                            <script>
+
+                            function getParameterByName(name) {
+                                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                                results = regex.exec(location.search);
+                                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+                            }
+
+                            $( document ).ready(function() {
+                            $("#inputformbutton").click(function(){
+
+                                var values = {"input" :  "roselyne", "polymer" : getParameterByName('polymer')};
+                                $.ajax({
+                                      method: "POST",
+                                        url: "/polymer",
+                                        //dataType: "application/json",
+                                        contentType: "application/json",
+                                        data:  JSON.stringify(values)
+                                        }).done(function( html ) {
+                                                 $("#resultdiv").text(JSON.stringify(html));
+                                        });;
+                               
+                               
+                               
+                                });
+                            });
+                            </script>
+
+                            </head>
+                            <body>
+                             
+                            <span>&nbsp;</span>
+                            <p>In this paragraph is an <span>important</span> section</p>
+                            <div><input id="inputform" type="text"></div><a href="#" id="inputformbutton">button</a>
+                            <div id = "resultdiv"> </div>                            
+                             
+</body>
+</html>

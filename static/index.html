@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   	<link rel="stylesheet" href="css/foundation.css"> 
+	<link rel="stylesheet" href="css/stylef.css">
+</head>
+<body>
+    	<script src="js/vendor/modernizr.js"></script>
+	<script src = "js/vendor/jquery.js"> </script>
+     	<script src="js/foundation.min.js"></script>
+     	<script src="js/foundation/foundation.accordion.js"></script>
+	
+	<nav class="top-bar" data-topbar data-options="is_hover:true"> 
+		<ul class="title-area"> 
+			<li class="name"> 
+				<h1> <a href="/"> Materials Genome Project </a> </h1> 
+			</li> <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone --> 
+			<li class="toggle-topbar menu-icon"> 
+				<a href="#"> <span>Polymers</span></a>
+			</li> 
+		</ul> 
+		<section class="top-bar-section"> <!-- Right Nav Section --> 
+			<ul class="right"> 
+				<li class="active">
+					<a href="#">Applications</a>
+				</li> 
+				<li class="has-dropdown"> 
+					<a href="#">Popular Apps</a> 
+						<ul class="dropdown"> 
+							<li><a href="howto.html">How-To</a>
+							</li>
+							<li><a href="flory.html">Flory-Huggins</a>
+							</li> 
+							<li><a href="vorn.html">Voorn-Overbeek</a> 
+							</li> 	
+							<li><a href="slct.html">SLCT</a> 
+							</li> 	
+							<li><a href="structurefactor.html">Structure Factor</a> 
+							</li> 	
+							<li><a href="saftdemo.html">SAFT</a> 
+							</li> 	
+						</ul> 
+				</li> 
+			</ul> <!-- Left Nav Section --> 
+			<ul class="left"> 
+				<li>
+					<a href="/howto.html">About</a>
+				</li> 
+			</ul> 
+		</section> 
+	</nav>
+ 
+
+	<section>	
+	<div id="Header">
+		<div id= "Heading">
+			<div class="row">
+				<div class="large-4 columns">
+					<h1 id="Mat">Materials</h1>
+				</div>
+				<div class="large-4 columns">
+					<h1 id="Gen">Genome</h1>
+				</div>
+				<div class="large-4 columns">
+					<h1 id="Pro">Project </h1>
+				</div>
+			</div>
+		</div>	
+		<table style="border:none;background-color: #42647F;"><tr><td style="text-align:center"><img src="img/drawing.png" style="height:100px"/></td></tr></table>
+	</div>
+        <div class="introduction">
+		<div class = "row">
+			<div class = "about">
+				<h2> The Project </h2>
+				<p> The Center for Hierarchical Materials Design (CHIMAD) represents a Chicago-based consortium of the University of Chicago, Northwestern University, Northwestern-Argonne Institute for Science and Engineering (NASIE) that is a partnership between Argonne National Laboratory and Northwestern, and the Computational Institute that is a partnership between the University of Chicago and Argonne.  It serves together with NIST as a national resource for the verified codes and curated databases that will enable proliferation of a materials-by-design strategy throughout US industrial partners.  Numerous materials “use cases” of industrial relevance drive purposeful method and tool development, while aiding transfer to industry of both the new principles of computational materials design. Demonstrating a broad methodology for multicomponent, multiphase materials spanning metals and polymers for structural and multifunctional applications. </p> 
+			</div>
+		</div>
+	</div>	
+	<table style="border:none">
+		<tr>
+			<td style="text-align:center">
+				<h2 style="text-align:center; padding-bottom: 0px; padding-top: 25px;"> Search the Database </h2>
+				<form action="/polymer" method="post">
+				<dl>
+				<dt> Polymer Name
+				<dd><input type="text" name="poly">
+				<dd><input type="submit" value="Search">
+				</dl>
+				</form>
+			</td>
+			<td>
+				<h2 style="text-align:left; padding-bottom: 0px; padding-top: 25px;"> Polymer Applications </h2>
+				<ul class="stack button-group">
+					  <li><a href="flory.html" class="button">Flory-Huggins Phase Diagram</a></li>
+					  <li><a href="vorn.html" class="button">Voorn-Overbeek Phase Diagram</a></li>
+					  <li><a href="slct.html" class="button">SLCT Phase Diagram</a></li>
+					  <li><a href="structurefactor.html" class="button">Random Phase Approximation Structure Factor</a></li>
+						
+				</ul>
+			</td>
+		</tr>
+	</table>
+
+	</section>
+	<br>
+        <table style="margin:0;bottom:0;left:0;text-align:center;background-color:#42647F;">    
+		<tr>
+			<td style="text-align:center">
+				<a href="http://www.uchicago.edu/" target="_blank">
+					<img width="100%" src="img/logo_UC_white@1x.png" alt="University of Chicago logo"/>
+				</a>
+			</td>
+        		<td style="text-align:center">
+				<a href="https://www.ci.uchicago.edu/" target="_blank">
+					<img width="45%" src="img/logo_CI_white@1x.png" alt="Computation Institute logo" />
+				</a>
+			</td>
+        		<td style="text-align:center">
+				<a href="http://www.anl.gov/" target="_blank">
+					<img width="65%" src="img/logo_ANL_white@1x.png" alt="Argonne National Laboratory logo" />
+				</a>
+			</td>
+        		<td style="text-align:center">
+				<a href="http://www.nist.gov/" target="_blank">
+					<img width="65%" src="img/logo_NIST_white@1x.png" alt="National Institute of Standards and Technology logo" />
+				</a>
+			</td>
+        		<td style="text-align:center">
+				<a href="http://chimad.northwestern.edu/" target="_blank">
+					<img width="65%" src="img/logo_ChiMaD_white@1x.png" alt="Center for Hierarchical Materials Design logo" />
+				</a>
+			</td>
+		</tr>
+        </table>
+  </body>
+</html>
+
